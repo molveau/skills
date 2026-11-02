@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-// hook-check: an opt-in Claude Code PostToolUse hook. After an Edit, Write or MultiEdit it checks the one file
+// hook-check: a Claude Code PostToolUse hook. After an Edit, Write or MultiEdit it checks the one file
 // named in tool_input.file_path: UI code with detect-tells, French message files with fr-typo. On findings it
 // prints a short report to stderr and exits 2, which Claude Code hands back to the agent; otherwise it exits 0
 // in silence. It never blocks on its own errors (bad input, a missing or unreadable file): those exit 0.
-// Zero dependencies. Registered by hand in .claude/settings.json; the plugin does not register it.
+// Zero dependencies. The plugin registers it in hooks/hooks.json, on by default; its check_on_edit option,
+// which Claude Code hands to the hook as CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT ("true" or "false"), turns it
+// off. Installed with the skills CLI instead, it is registered by hand in .claude/settings.json.
 import { readFileSync, statSync, realpathSync } from 'node:fs';
 import { resolve, extname, basename, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -36,15 +38,15 @@ export async function check(path, text) {
   if (CODE.has(ext)) {
     const scanned = sfcAsHtml(path);
     if (!isScannable(scanned, text.length, false)) return [];
-    return detectTells([{ path: scanned, text }]).map((f) => `${path}:${f.line}  #${f.tell} ${f.label}  ${f.match}`);
+    return detectTells([{ path: scanned, text }]).map((f) => path + ':' + f.line + '  #' + f.tell + ' ' + f.label + '  ' + f.match);
   }
   if (isFrench(path)) {
     const fr = await loadFrTypo();
     if (!fr) return [];
     return fr.scanText(path, text).map((f) => {
-      const where = f.column ? `${f.line}:${f.column}` : `${f.line}`;
+      const where = f.column ? f.line + ':' + f.column : String(f.line);
       const shown = JSON.stringify(fr.visible(f.match));
-      return `${path}:${where}  ${f.rule}  ${shown}`;
+      return path + ':' + where + '  ' + f.rule + '  ' + shown;
     });
   }
   return [];
@@ -55,9 +57,9 @@ function report(path, lines) {
   const shown = lines.slice(0, SHOWN);
   const more = lines.length - shown.length;
   return [
-    `${lines.length} finding(s), ${kind}:`,
+    lines.length + ' finding(s), ' + kind + ':',
     ...shown,
-    ...(more > 0 ? [`... and ${more} more`] : []),
+    ...(more > 0 ? ['... and ' + more + ' more'] : []),
     'Fix them, or say why one is intended. The anti-slop and french-typography skills explain each rule.',
   ].join('\n') + '\n';
 }
@@ -103,7 +105,15 @@ function isMainModule() {
   return import.meta.url === pathToFileURL(resolved).href;
 }
 
-if (isMainModule()) {
+// The plugin option check_on_edit, off when the user turned it off in /config. The only value read from
+// the process environment.
+function turnedOff() {
+  return process.env.CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT === 'false';
+}
+
+if (isMainModule() && turnedOff()) {
+  process.exitCode = 0;
+} else if (isMainModule()) {
   let input = '';
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', (chunk) => { input += chunk; });

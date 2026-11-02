@@ -1,7 +1,7 @@
 {
   "name": "molveau-skills",
-  "description": "Eleven agent skills by Molveau Studio: anti-slop, UI, UX, motion, a deep design audit, an inspiration index, French typography, Québec Law 25, SaaS and showcase-site playbooks and a delivery workflow.",
-  "version": "1.1.1",
+  "description": "Eleven agent skills by Molveau Studio: anti-slop, UI, UX, motion, a deep design audit, an inspiration index, French typography, Québec Law 25, SaaS and showcase-site playbooks and a delivery workflow, with four commands, two review agents and an edit check.",
+  "version": "1.2.0",
   "author": {
     "name": "Molveau Studio",
     "url": "https://www.molveau.ca"
@@ -25,5 +25,13 @@
   "documentationUrl": "https://github.com/molveau/skills#readme",
   "supportUrl": "https://github.com/molveau/skills/issues",
   "privacyPolicyUrl": "https://github.com/molveau/skills/blob/main/PRIVACY.md",
-  "termsOfServiceUrl": "https://github.com/molveau/skills/blob/main/TERMS.md"
+  "termsOfServiceUrl": "https://github.com/molveau/skills/blob/main/TERMS.md",
+  "userConfig": {
+    "check_on_edit": {
+      "type": "boolean",
+      "title": "Check edited files",
+      "description": "After each edit, report AI-look tells in UI files and French spacing errors in French message files. Silent when the file is clean.",
+      "default": true
+    }
+  }
 }

@@ -2,6 +2,19 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-11-01
+
+### Added
+
+- Four plugin commands in `skills/commands/`: `unslop` (the full `anti-slop` run without waiting for approval, keeping the original as the before), `story-video` (the before and after story video, Accessibility step included), `fr-check` (the `fr-typo` checker on given paths or the project's French files, fixing only when asked) and `loi-25-audit` (the Law 25 report; not legal advice).
+- Two read-only plugin agents in `skills/agents/`: `ui-reviewer` (the `ui`, `ux` and `anti-slop` skills and the tells detector; ranked findings with `file:line` and exact fixes) and `loi-25-auditor` (the `loi-25-website` report).
+- A plugin option, `check_on_edit` ("Check edited files" in `/config`), on by default.
+
+### Changed
+
+- The plugin now registers the `hook-check` PostToolUse hook from `skills/hooks/hooks.json`, on by default. Turning `check_on_edit` off makes the hook exit at once. Installs made with the skills CLI still register it by hand, as the README shows.
+- `hook-check.mjs` builds its report lines by concatenation instead of template literals; the output is unchanged.
+
 ## [1.1.1] - 2026-11-01
 
 ### Added

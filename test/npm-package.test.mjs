@@ -8,7 +8,8 @@ import { spawnSync } from 'node:child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
-const SKILLS = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && statSync(join(ROOT, 'skills', n)).isDirectory());
+// commands/, agents/ and hooks/ are plugin components beside the skills, not skills.
+const SKILLS = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && !['commands', 'agents', 'hooks'].includes(n) && statSync(join(ROOT, 'skills', n)).isDirectory());
 
 let packed;
 function pack() {
@@ -67,4 +68,8 @@ test('the tarball leaves out tests, examples, vendored copies and private files,
     assert.ok(!/\.(png|jpe?g|mp4|webm|zip|tgz)$/i.test(p), `${p} is a binary`);
   }
   assert.ok(pack().unpackedSize < 1024 * 1024, `unpacked ${pack().unpackedSize} bytes`);
+});
+
+test('the tarball leaves out the plugin-only commands, agents and hooks', () => {
+  for (const p of paths()) assert.ok(!/^skills\/(commands|agents|hooks)\//.test(p), `${p} is for the plugin only`);
 });

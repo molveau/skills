@@ -120,3 +120,31 @@ test('with anti-slop installed alone, French files are skipped and code is still
   const code = go(hookInput(file('src/a.css', GRADIENT)));
   assert.equal(code.status, 2, code.stderr);
 });
+
+// The plugin's userConfig.check_on_edit reaches the hook as CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT, the value
+// turned into a string ("true" or "false"). Only "false" turns the check off.
+test('the off switch: check_on_edit false exits 0 at once, other values still check', () => {
+  const p = file('src/off.tsx', `<p>a ${EM} b</p>\n`);
+  const withOption = (value) => {
+    const env = { ...process.env };
+    delete env.CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT;
+    if (value !== undefined) env.CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT = value;
+    return spawnSync(process.execPath, [HOOK], { input: hookInput(p), encoding: 'utf8', env });
+  };
+  const off = withOption('false');
+  assert.equal(off.status, 0, off.stderr);
+  assert.equal(off.stderr, '');
+  assert.equal(off.stdout, '');
+  for (const value of [undefined, 'true', '']) {
+    const r = withOption(value);
+    assert.equal(r.status, 2, `${value}: ${r.stderr}`);
+    assert.match(r.stderr, /#16 Em dash in copy/);
+  }
+});
+
+test('the off switch skips even unreadable input', () => {
+  const env = { ...process.env, CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT: 'false' };
+  const r = spawnSync(process.execPath, [HOOK], { input: '{not json', encoding: 'utf8', env });
+  assert.equal(r.status, 0);
+  assert.equal(r.stderr, '');
+});

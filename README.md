@@ -44,7 +44,7 @@ Or one bundle:
 | Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` |
 | Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` |
 
-In Claude Code, all eleven as one plugin:
+In Claude Code, all eleven as one plugin, with the commands, agents, MCP server and hook described below:
 
 ```
 /plugin marketplace add molveau/skills
@@ -96,11 +96,31 @@ Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) and o
 
 `detect_tells` with `paths` reads only inside the folder the client starts the server in (usually the project), follows no link out of it, skips `node_modules`, `.git`, build folders and tests, and stops at 2,000 files of 1 MB at most.
 
-## Opt-in hook
+## Commands and agents
+
+The Claude Code plugin adds four commands and two read-only agents on top of the skills. Each one runs a skill's own process, so the result matches what the skill's `SKILL.md` describes.
+
+| Command | What it does |
+|---|---|
+| `/molveau-skills:unslop <file, folder or URL>` | The full `anti-slop` run without stopping for approval: the direction is written at the top of the report, and the original is kept in `unslop-before/` as the before |
+| `/molveau-skills:story-video <before> <after>` | Builds and renders the story video for a before and after pair, Accessibility step included (needs Playwright and ffmpeg in the project) |
+| `/molveau-skills:fr-check [paths] [fix]` | Runs `fr-typo` on the given paths, or on the project's French message files and `*.fr.md`; fixes only when you add `fix`, and reports what changed |
+| `/molveau-skills:loi-25-audit <folder or URL>` | The `loi-25-website` audit with its pass, fix and n.a. report. Not legal advice |
+
+| Agent | What it does | Tools |
+|---|---|---|
+| `molveau-skills:ui-reviewer` | Design and UX review of the given files with `ui`, `ux` and `anti-slop`; runs the tells detector and returns ranked findings with `file:line` and the exact fix | Read, Grep, Glob, Bash |
+| `molveau-skills:loi-25-auditor` | Law 25 audit of a site's code with `loi-25-website`; returns the skill's report | Read, Grep, Glob |
+
+Claude delegates to an agent when the task fits its description, or you name it: `@agent-molveau-skills:ui-reviewer review app/page.tsx`. The skills CLI installs the skills only; the commands and agents come with the plugin.
+
+## Hook
 
 `anti-slop/scripts/hook-check.mjs` is a Claude Code `PostToolUse` hook. After each edit it checks the one file just written: UI code (`.tsx`, `.jsx`, `.ts`, `.js`, `.css`, `.html`, `.vue`, `.svelte`) with `detect-tells`, and French message files (`fr.json`, `*.fr.json`, `fr/*.json`, `*.fr.md`) with `fr-typo` when the `french-typography` skill is installed beside it. Findings go back to the agent, which fixes them or says why one is intended. A clean file, any other file and any error in the hook itself let the edit through in silence.
 
-The plugin does not turn it on, because it runs on every edit. To use it in a project where the skills CLI installed the skills, add this to the project's `.claude/settings.json`:
+The plugin ships it on by default. To turn it off, open `/config` and switch off "Check edited files" under the plugin's options (or run `/plugin configure molveau-skills@molveau`).
+
+With the skills CLI instead of the plugin, nothing registers it for you. To use it in a project where the skills CLI installed the skills, add this to the project's `.claude/settings.json`:
 
 ```json
 {

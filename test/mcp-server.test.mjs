@@ -115,7 +115,7 @@ test('tools/list: five tools with descriptions and closed object schemas', async
 test('get_playbook offers exactly the skills in skills/', async () => {
   const { replies } = await talk([req(1, 'tools/list')], { expect: 1 });
   const schema = replies[0].result.tools.find((t) => t.name === 'get_playbook').inputSchema;
-  const dirs = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && statSync(join(ROOT, 'skills', n)).isDirectory());
+  const dirs = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && !['commands', 'agents', 'hooks'].includes(n) && statSync(join(ROOT, 'skills', n)).isDirectory());
   assert.deepEqual([...schema.properties.skill.enum].sort(), dirs.sort());
   assert.equal(dirs.length, 11);
 });

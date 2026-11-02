@@ -127,9 +127,10 @@ the end of `references/tells.md`; treat a hit as "look here".
 
 The same checks run without a shell through the plugin's MCP server: `detect_tells` (a snippet or project
 paths), `check_contrast` (any colour pair the screen ships), `fr_typo`, `check_motion`, and `get_playbook`
-to read this playbook by section. `scripts/hook-check.mjs` is an opt-in Claude Code PostToolUse hook that
-runs this detector on each edited UI file and hands the findings back to the agent; it stays off until the
-project's settings register it (snippet in the repository README).
+to read this playbook by section. `scripts/hook-check.mjs` is a Claude Code PostToolUse hook that runs this
+detector on each edited UI file and hands the findings back to the agent. The plugin registers it, on by
+default; "Check edited files" in `/config` turns it off. With the skills CLI, register it in the project's
+settings (snippet in the repository README).
 
 ## Ratchet test in a project
 
@@ -147,7 +148,7 @@ test('no new vibe-coded tells', () => {
   const files = globSync('{app,components}/**/*.{ts,tsx,css}').map((path) => ({ path, text: readFileSync(path, 'utf8') }));
   const now = {};
   for (const f of detectTells(files)) now[f.tell] = (now[f.tell] ?? 0) + 1;
-  for (const [tell, n] of Object.entries(now)) assert.ok(n <= (BASELINE[tell] ?? 0), `tell ${tell}: ${n} findings, baseline ${BASELINE[tell] ?? 0}`);
+  for (const [tell, n] of Object.entries(now)) assert.ok(n <= (BASELINE[tell] ?? 0), 'tell ' + tell + ': ' + n + ' findings, baseline ' + (BASELINE[tell] ?? 0));
 });
 ```
 

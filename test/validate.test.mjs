@@ -24,9 +24,11 @@ function walk(dir) {
 const rel = (p) => relative(ROOT, p).split(sep).join('/');
 const isText = (buf) => !buf.subarray(0, 8000).includes(0);
 
+// Plugin component folders sit beside the skills in skills/ (the plugin root); they are not skills.
+const COMPONENT_DIRS = new Set(['commands', 'agents', 'hooks']);
 function skillDirs() {
   if (!existsSync(SKILLS)) return [];
-  return readdirSync(SKILLS).filter((n) => !n.startsWith('.') && statSync(join(SKILLS, n)).isDirectory());
+  return readdirSync(SKILLS).filter((n) => !n.startsWith('.') && !COMPONENT_DIRS.has(n) && statSync(join(SKILLS, n)).isDirectory());
 }
 const readJson = (f) => JSON.parse(readFileSync(join(ROOT, f), 'utf8'));
 
@@ -330,28 +332,164 @@ test('npm test runs every test file and nothing under test/fixtures', () => {
   assert.ok(!matched.some((p) => p.includes('fixtures')));
 });
 
-// The plugin starts the MCP server from skills/.mcp.json; the anti-slop hook stays opt-in, so the plugin
-// registers no hooks of its own.
-test('the plugin declares the MCP server and no hooks', () => {
+// The plugin starts the MCP server from skills/.mcp.json and registers the anti-slop hook from the default
+// skills/hooks/hooks.json, so plugin.json declares neither.
+test('the plugin declares the MCP server and no hooks of its own in plugin.json', () => {
   const mcp = JSON.parse(readFileSync(join(SKILLS, '.mcp.json'), 'utf8'));
   const server = mcp.mcpServers['molveau-skills'];
   assert.equal(server.command, 'node');
   assert.deepEqual(server.args, ['${CLAUDE_PLUGIN_ROOT}/.mcp/server.mjs']);
   assert.ok(existsSync(join(SKILLS, server.args[0].replace('${CLAUDE_PLUGIN_ROOT}/', ''))));
   assert.equal(server.env, undefined);
-  assert.ok(!existsSync(join(SKILLS, 'hooks')), 'skills/hooks/ would register hooks for every user');
   const plugin = JSON.parse(readFileSync(PLUGIN, 'utf8'));
-  assert.equal(plugin.hooks, undefined);
+  assert.equal(plugin.hooks, undefined, 'hooks load from skills/hooks/hooks.json');
+  assert.equal(plugin.commands, undefined, 'commands load from skills/commands/');
+  assert.equal(plugin.agents, undefined, 'agents load from skills/agents/');
   assert.ok(statSync(join(SKILLS, '.mcp', 'server.mjs')).mode & 0o100, 'server.mjs must be executable for the npm bin');
   assert.match(readFileSync(join(SKILLS, '.mcp', 'server.mjs'), 'utf8'), /^#!\/usr\/bin\/env node\n/);
 });
 
-test('README documents the MCP server and the opt-in hook; anti-slop points to both', () => {
+test('README documents the MCP server and the hook; anti-slop points to both', () => {
   const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
-  for (const must of ['## MCP server', '## Opt-in hook', 'claude mcp add molveau-skills -- npx -y @molveau/skills', '"args": ["-y", "@molveau/skills"]', '"matcher": "Edit|Write|MultiEdit"', '.claude/skills/anti-slop/scripts/hook-check.mjs']) {
+  for (const must of ['## MCP server', '## Hook', '/config', 'Check edited files', 'claude mcp add molveau-skills -- npx -y @molveau/skills', '"args": ["-y", "@molveau/skills"]', '"matcher": "Edit|Write|MultiEdit"', '.claude/skills/anti-slop/scripts/hook-check.mjs']) {
     assert.ok(readme.includes(must), `README lacks ${must}`);
   }
+  assert.ok(!readme.includes('## Opt-in hook'), 'the hook is on by default in the plugin now');
   for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
   const skill = readFileSync(join(SKILLS, 'anti-slop', 'SKILL.md'), 'utf8');
   assert.ok(skill.includes('detect_tells') && skill.includes('scripts/hook-check.mjs'), 'anti-slop SKILL.md should point to the MCP tools and the hook');
+  assert.ok(!skill.includes('opt-in Claude Code'), 'anti-slop SKILL.md still calls the hook opt-in');
+});
+
+test('skillDirs leaves out the plugin component folders', () => {
+  for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
+  assert.equal(skillDirs().length, 11);
+});
+
+// Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment
+// variable, so none appears; Claude Code appends the typed arguments when no placeholder takes them.
+const COMMANDS = ['fr-check', 'loi-25-audit', 'story-video', 'unslop'];
+const AGENTS = {
+  'ui-reviewer': { tools: ['Read', 'Grep', 'Glob', 'Bash'], skills: ['ui', 'ux', 'anti-slop'] },
+  'loi-25-auditor': { tools: ['Read', 'Grep', 'Glob'], skills: ['loi-25-website'] },
+};
+const PLACEHOLDER = /\$\{?[A-Za-z_][A-Za-z0-9_]*/;
+const frontmatterLines = (text) => (text.match(/^---\n([\s\S]*?)\n---\n/)?.[1] ?? '').split('\n');
+
+function strictYamlSafe(file, text) {
+  for (const line of frontmatterLines(text)) {
+    const m = line.match(/^\s*[\w-]+:\s+(.+)$/);
+    if (!m) continue;
+    const v = m[1].trim();
+    if (/^["'|>]/.test(v)) continue;
+    assert.ok(!/: | #/.test(v), `${file}: unquoted value contains ": " or " #": ${line.slice(0, 60)}`);
+    assert.ok(!/^[-?:,\[\]{}&*!%@`]/.test(v), `${file}: unquoted value starts with a YAML indicator: ${line.slice(0, 60)}`);
+  }
+}
+
+test('the commands are exactly the four, each with a description, an argument hint and no placeholder', () => {
+  const dir = join(SKILLS, 'commands');
+  assert.deepEqual(readdirSync(dir).sort(), COMMANDS.map((c) => `${c}.md`));
+  for (const c of COMMANDS) {
+    const file = `skills/commands/${c}.md`;
+    const text = readFileSync(join(dir, `${c}.md`), 'utf8');
+    const { data, body } = parseFrontmatter(text);
+    assert.ok(String(data.description ?? '').length >= 40, `${file}: description`);
+    assert.ok(String(data['argument-hint'] ?? '').length > 0, `${file}: argument-hint`);
+    assert.ok(body.trim().length > 200, `${file}: body`);
+    assert.ok(!PLACEHOLDER.test(text), `${file} has a dollar placeholder: ${text.match(PLACEHOLDER)?.[0]}`);
+    strictYamlSafe(file, text);
+  }
+});
+
+test('each agent has valid frontmatter, a restricted tool list and preloads its skills', () => {
+  const dir = join(SKILLS, 'agents');
+  assert.deepEqual(readdirSync(dir).sort(), Object.keys(AGENTS).map((a) => `${a}.md`).sort());
+  for (const [name, want] of Object.entries(AGENTS)) {
+    const file = `skills/agents/${name}.md`;
+    const text = readFileSync(join(dir, `${name}.md`), 'utf8');
+    const { data, body } = parseFrontmatter(text);
+    assert.equal(data.name, name, `${file}: name`);
+    assert.ok(!data.name.includes(':'), `${file}: a colon is reserved for scoped names`);
+    assert.ok(String(data.description ?? '').length >= 40, `${file}: description`);
+    assert.deepEqual(String(data.tools ?? '').split(',').map((t) => t.trim()), want.tools, `${file}: tools`);
+    assert.equal(data.model, 'inherit', `${file}: model`);
+    for (const ignored of ['hooks', 'mcpServers', 'permissionMode']) assert.equal(data[ignored], undefined, `${file}: ${ignored} is ignored for plugin agents`);
+    const lines = frontmatterLines(text);
+    const at = lines.indexOf('skills:');
+    assert.ok(at >= 0, `${file}: skills list`);
+    const listed = [];
+    for (const l of lines.slice(at + 1)) {
+      const m = l.match(/^\s+-\s+(\S+)$/);
+      if (!m) break;
+      listed.push(m[1]);
+    }
+    assert.deepEqual(listed, want.skills.map((s) => `molveau-skills:${s}`), `${file}: skills`);
+    for (const s of want.skills) {
+      assert.ok(existsSync(join(SKILLS, s, 'SKILL.md')), `${file}: skill ${s} missing`);
+      assert.ok(body.includes(`\`${s}\``), `${file}: body does not name the ${s} skill`);
+    }
+    assert.match(body, /read-only|do not edit/i, `${file}: says it is read-only`);
+    assert.ok(!PLACEHOLDER.test(text), `${file} has a dollar placeholder`);
+    strictYamlSafe(file, text);
+  }
+});
+
+const HOOK_SCRIPT = 'anti-slop/scripts/hook-check.mjs';
+
+test('hooks.json registers hook-check after edits, in exec form', () => {
+  const file = join(SKILLS, 'hooks', 'hooks.json');
+  const config = JSON.parse(readFileSync(file, 'utf8'));
+  assert.deepEqual(Object.keys(config), ['hooks'], 'a plugin hooks file wraps the events in "hooks"');
+  assert.deepEqual(Object.keys(config.hooks), ['PostToolUse']);
+  const [entry, ...rest] = config.hooks.PostToolUse;
+  assert.equal(rest.length, 0);
+  assert.equal(entry.matcher, 'Edit|Write|MultiEdit');
+  assert.equal(entry.hooks.length, 1);
+  const [hook] = entry.hooks;
+  assert.equal(hook.type, 'command');
+  assert.equal(hook.command, 'node');
+  assert.deepEqual(hook.args, ['${CLAUDE_PLUGIN_ROOT}/' + HOOK_SCRIPT]);
+  assert.ok(existsSync(join(SKILLS, HOOK_SCRIPT)), `${HOOK_SCRIPT} missing`);
+  const text = readFileSync(file, 'utf8');
+  assert.deepEqual(text.match(/\$\{?[A-Za-z_]\w*\}?/g), ['${CLAUDE_PLUGIN_ROOT}'], 'hooks.json names no other variable');
+});
+
+test('userConfig.check_on_edit is a boolean on by default', () => {
+  const plugin = JSON.parse(readFileSync(PLUGIN, 'utf8'));
+  assert.deepEqual(Object.keys(plugin.userConfig ?? {}), ['check_on_edit']);
+  assert.deepEqual(plugin.userConfig.check_on_edit, {
+    type: 'boolean',
+    title: 'Check edited files',
+    description: 'After each edit, report AI-look tells in UI files and French spacing errors in French message files. Silent when the file is clean.',
+    default: true,
+  });
+});
+
+test('hook-check reads one environment value, the off switch, and no placeholder', () => {
+  const src = readFileSync(join(SKILLS, HOOK_SCRIPT), 'utf8');
+  assert.deepEqual(src.match(/process\.env\b[.\[]?\s*['"]?\w*/g), ['process.env.CLAUDE_PLUGIN_OPTION_CHECK_ON_EDIT']);
+  assert.ok(!PLACEHOLDER.test(src), `hook-check.mjs has a dollar placeholder: ${src.match(PLACEHOLDER)?.[0]}`);
+});
+
+// The directory screens: in the component files, plugin.json and the anti-slop SKILL.md, no dollar
+// placeholder, no shell words beside a URL, no network call.
+test('component files stay clear of what the directory screens flag', () => {
+  const files = [
+    ...COMMANDS.map((c) => `commands/${c}.md`),
+    ...Object.keys(AGENTS).map((a) => `agents/${a}.md`),
+    'hooks/hooks.json', HOOK_SCRIPT, '.claude-plugin/plugin.json', 'anti-slop/SKILL.md',
+  ];
+  for (const f of files) {
+    const text = readFileSync(join(SKILLS, f), 'utf8');
+    const vars = (text.match(/\$\{?[A-Za-z_]\w*\}?/g) ?? []).filter((v) => !(f === 'hooks/hooks.json' && v === '${CLAUDE_PLUGIN_ROOT}'));
+    assert.deepEqual(vars, [], `skills/${f}: dollar placeholders`);
+    text.split('\n').forEach((line, i) => {
+      if (/https?:\/\//.test(line)) assert.ok(!/\b(set|env|export|printenv)\b/i.test(line), `skills/${f}:${i + 1} has a shell word beside a URL`);
+      assert.ok(!/\bpass\b\s*(?:[`'"=]|--|\w+=)/i.test(line), `skills/${f}:${i + 1}: "pass" followed by a value`);
+      assert.ok(!/\b(TOKEN|SECRET|API_KEY)\b/.test(line), `skills/${f}:${i + 1} names a credential`);
+    });
+    if (f.startsWith('commands/') || f.startsWith('agents/')) assert.ok(!/https?:\/\//.test(text), `skills/${f}: no URL needed`);
+    assert.ok(!/\bfetch\(|node:https?\b|node:net\b|XMLHttpRequest/.test(text), `skills/${f}: network call`);
+  }
 });
