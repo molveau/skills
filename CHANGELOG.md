@@ -12,7 +12,7 @@ All notable changes to this project are written here. The format follows [Keep a
 
 ### Changed
 
-- `detect-tells`, `check-motion` and `fr-typo` export the helpers the server and the hook share with their CLIs (`isScannable`, `formatFindings`, `visible`); the CLIs behave as before.
+- `detect-tells`, `check-motion` and `fr-typo` export the helpers the server and the hook share with their CLIs (`isScannable`, `sfcAsHtml`, `formatFindings`, `visible`); the CLIs behave as before.
 
 ## [1.0.4] - 2026-11-01
 
