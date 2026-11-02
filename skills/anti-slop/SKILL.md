@@ -176,7 +176,7 @@ What it adds to unslop's renderer:
   mark an element that still fails in the after.
 - **A caption**, `<meta name="story-caption" content="...">`, bottom left. State only what is true of
   the run, such as the model and that the screen was not edited by hand.
-- **The credit** `molveau/skills · unslop method by @heydamir` is drawn on every frame, as the CC BY 4.0
+- **The credit** `molveau.ca/skills · unslop method by @heydamir` is drawn on every frame, as the CC BY 4.0
   licence of unslop asks. Do not remove it.
 
 The story is a presentation of real files: step 0 is the before as it was, and the last step equals the

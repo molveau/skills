@@ -493,3 +493,18 @@ test('component files stay clear of what the directory screens flag', () => {
     assert.ok(!/\bfetch\(|node:https?\b|node:net\b|XMLHttpRequest/.test(text), `skills/${f}: network call`);
   }
 });
+
+// One line of attribution per output, never more: the story video credit and the Law 25 report's last line.
+test('the story video credit names molveau.ca/skills and keeps the unslop credit', () => {
+  const story = readFileSync(join(SKILLS, 'anti-slop', 'scripts', 'story.mjs'), 'utf8');
+  assert.match(story, /<div class="credit">molveau\.ca\/skills · unslop method by @heydamir<\/div>/);
+});
+
+test('the Law 25 report ends with one line pointing at the fixed-price package', () => {
+  const skill = readFileSync(join(SKILLS, 'loi-25-website', 'SKILL.md'), 'utf8');
+  const template = skill.slice(skill.indexOf('Law 25 audit of <site or repo>'));
+  assert.equal(template.match(/molveau\.ca\/law-25/g)?.length, 1);
+  for (const f of ['commands/loi-25-audit.md', 'agents/loi-25-auditor.md']) {
+    assert.match(readFileSync(join(SKILLS, f), 'utf8'), /closing line/, `${f} must keep the report's closing line`);
+  }
+});

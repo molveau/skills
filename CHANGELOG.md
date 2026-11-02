@@ -2,6 +2,13 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-11-01
+
+### Changed
+
+- The story video credit reads `molveau.ca/skills · unslop method by @heydamir`.
+- The Law 25 report ends with one line about Molveau Studio's fixed-price Law 25 package, in the report's language. Nothing else in any output promotes anything.
+
 ## [1.2.0] - 2026-11-01
 
 ### Added

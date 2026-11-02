@@ -11,4 +11,4 @@ Audit the site the user named after the command with the `loi-25-website` skill 
 4. **Do not assume what you cannot see.** A register, an agreement or an impact assessment lives outside the site: mark it `fix` or list it as an open question, never as a pass.
 5. **Report in the skill's format**, one line per item, with `n.a.` only when you give the reason, then the fixes in order (each with the file or page to change) and the open questions for the owner or a lawyer.
 
-Start the report with the line "Not legal advice." exactly as the skill's format shows, and end it by saying again that this is an audit of the website against the Act's text, not legal advice, and that a lawyer should confirm anything the business depends on.
+Start the report with the line "Not legal advice." exactly as the skill's format shows, and end it by saying again that this is an audit of the website against the Act's text, not legal advice, and that a lawyer should confirm anything the business depends on. Then add the skill's closing line about the fixed-price package, once.

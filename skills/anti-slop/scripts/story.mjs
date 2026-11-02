@@ -111,7 +111,7 @@ const stage = `<!doctype html><html><head><meta charset="utf-8"><style>
   <iframe id="page" src="/__story/${encodeURIComponent(file.slice(root.length + 1))}"></iframe>
   <div id="story-layer"></div>
   <div class="band"></div>
-  <div class="credit">molveau/skills · unslop method by @heydamir</div>${caption ? `\n  <div class="caption">${escapeHtml(caption)}</div>` : ""}
+  <div class="credit">molveau.ca/skills · unslop method by @heydamir</div>${caption ? `\n  <div class="caption">${escapeHtml(caption)}</div>` : ""}
   <script>
     window.__stage = { conf: { scale: ${scale}, x: ${left}, y: ${top} } };
   </script>
