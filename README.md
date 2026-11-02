@@ -96,6 +96,30 @@ Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) and o
 
 `detect_tells` with `paths` reads only inside the folder the client starts the server in (usually the project), follows no link out of it, skips `node_modules`, `.git`, build folders and tests, and stops at 2,000 files of 1 MB at most.
 
+### Hosted endpoint (Streamable HTTP)
+
+`@molveau/skills/core` answers MCP messages without starting a process, so a web route can serve the same tools over Streamable HTTP. Importing it reads no stdin and starts nothing.
+
+```js
+import { handleRpc, bundledFiles } from '@molveau/skills/core';
+
+handleRpc(message, { remote: true }); // the reply, an array of replies for a batch, or null for a notification
+```
+
+| Option | Default | Effect |
+|---|---|---|
+| `remote` | `false` | `true` for a hosted endpoint: `detect_tells` takes only `code` and `filename` (no `paths`), string arguments over 200,000 characters are a tool error, and `get_playbook` leaves out the lines that point at the studio |
+| `cwd` | `process.cwd()` | Folder `detect_tells` `paths` resolve in (local mode only) |
+| `readFile` | read beside the module | `(path) => string \| null` serving the files `bundledFiles()` lists, by their path in the package, for a runtime with no file system |
+
+A Next.js route (Node.js runtime) answers each `POST` with `handleRpc(await request.json(), { remote: true })`: the reply as JSON with status 200, or status 202 and no body when it returns null. Cap the request body size in the route: the 200,000-character limit applies to each argument, not to a whole request or batch. `options.remote` must be `true` or `false`; any other value throws, so a typo never falls back to local mode. `get_playbook` reads the skills' `SKILL.md` and playbook files at run time, so keep the package unbundled and its files traced:
+
+```js
+// next.config
+serverExternalPackages: ['@molveau/skills'],
+outputFileTracingIncludes: { '/api/mcp': ['./node_modules/@molveau/skills/skills/**'] },
+```
+
 ## Commands and agents
 
 The Claude Code plugin adds four commands and two read-only agents on top of the skills. Each one runs a skill's own process, so the result matches what the skill's `SKILL.md` describes.

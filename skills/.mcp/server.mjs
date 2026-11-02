@@ -1,92 +1,23 @@
 #!/usr/bin/env node
 // molveau-skills MCP server: the skills' checks and playbooks as five tools for any MCP client.
 // Zero dependencies. Speaks newline-delimited JSON-RPC 2.0 on stdin and stdout; stdout carries protocol
-// messages only, diagnostics go to stderr. Read-only: no network, no writes.
-import { readFileSync, realpathSync } from 'node:fs';
+// messages only, diagnostics go to stderr. Read-only: no network, no writes. The answers come from core.mjs,
+// which a hosted endpoint calls too.
+import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { TOOLS, checkArgs } from './tools.mjs';
+import { TOOLS } from './tools.mjs';
+import { handleRpc } from './core.mjs';
 
-const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const MAX_LINE = 32 * 1024 * 1024;
 
-function readVersion() {
-  try {
-    return JSON.parse(readFileSync(new URL('../.claude-plugin/plugin.json', import.meta.url), 'utf8')).version;
-  } catch {
-    return '0.0.0';
-  }
-}
-const VERSION = readVersion();
-
-const ok = (id, result) => ({ jsonrpc: '2.0', id, result });
 const fail = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });
-const toolError = (message) => ({ content: [{ type: 'text', text: message }], isError: true });
-
-function callTool(params, tools, ctx) {
-  const tool = tools.find((t) => t.name === params?.name);
-  if (!tool) return { error: `Unknown tool: ${params?.name}` };
-  const args = params.arguments ?? {};
-  const problem = checkArgs(tool.inputSchema, args);
-  if (problem) return { result: toolError(problem) };
-  try {
-    const out = tool.run(args, ctx);
-    const content = [{ type: 'text', text: out.text }];
-    if (out.footer) content.push({ type: 'text', text: out.footer });
-    return { result: { content, ...(out.data ? { structuredContent: out.data } : {}) } };
-  } catch (e) {
-    return { result: toolError(e instanceof Error ? e.message : String(e)) };
-  }
-}
 
 /**
- * Answers one parsed JSON-RPC message (or a batch). Returns the reply, or null for notifications and for
- * replies the client sends us.
+ * Answers one parsed JSON-RPC message (or a batch) with the stdio tools, through the shared core. Returns the
+ * reply, or null for notifications and for replies the client sends us.
  */
 export function handle(msg, tools = TOOLS, ctx = { cwd: process.cwd() }) {
-  if (Array.isArray(msg)) {
-    if (!msg.length) return fail(null, -32600, 'Invalid Request: empty batch');
-    const replies = msg.map((m) => handle(m, tools, ctx)).filter(Boolean);
-    return replies.length ? replies : null;
-  }
-  if (!msg || typeof msg !== 'object') return fail(null, -32600, 'Invalid Request');
-  const hasId = typeof msg.id === 'string' || typeof msg.id === 'number';
-  if (typeof msg.method !== 'string') {
-    if ('result' in msg || 'error' in msg) return null; // a reply to a request we never send
-    return fail(hasId ? msg.id : null, -32600, 'Invalid Request');
-  }
-  if ('id' in msg && !hasId) return fail(null, -32600, 'Invalid Request: id must be a string or a number');
-  if (!hasId) return null; // notification: notifications/initialized, cancelled and the rest
-
-  const { id, method, params } = msg;
-  try {
-    switch (method) {
-      case 'initialize': {
-        const asked = params?.protocolVersion;
-        return ok(id, {
-          protocolVersion: PROTOCOLS.includes(asked) ? asked : PROTOCOLS[0],
-          capabilities: { tools: {} },
-          serverInfo: { name: 'molveau-skills', version: VERSION },
-          instructions:
-            'Design checks from the Molveau skills: detect_tells (AI-look tells in UI code), check_contrast (WCAG ratio), fr_typo (French spacing and punctuation), check_motion (animation guardrails), and get_playbook to read a skill before building.',
-        });
-      }
-      case 'ping':
-        return ok(id, {});
-      case 'tools/list':
-        return ok(id, {
-          tools: tools.map(({ name, title, description, inputSchema, annotations }) => ({ name, title, description, inputSchema, annotations })),
-        });
-      case 'tools/call': {
-        const r = callTool(params, tools, ctx);
-        return r.error ? fail(id, -32602, r.error) : ok(id, r.result);
-      }
-      default:
-        return fail(id, -32601, `Method not found: ${method}`);
-    }
-  } catch (e) {
-    process.stderr.write(`molveau-skills: ${e?.stack ?? e}\n`);
-    return fail(id, -32603, 'Internal error');
-  }
+  return handleRpc(msg, { tools, cwd: ctx.cwd });
 }
 
 /**
@@ -125,7 +56,7 @@ function serve() {
       send(fail(null, -32700, 'Parse error'));
       return;
     }
-    const reply = handle(msg);
+    const reply = handleRpc(msg);
     if (reply) send(reply);
   };
   const push = lineSplitter(onLine, () => send(fail(null, -32700, 'Parse error: message too large')));

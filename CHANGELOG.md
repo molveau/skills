@@ -2,6 +2,18 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2026-11-02
+
+### Added
+
+- `@molveau/skills/core`, the MCP server's transport-agnostic core: `handleRpc(message, options)` answers one parsed JSON-RPC message or a batch, and returns null for a notification. The stdio server uses it, so a hosted Streamable HTTP route answers exactly as the local server does. `bundledFiles()` lists the skill files it reads at run time. `package.json` now has an `exports` map (`.`, `./core`, `./package.json`); the bin is unchanged.
+- Remote mode (`handleRpc(message, { remote: true })`) for a hosted endpoint: `detect_tells` takes only `code` and `filename` (no `paths`, so no file outside the skills' own is read), string arguments over 200,000 characters are a tool error, and `get_playbook` leaves out the lines that point at Molveau Studio, the Law 25 report's closing line among them, from its text and its structured data. `options.remote` must be a boolean: any other value throws rather than falling back to local mode.
+- Tool annotations tested on all five tools in both modes: `title`, `readOnlyHint: true`, `destructiveHint: false`, `openWorldHint: false`, `idempotentHint: true`.
+
+### Changed
+
+- `PRIVACY.md` covers the hosted endpoint at `https://www.molveau.ca/api/mcp`: what it receives, that it stores none of it, and the hosting provider's request logs.
+
 ## [1.2.1] - 2026-11-01
 
 ### Changed

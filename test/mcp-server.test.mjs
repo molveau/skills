@@ -109,6 +109,7 @@ test('tools/list: five tools with descriptions and closed object schemas', async
     assert.equal(t.inputSchema.type, 'object');
     assert.equal(t.inputSchema.additionalProperties, false, `${t.name}: additionalProperties`);
     assert.equal(t.annotations?.readOnlyHint, true, `${t.name}: readOnlyHint`);
+    assert.deepEqual(t.annotations, { title: t.title, readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, `${t.name}: annotations`);
   }
 });
 

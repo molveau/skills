@@ -1,6 +1,7 @@
 // The five tools of the molveau-skills MCP server. Each one wraps a skill script, so the server and the CLIs
 // always agree. All of them are read-only: they read the skills' own files and, for detect_tells with paths,
-// files inside the server's working directory, and nothing else. No network, no writes.
+// files inside the server's working directory, and nothing else. No network, no writes. REMOTE_TOOLS are the
+// same five for a hosted endpoint: no paths, so only the skills' own files are read, and no studio line.
 import { readFileSync, readdirSync, statSync, realpathSync, existsSync } from 'node:fs';
 import { join, resolve, relative, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -99,7 +100,13 @@ export function collectInside(root, paths, { maxFiles = 2000, maxBytes = 1_000_0
 
 // ---------- playbooks ----------
 
-const readSkillFile = (skill, file) => {
+// Every file get_playbook can read, relative to the package root.
+export const PLAYBOOK_FILES = SKILLS.flatMap((s) => ['skills/' + s + '/SKILL.md', 'skills/' + s + '/references/playbook.md']);
+
+// ctx.readFile, when given, serves those files by their package-relative path (for a runtime without a file
+// system); otherwise they are read beside this module.
+const readSkillFile = (skill, file, ctx) => {
+  if (typeof ctx?.readFile === 'function') return ctx.readFile('skills/' + skill + '/' + file) ?? null;
   const p = join(SKILLS_DIR, skill, file);
   return existsSync(p) ? readFileSync(p, 'utf8') : null;
 };
@@ -173,10 +180,10 @@ function fitSections(picked) {
   return out;
 }
 
-function getPlaybook({ skill, query }) {
-  const skillMd = readSkillFile(skill, 'SKILL.md');
+function getPlaybook({ skill, query }, ctx) {
+  const skillMd = readSkillFile(skill, 'SKILL.md', ctx);
   if (skillMd === null) throw new Error(`skills/${skill}/SKILL.md is missing from this install.`);
-  const playbook = readSkillFile(skill, join('references', 'playbook.md'));
+  const playbook = readSkillFile(skill, 'references/playbook.md', ctx);
   const searched = playbook ?? skillMd;
   const source = playbook ? `skills/${skill}/references/playbook.md` : `skills/${skill}/SKILL.md`;
   const all = sections(searched);
@@ -371,3 +378,65 @@ export const TOOLS = [
     run: getPlaybook,
   },
 ];
+
+// ---------- remote mode ----------
+
+// A line that points at the studio: the Law 25 report's closing line in either language, the further-reading
+// link to the studio's guides, and any line like them added later.
+const STUDIO_LINE = /molveau\.ca|Molveau Studio/i;
+
+// Takes out every studio line. A blank line left doubled, at the top, or just before a closing fence goes too.
+export function withoutPromotion(text) {
+  const lines = text.split('\n');
+  const blank = (line) => line !== undefined && line.trim() === '';
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (!STUDIO_LINE.test(lines[i])) { out.push(lines[i]); continue; }
+    const next = lines[i + 1];
+    const prevBlank = out.length > 0 && blank(out[out.length - 1]);
+    if ((!out.length || prevBlank) && blank(next)) i++;
+    else if (prevBlank && (next === undefined || /^\s*(`{3,}|~{3,})\s*$/.test(next))) out.pop();
+  }
+  return out.join('\n');
+}
+
+// The same filter over structured data: strings are filtered, list items naming the studio are dropped.
+function dataWithoutPromotion(value) {
+  if (typeof value === 'string') return withoutPromotion(value);
+  if (Array.isArray(value)) return value.filter((v) => !(typeof v === 'string' && STUDIO_LINE.test(v))).map(dataWithoutPromotion);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, dataWithoutPromotion(v)]));
+  return value;
+}
+
+const byName = (name) => TOOLS.find((t) => t.name === name);
+
+function remoteDetectTells() {
+  const local = byName('detect_tells');
+  const { paths, ...properties } = local.inputSchema.properties;
+  return {
+    ...local,
+    description: local.description.replace(/ Give `code` .*? Returns /, ' Give `code` (scanned as `filename`, default snippet.tsx). Returns '),
+    inputSchema: { ...local.inputSchema, properties, required: ['code'] },
+    run(args) {
+      if (args.paths !== undefined) throw new Error('This server scans only the code you send: paths is not accepted.');
+      return local.run(args, {});
+    },
+  };
+}
+
+function remoteGetPlaybook() {
+  const local = byName('get_playbook');
+  return {
+    ...local,
+    run(args, ctx) {
+      const out = local.run(args, ctx);
+      return {
+        text: withoutPromotion(out.text),
+        ...(out.footer ? { footer: withoutPromotion(out.footer) } : {}),
+        ...(out.data ? { data: dataWithoutPromotion(out.data) } : {}),
+      };
+    },
+  };
+}
+
+export const REMOTE_TOOLS = TOOLS.map((t) => (t.name === 'detect_tells' ? remoteDetectTells() : t.name === 'get_playbook' ? remoteGetPlaybook() : t));
