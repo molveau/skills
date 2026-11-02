@@ -2,6 +2,18 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-11-01
+
+### Added
+
+- An MCP server with five read-only tools: `detect_tells` (the anti-slop tells in a snippet or in files inside the working directory), `check_contrast` (WCAG ratio, AA and AAA), `fr_typo` (French spacing and punctuation, check or fix), `check_motion` (the motion guardrails) and `get_playbook` (a skill's direction gate or the playbook sections that match a query). Zero dependencies; the Claude Code plugin starts it through `skills/.mcp.json`.
+- An opt-in Claude Code hook, `skills/anti-slop/scripts/hook-check.mjs`: after an edit it runs `detect-tells` on UI code and `fr-typo` on French message files, and reports findings back to the agent. The plugin does not register it; see the README.
+- The npm package `@molveau/skills`, so other MCP clients can run the server with `npx -y @molveau/skills`.
+
+### Changed
+
+- `detect-tells`, `check-motion` and `fr-typo` export the helpers the server and the hook share with their CLIs (`isScannable`, `formatFindings`, `visible`); the CLIs behave as before.
+
 ## [1.0.4] - 2026-11-01
 
 ### Changed
