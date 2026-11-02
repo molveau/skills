@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispatch · FieldPilot AI</title>
+<!--
+  Direction
+  Product:   FieldPilot AI, the dispatch board for a plumbing and HVAC shop. The dispatcher opens it all day to see who is where and what is late.
+  Character: steady, plain-spoken, workmanlike.
+  World:     the yard at 7 AM. Asphalt, van livery, road-sign figures, the hi-vis vest. Neutrals lean slightly green-grey like wet asphalt.
+  Moments:   today's schedule drawn as one track through the day, and the week's jobs as a single-hue bar chart.
+  Signature: hi-vis yellow-green means "now" and nothing else: the job in progress, today's bar and the one action that creates work.
+  Idea:      on this screen, the dispatcher's day sheet becomes a track with one live point on it.
+-->
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #121412;
+    --surface: #181b18;
+    --surface-2: #20241f;
+    --line: #2a2e28;
+    --ink: #e8eae3;
+    --ink-2: #b3b7ac;
+    --ink-3: #8a8f84;
+    --bar: #3b4038;
+    --now: #d4ef4a;
+    --on-now: #151810;
+    --pos: #4cc38a;
+    --neg: #f06a6a;
+    --sans: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+    --figures: "DIN Alternate", "Bahnschrift", "Avenir Next", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--ground); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  .app { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { padding: 20px 12px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 24px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; height: 32px; }
+  .brand svg { width: 22px; height: 22px; color: var(--ink); }
+  .brand-name { font-weight: 600; font-size: 15px; }
+
+  .search { position: relative; }
+  .search input { width: 100%; height: 36px; padding: 0 12px 0 34px; border-radius: 8px; font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); outline: none; transition: border-color .15s; }
+  .search input::placeholder { color: var(--ink-3); }
+  .search input:focus-visible { border-color: var(--ink-3); box-shadow: 0 0 0 2px var(--ground), 0 0 0 4px var(--ink-3); }
+  .search .i { position: absolute; left: 11px; top: 10px; color: var(--ink-3); }
+
+  .label { font-size: 12px; font-weight: 500; color: var(--ink-3); padding: 0 10px; margin-bottom: 8px; }
+  nav ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: background-color .15s, color .15s; }
+  .nav-item:focus-visible { outline: 2px solid var(--ink-3); outline-offset: 2px; }
+  .nav-item.active { color: var(--ink); background: var(--surface-2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04); }
+  .count { margin-left: auto; font-family: var(--figures); font-size: 13px; color: var(--ink-3); }
+  @media (hover: hover) and (pointer: fine) { .nav-item:hover { background: var(--surface); color: var(--ink); } }
+
+  /* Main */
+  main { padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+  .sub { color: var(--ink-2); margin-top: 4px; font-size: 14px; }
+  .actions { display: flex; align-items: center; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); color: var(--ink); background: var(--surface-2); transition: background-color .15s, transform .1s; }
+  .btn.primary { border-color: transparent; color: var(--on-now); background: var(--now); }
+  .btn:active { transform: scale(.98); }
+  .btn:focus-visible { outline: 2px solid var(--ink-2); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) { .btn:hover { background: #292e28; } .btn.primary:hover { background: #c6e23a; } }
+  .avatar { width: 36px; height: 36px; margin-left: 8px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); }
+
+  /* KPIs: one strip split by dividers */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .kpi { padding: 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .kpi + .kpi { border-left: 1px solid var(--line); }
+  .kpi-title { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+  .kpi-num { font-family: var(--figures); font-size: 30px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi-num small { font-size: 18px; color: var(--ink-3); }
+  .kpi-foot { display: flex; gap: 8px; font-size: 13px; color: var(--ink-3); }
+  .delta { font-weight: 600; white-space: nowrap; }
+  .delta.up { color: var(--pos); }
+  .delta.down { color: var(--neg); }
+  .delta.flat { color: var(--ink-2); }
+
+  /* Panels */
+  .grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; }
+  .panel { border-radius: 12px; padding: 24px; min-width: 0; background: var(--surface); border: 1px solid var(--line); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+  .panel h2 { font-size: 16px; font-weight: 600; }
+  .meta { font-size: 13px; color: var(--ink-3); }
+
+  /* Chart */
+  .chart { position: relative; height: 290px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; align-items: end; padding: 28px 0 0 34px; }
+  .chart::before { content: ""; position: absolute; left: 34px; right: 0; top: 28px; bottom: 28px; background: repeating-linear-gradient(to top, rgba(232, 234, 227, .06) 0 1px, transparent 1px 25%); border-bottom: 1px solid var(--line); }
+  .yaxis { position: absolute; left: 0; top: 28px; bottom: 28px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-family: var(--figures); font-size: 12px; color: var(--ink-3); transform: translateY(6px); }
+  .yaxis span:first-child { transform: translateY(-6px); }
+  .col { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; }
+  .bar-wrap { width: 100%; height: calc(100% - 28px); display: flex; align-items: flex-end; justify-content: center; }
+  .bar { position: relative; width: min(100%, 40px); border-radius: 2px 2px 0 0; background: var(--bar); }
+  .col.today .bar { background: var(--now); }
+  .val { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 6px; font-family: var(--figures); font-size: 13px; color: var(--ink-2); }
+  .col.today .val { color: var(--ink); }
+  .col .day { height: 22px; font-size: 12px; font-weight: 500; color: var(--ink-3); }
+  .col.today .day { color: var(--ink); }
+  .avg { position: absolute; left: 34px; right: 0; bottom: calc(28px + (100% - 56px) * var(--avg)); border-top: 1px dashed var(--ink-3); z-index: 2; pointer-events: none; }
+  .avg span { position: absolute; left: 4px; bottom: 4px; font-size: 12px; color: var(--ink-3); }
+  .chart-foot { display: flex; justify-content: space-between; margin-top: 16px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; gap: 8px; }
+  .chart-foot b { color: var(--ink); font-weight: 600; }
+
+  /* Schedule: one track through the day */
+  .timeline { list-style: none; position: relative; }
+  .timeline::before { content: ""; position: absolute; left: 79px; top: 22px; bottom: 22px; width: 1px; background: var(--line); }
+  .job { display: grid; grid-template-columns: 72px 1fr auto; gap: 16px; align-items: center; padding: 8px 12px 8px 0; border-radius: 8px; }
+  .job.now { background: var(--surface-2); }
+  .time { position: relative; font-family: var(--figures); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .node { position: absolute; left: 75px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--ink-3); }
+  .done .node { background: var(--ink-3); }
+  .now .node { background: var(--now); border-color: var(--now); box-shadow: 0 0 0 3px var(--surface-2); }
+  .urgent .node { border-color: var(--neg); }
+  .now .time { color: var(--ink); }
+  .done .job-title { color: var(--ink-2); }
+  .job-title { font-size: 14px; font-weight: 500; }
+  .job-meta { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+  .tag { font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--ink-3); }
+  .tag.live { color: var(--now); }
+  .tag.urgent { color: var(--neg); }
+  .tag.next { color: var(--ink-2); }
+
+  /* Technicians */
+  .techs { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); column-gap: 24px; }
+  .tech { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .tav { position: relative; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); flex: none; }
+  .tav::after { content: ""; position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%; background: var(--s); border: 2px solid var(--surface); }
+  .tinfo { flex: 1; min-width: 0; }
+  .tname { font-size: 14px; font-weight: 500; }
+  .trole { font-size: 13px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status { font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--ink-2); }
+  .status.ok { color: var(--pos); }
+  .status.off { color: var(--ink-3); }
+  .s-site { --s: var(--now); } .s-ok { --s: var(--pos); } .s-route { --s: var(--ink-2); } .s-off { --s: #50554c; }
+
+  .ai-note { margin-top: 12px; padding: 12px 16px; border-radius: 8px; font-size: 14px; line-height: 1.5; color: var(--ink-2); background: var(--surface-2); }
+  .ai-note b { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 1280px) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(2, 1fr); } .kpi:nth-child(3) { border-left: 0; } .kpi:nth-child(n+3) { border-top: 1px solid var(--line); } }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    main { padding: 20px 16px; }
+    h1 { font-size: 24px; }
+    .chart { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-board" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></symbol>
+  <symbol id="i-jobs" viewBox="0 0 16 16"><path d="M10.5 2.5a3 3 0 0 0-3.2 4L2.5 11.3a1.4 1.4 0 0 0 2 2l4.8-4.8a3 3 0 0 0 4-3.2l-1.8 1.8-1.7-.4-.4-1.7z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 16 16"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3"/></symbol>
+  <symbol id="i-route" viewBox="0 0 16 16"><circle cx="4" cy="12" r="1.8"/><circle cx="12" cy="4" r="1.8"/><path d="M5.8 12H10a2 2 0 0 0 0-4H6a2 2 0 0 1 0-4h4.2"/></symbol>
+  <symbol id="i-invoice" viewBox="0 0 16 16"><path d="M4 2h8v12l-2-1-2 1-2-1-2 1z"/><path d="M6 5.5h4M6 8h4"/></symbol>
+  <symbol id="i-people" viewBox="0 0 16 16"><circle cx="6" cy="5.5" r="2.5"/><path d="M1.5 13.5c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/><path d="M10.5 3.2a2.4 2.4 0 0 1 0 4.6M12 10.3c1.2.5 2 1.6 2.5 3.2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></symbol>
+  <symbol id="i-export" viewBox="0 0 16 16"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="5" fill="currentColor"/><path d="M6.5 15.5V10a3 3 0 0 1 3-3h6" fill="none" stroke="#121412" stroke-width="2" stroke-linecap="round"/><circle cx="6.5" cy="15.5" r="2" fill="#121412"/><circle cx="15.5" cy="7" r="2" fill="#121412"/></svg>
+      <span class="brand-name">FieldPilot AI</span>
+    </div>
+
+    <div class="search">
+      <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+      <input type="search" placeholder="Search jobs, clients, techs…" aria-label="Search jobs, clients and technicians">
+    </div>
+
+    <nav aria-label="Main">
+      <ul>
+        <li><a class="nav-item active" href="#" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-board"/></svg>Dashboard</a></li>
+        <li><a class="nav-item" href="#"><svg class="i" aria-hidden="true"><use href="#i-jobs"/></svg>Jobs <span class="count">24</span></a></li>
+        <li><a class="nav-item" href="#"><svg class="i" aria-hidden="true"><use href="#i-cal"/></svg>Schedule</a></li>
+        <li><a class="nav-item" href="#"><svg class="i" aria-hidden="true"><use href="#i-route"/></svg>AI Dispatch</a></li>
+        <li><a class="nav-item" href="#"><svg class="i" aria-hidden="true"><use href="#i-invoice"/></svg>Invoices</a></li>
+        <li><a class="nav-item" href="#"><svg class="i" aria-hidden="true"><use href="#i-people"/></svg>Customers</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Teams">
+      <div class="label">Teams</div>
+      <ul>
+        <li><a class="nav-item" href="#">Plumbing</a></li>
+        <li><a class="nav-item" href="#">HVAC</a></li>
+        <li><a class="nav-item" href="#">Emergency</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="top">
+      <div>
+        <h1>Dispatch</h1>
+        <p class="sub">Sunday, November 1 · 3 jobs need attention</p>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button"><svg class="i" aria-hidden="true"><use href="#i-export"/></svg>Export</button>
+        <button class="btn primary" type="button"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>New job</button>
+        <div class="avatar" role="img" aria-label="Sarah">S</div>
+      </div>
+    </header>
+
+    <section class="kpis" aria-label="Key metrics">
+      <article class="kpi">
+        <span class="kpi-title">Jobs today</span>
+        <div class="kpi-num">24</div>
+        <div class="kpi-foot"><span class="delta up">+12%</span> vs. last Sunday</div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-title">Revenue this week</span>
+        <div class="kpi-num">$48.2k</div>
+        <div class="kpi-foot"><span class="delta up">+8.4%</span> $6.1k to weekly goal</div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-title">Techs on the road</span>
+        <div class="kpi-num">9<small> / 14</small></div>
+        <div class="kpi-foot"><span class="delta flat">4</span> on site right now</div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-title">Overdue invoices</span>
+        <div class="kpi-num">$7.9k</div>
+        <div class="kpi-foot"><span class="delta down">5 invoices</span> reminders sent</div>
+      </article>
+    </section>
+
+    <div class="grid">
+      <section class="panel" aria-labelledby="chart-h">
+        <div class="panel-head">
+          <h2 id="chart-h">Jobs completed</h2>
+          <span class="meta">Oct 26 – Nov 1</span>
+        </div>
+        <div class="chart" id="chart" role="img" aria-label="Bar chart of jobs completed per day: Mon 18, Tue 26, Wed 22, Thu 31, Fri 28, Sat 14, Sun 24 (today). Daily average 23.">
+          <div class="yaxis" aria-hidden="true"><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span></div>
+        </div>
+        <div class="chart-foot"><span><b id="week-total">163 jobs</b> completed this week</span><span>Best day: <b id="week-best">Thursday</b> · <span id="week-best-n">31</span> jobs</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="sched-h">
+        <div class="panel-head">
+          <h2 id="sched-h">Today's schedule</h2>
+          <span class="meta">24 jobs</span>
+        </div>
+        <ul class="timeline">
+          <li class="job done"><span class="time">8:00 AM<i class="node"></i></span><div><div class="job-title">Water heater swap</div><div class="job-meta">Johnson residence · Marcus T.</div></div><span class="tag">Done</span></li>
+          <li class="job done"><span class="time">9:30 AM<i class="node"></i></span><div><div class="job-title">AC tune-up</div><div class="job-meta">Parkview Dental · Priya N.</div></div><span class="tag">Done</span></li>
+          <li class="job now"><span class="time">11:00 AM<i class="node"></i></span><div><div class="job-title">Furnace repair</div><div class="job-meta">Oak St. Apartments · Diego R.</div></div><span class="tag live">In progress</span></li>
+          <li class="job urgent"><span class="time">1:15 PM<i class="node"></i></span><div><div class="job-title">Burst pipe, basement</div><div class="job-meta">Lee household · Unassigned</div></div><span class="tag urgent">Urgent</span></li>
+          <li class="job"><span class="time">3:00 PM<i class="node"></i></span><div><div class="job-title">Mini-split install</div><div class="job-meta">Harbor Café · Jess K.</div></div><span class="tag next">Up next</span></li>
+          <li class="job"><span class="time">4:45 PM<i class="node"></i></span><div><div class="job-title">Drain cleaning</div><div class="job-meta">Maple Court · Marcus T.</div></div><span class="tag">Scheduled</span></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="panel" aria-labelledby="tech-h">
+      <div class="panel-head">
+        <h2 id="tech-h">Technicians</h2>
+        <span class="meta">9 active · 5 off</span>
+      </div>
+      <ul class="techs">
+        <li class="tech"><div class="tav s-site">DR</div><div class="tinfo"><div class="tname">Diego Ramirez</div><div class="trole">HVAC · Oak St. Apartments</div></div><span class="status">On site</span></li>
+        <li class="tech"><div class="tav s-ok">MT</div><div class="tinfo"><div class="tname">Marcus Tran</div><div class="trole">Plumbing · Finished 2 jobs</div></div><span class="status ok">Available</span></li>
+        <li class="tech"><div class="tav s-route">PN</div><div class="tinfo"><div class="tname">Priya Nair</div><div class="trole">HVAC · ETA 12 min to Harbor Café</div></div><span class="status">En route</span></li>
+        <li class="tech"><div class="tav s-route">JK</div><div class="tinfo"><div class="tname">Jess Kowalski</div><div class="trole">HVAC · Heading to supply house</div></div><span class="status">En route</span></li>
+        <li class="tech"><div class="tav s-site">AO</div><div class="tinfo"><div class="tname">Amara Okafor</div><div class="trole">Plumbing · Riverside Lofts</div></div><span class="status">On site</span></li>
+        <li class="tech"><div class="tav s-off">TB</div><div class="tinfo"><div class="tname">Tom Becker</div><div class="trole">Plumbing · Back at 7:00 AM</div></div><span class="status off">Off duty</span></li>
+      </ul>
+      <p class="ai-note"><b>Suggested:</b> send Marcus Tran to the Lee household burst pipe. Closest available plumber, 14 min away.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+  const data = [
+    { d: 'Mon', v: 18 }, { d: 'Tue', v: 26 }, { d: 'Wed', v: 22 }, { d: 'Thu', v: 31 },
+    { d: 'Fri', v: 28 }, { d: 'Sat', v: 14 }, { d: 'Sun', v: 24, today: true }
+  ];
+  const names = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+  const max = 40, chart = document.getElementById('chart');
+  const total = data.reduce((sum, x) => sum + x.v, 0);
+  const best = data.reduce((a, b) => (b.v > a.v ? b : a));
+  data.forEach(x => {
+    const el = document.createElement('div');
+    el.className = 'col' + (x.today ? ' today' : '');
+    el.innerHTML = `<div class="bar-wrap"><div class="bar" style="height:${x.v / max * 100}%"><span class="val">${x.v}</span></div></div><div class="day">${x.d}</div>`;
+    chart.appendChild(el);
+  });
+  const avg = document.createElement('div');
+  avg.className = 'avg';
+  avg.style.setProperty('--avg', total / data.length / max);
+  avg.innerHTML = `<span>Avg ${Math.round(total / data.length)}</span>`;
+  chart.appendChild(avg);
+  document.getElementById('week-total').textContent = `${total} jobs`;
+  document.getElementById('week-best').textContent = names[best.d];
+  document.getElementById('week-best-n').textContent = best.v;
+</script>
+</body>
+</html>

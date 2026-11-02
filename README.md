@@ -1,0 +1,119 @@
+# Molveau skills
+
+Eleven agent skills from [Molveau Studio](https://www.molveau.ca/?utm_source=github&utm_medium=readme&utm_campaign=skills), a web studio in Montréal. Eight of them cover a domain (anti-slop, UI, motion, UX, French typography, Law 25, SaaS, showcase sites) and route to the best material on it; two more are a deep design audit and an inspiration index; the last one is the delivery workflow that ties them together. The domain material comes from other authors' open skills, kept in this repo as pinned, unedited copies and checked against upstream every week. You install one skill instead of a dozen, and the work is split by task, so the agent opens the right file instead of loading everything.
+
+## See it work
+
+[![A vibecoded dashboard turning into a designed one, step by step, with live spacing, contrast and radius measurements](examples/fieldpilot-unslop/poster.jpg)](examples/fieldpilot-unslop/video.mp4)
+
+A dashboard vibecoded by Claude Sonnet, unslopped by Claude Opus with the `anti-slop` skill in one run, video included. No hand edits to anything the skill produced: the prompts, both files, the story and the run notes are in [`examples/fieldpilot-unslop/`](examples/fieldpilot-unslop/run.md). More on [molveau.ca/skills](https://www.molveau.ca/skills?utm_source=github&utm_medium=readme&utm_campaign=skills).
+
+## The skills
+
+| Skill | What it does | Merges | Script |
+|---|---|---|---|
+| `anti-slop` | Removes the AI-generated look from a UI and sets a direction; lists 20 tells | unslop (Damir Sokolovsky), taste-skill (Leonxlnx) | `detect-tells` |
+| `ui` | Build, restyle, polish, critique and redesign interfaces; UI prompt pack | Jakub Krehel, Paul Bakaus (Impeccable), Emil Kowalski (taste guide) | none |
+| `motion` | Decide, build, review and audit animation, with guardrails | Emil Kowalski, GreenSock, Raphael Salaja, LottieFiles, Benji Taylor | `check-motion` |
+| `ux` | Interface copy, resilience, edge cases and accessibility | Jakub Krehel, Paul Bakaus (Impeccable), ibelick | none |
+| `french-typography` | Fixes and checks French (Québec and France) spacing, guillemets and apostrophes | Molveau only | `fr-typo` |
+| `loi-25-website` | Audits a website against Québec's Law 25; general information, not legal advice | Molveau only | none |
+| `saas` | Playbook for a SaaS or app UI: what it needs, and which skills to apply in what order | Molveau only | none |
+| `vitrine` | Playbook for a local business showcase site | Molveau only | none |
+| `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented | Molveau only | `merge-findings` and three helpers |
+| `design-inspiration-index` | Routes a need (hero, navbar, CTA, motion, icons, brand) to the best public gallery or registry | Molveau only | none |
+| `workflow` | How to deliver with a coding agent: clarify, plan, test first, one implementer and one reviewer per task, verify, git hygiene, status and result reports; routes each step to the skills above | Molveau only | none |
+
+How each skill compares with the other open skills on its subject, and when to install the original instead: [`anti-slop`](https://www.molveau.ca/guides/anti-slop-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`ui`](https://www.molveau.ca/guides/ui-design-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`ux`](https://www.molveau.ca/guides/ux-accessibility-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`motion`](https://www.molveau.ca/guides/motion-animation-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`design-grill`](https://www.molveau.ca/guides/design-audit-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`design-inspiration-index`](https://www.molveau.ca/guides/design-inspiration-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`workflow`](https://www.molveau.ca/guides/agent-workflow-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`french-typography`](https://www.molveau.ca/guides/french-typography-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`loi-25-website`](https://www.molveau.ca/guides/law-25-website-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`saas`](https://www.molveau.ca/guides/saas-ui-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`vitrine`](https://www.molveau.ca/guides/local-business-website-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills).
+
+## Install
+
+All eleven, with the [skills CLI](https://github.com/vercel-labs/skills) (Claude Code, Codex, Cursor and other agents that read `SKILL.md`):
+
+```sh
+npx skills add molveau/skills                  # all eleven, in this project
+npx skills add molveau/skills -g               # all eleven, for every project
+npx skills add molveau/skills -s anti-slop     # just one
+```
+
+Or one bundle:
+
+| Bundle | Skills CLI | Claude Code plugin |
+|---|---|---|
+| Everything | `npx skills add molveau/skills` | `/plugin install molveau-skills@molveau` |
+| Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index` | `/plugin install molveau-design@molveau` |
+| Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` | `/plugin install molveau-quebec@molveau` |
+| Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` | `/plugin install molveau-playbooks@molveau` |
+
+For the Claude Code plugins, add the marketplace once:
+
+```
+/plugin marketplace add molveau/skills
+```
+
+The scripts have no dependencies and run on Node 20 or newer. After installing, call them from the skill folder, for example:
+
+```sh
+node <skill folder>/scripts/detect-tells.mjs src/
+node <skill folder>/scripts/check-motion.mjs src/
+node <skill folder>/scripts/fr-typo.mjs --check messages/fr.json
+```
+
+Each `SKILL.md` documents the options.
+
+## How updates work
+
+`sources.json` pins every upstream repo to a commit. The copies under `skills/*/references/vendor/` are never edited by hand; Molveau's own words live in each `SKILL.md`, `scripts/` and the playbooks.
+
+```sh
+node scripts/sync-sources.mjs --check          # does any pinned repo have newer commits?
+node scripts/sync-sources.mjs --bump           # re-vendor at the latest commits; then read the diff
+```
+
+A weekly GitHub Action runs the check and keeps one open issue, "Upstream skills moved", listing each moved source with a compare link. A bump is always reviewed by a person before it is committed. GitHub pauses scheduled workflows after 60 days without repository activity; re-enable it from the Actions tab if that happens. `npm test` runs the scripts' tests and checks that every skill is well formed.
+
+## Usage numbers
+
+Installs per skill, from the skills CLI's anonymous telemetry, are public on [skills.sh/molveau/skills](https://skills.sh/molveau/skills). GitHub keeps traffic for 14 days only; maintainers archive it with `node scripts/stats.mjs` (needs the GitHub CLI with push access; the archive stays local in `stats/`).
+
+## Credits
+
+None of this exists without the people who wrote the originals. Thank you:
+
+- [Damir Sokolovsky](https://github.com/heydamir/unslop) for unslop (CC BY 4.0)
+- [Leonxlnx](https://github.com/Leonxlnx/taste-skill) for taste-skill
+- [Emil Kowalski](https://github.com/emilkowalski/skills) for the animation and design engineering skills
+- [GreenSock](https://github.com/greensock/gsap-skills) for the GSAP skills
+- [Raphael Salaja](https://github.com/raphaelsalaja/skill) for 12 principles of animation
+- [LottieFiles](https://github.com/LottieFiles/motion-design-skill) for motion-design
+- [Benji Taylor](https://github.com/benjitaylor/skills) for stageshow
+- [Jakub Krehel](https://github.com/jakubkrehel/skills) for better-ui and its siblings, and [make-interfaces-feel-better](https://github.com/jakubkrehel/make-interfaces-feel-better)
+- [Paul Bakaus](https://github.com/pbakaus/impeccable) for Impeccable (Apache-2.0), which itself bundles material from [ehmo](https://github.com/ehmo/platform-design-skills)
+- [Julien Thibeaut (ibelick)](https://github.com/ibelick/ui-skills) for fixing-accessibility
+- Rauno Freiberg ([devouringdetails.com](https://devouringdetails.com)) and Suganthan Mohanadasan ([suganthan.com](https://suganthan.com)), whose published work is distilled, in Molveau's own words, into the `ui` skill's animation and discoverability references
+
+Exact repos, commits and licenses are in [THIRD_PARTY.md](THIRD_PARTY.md), and each vendored folder keeps its own LICENSE and a `SOURCE.md`.
+
+Notes:
+
+- unslop is CC BY 4.0. The credit is repeated in `skills/anti-slop/SKILL.md` and `THIRD_PARTY.md`. The vendored copy is partial (a few files are excluded, listed in its `SOURCE.md`) and its files are unmodified. The parts of unslop adapted in `skills/anti-slop/SKILL.md` stay CC BY 4.0; Molveau's other files are MIT.
+- Some stageshow examples are left out because they embed or replicate third-party logos and product marks. The reason for each exclusion is in the stageshow `SOURCE.md`. Its kit still includes phone glyphs adapted from Apple's iOS UI kit, traced macOS cursors and SF Symbols-style icons; check them before reusing in a product.
+- 12 principles of animation is pinned to its last published version: upstream archived the skill in October 2026 and removed it.
+
+Good skills that this repo links to instead of merging:
+
+- [Matt Pocock's skills](https://github.com/mattpocock/skills) and [Superpowers](https://github.com/obra/superpowers) go deeper on process (grilling, planning, TDD, debugging, code review); the `workflow` skill points to them as optional.
+- [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) is a searchable design database with a large footprint; install it on its own if you want it.
+
+## Guides
+
+How we use these skills on client work, on molveau.ca:
+
+- [The Claude skills stack](https://www.molveau.ca/guides/claude-skills-stack)
+- [The UI prompt pack](https://www.molveau.ca/guides/ui-prompt-pack)
+
+French versions live under `/fr/guides/`.
+
+## License
+
+Files written by Molveau are MIT, copyright 2026 Stanislas Molveau (see [LICENSE](LICENSE)). Vendored files keep their own licenses, listed in [THIRD_PARTY.md](THIRD_PARTY.md).

@@ -1,0 +1,5 @@
+{
+  "name": "fixture-dedupe-tokens",
+  "private": true,
+  "dependencies": { "react-dom": "19.0.0" }
+}

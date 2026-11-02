@@ -1,0 +1,30 @@
+name: upstream-check
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # --check exits 1 when a source moved or a check failed. The report is captured either way; the next
+      # step reports moved sources in the issue and fails the job (exit 1) if any check itself errored or
+      # the report is not valid JSON.
+      - name: Check pinned sources against upstream
+        id: check
+        run: node scripts/sync-sources.mjs --check --json > report.json
+        continue-on-error: true
+      - name: Open, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/upstream-issue.mjs report.json
