@@ -28,7 +28,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
   and Experience commit to one bold move (a Committed palette, a display face, one signature); Operate and
   Read show ambition as precision (exact alignment, tuned type, restrained color). [Impeccable]
 - **Read** surfaces: the world owns the frame (masthead, rail, section openers, how code and tables are
-  set); the reading column stays calm (a reading face, real contrast, 60-75 characters near 16px), the
+  typeset); the reading column stays calm (a reading face, real contrast, 60-75 characters near 16px), the
   navigation stays standard, monospace only for code and parameters. [Impeccable]
 - One design authority and one pass at a time; for anything user-facing, the flow and stories first. [Molveau]
 
@@ -175,15 +175,15 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 
 ## 8. Icons
 
-- One library and one stroke family per surface; a stray filled icon among outlines reads as a bug. The set
-  is chosen per project behind one module (`anti-slop` owns the default-set and emoji rules). [Jakub] [feel] [Molveau/Emil]
+- One library and one stroke family per surface; a stray filled icon among outlines reads as a bug. The icon
+  library is chosen per project behind one module (`anti-slop` owns the default library and emoji rules). [Jakub] [feel] [Molveau/Emil]
 - Rendered stroke tracks the text beside it: 1.5px at 400 (14-16px), 2px at 500-600, 2.5px at 700 or for an
   emphasized standalone icon; 16px icons beside body text, 18px beside 20px text. Use the library's
   absolute-stroke option or `vector-effect: non-scaling-stroke`, since a 24px-grid icon at 16px thins.
   Inline icons 1em-1.25em. [Jakub] [feel] [Molveau/Emil]
 - One SVG in `currentColor`, states from CSS (muted, hover strong, pressed accent, disabled opacity 0.4);
   strip hard-coded fills on import. Outline by default, fill marks the active state. [Jakub] [feel]
-- Design at render size: test at the smallest size (often 16px), use the set's per-size grid (16, 20, 24),
+- Design at render size: test at the smallest size (often 16px), use the library's per-size grid (16, 20, 24),
   prefer a simpler glyph to shrunken detail, always SVG. [Jakub] [feel]
 - RTL flips only reading-direction icons (back/forward, chevrons, list and indent, send, speaker waves),
   never logos, checkmarks, objects or media controls. Icon-only controls carry an accessible name. [Jakub] [feel]
@@ -195,10 +195,10 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
   siblings that carry its peers. [Molveau] [Impeccable] [Jakub]
 - Loading is skeletons in the final layout, not a central spinner; an empty state teaches the next action.
   The words and anatomy of every state are `ux` §6's. [Impeccable]
-- One affordance vocabulary: one button shape, one form-control set, one icon style; if Save looks different
+- One affordance vocabulary: one button shape, one form-control style, one icon style; if Save looks different
   in two places, one is wrong. No reinvented scrollbars or controls for flavor. [Impeccable]
 - **Interactive checklist** (`references/components.md`): transitions, not keyframes, so rapid actions
-  retarget; `transform` set on the element itself (inherited CSS variables lag past about 20 items); an
+  retarget; `transform` applied to the element itself (inherited CSS variables lag past about 20 items); an
   `::after` bridges gaps so hover stays continuous across stacked items; decorative and duplicate layers
   `aria-hidden`; gestures tested on a real device. [Molveau/Emil]
 - Sheets drag to dismiss only from scroll top with about a 100ms guard; keyboard height from the Visual

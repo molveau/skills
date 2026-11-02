@@ -2,6 +2,12 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-11-01
+
+### Changed
+
+- Wording only: the `ui` playbook no longer uses "set" as a verb, and taste-skill's SOURCE.md note no longer quotes the phrases the plugin directory's screens misread as credential handling.
+
 ## [1.0.3] - 2026-11-01
 
 ### Changed
