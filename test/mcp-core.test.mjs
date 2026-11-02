@@ -210,3 +210,15 @@ test('remote get_playbook filters its structured data too', () => {
   assert.ok(!/molveau/i.test(JSON.stringify(first)), JSON.stringify(first));
   assert.deepEqual(first.result.structuredContent.sections, ['# T', '## Plain']);
 });
+
+test('fr_typo stays linear: a cap-sized text full of findings is checked in well under a second', () => {
+  const text = ' :\n'.repeat(Math.floor(MAX_INPUT / 3));
+  const start = performance.now();
+  const { result } = call('fr_typo', { text }, remote);
+  const elapsed = performance.now() - start;
+  const lines = Math.floor(MAX_INPUT / 3);
+  assert.equal(result.structuredContent.count, lines);
+  assert.ok(elapsed < 1000, `took ${Math.round(elapsed)} ms`);
+  // Positions are still exact on the last line.
+  assert.deepEqual(result.structuredContent.findings.at(-1), { line: lines, column: 1, rule: 'high-punct', match: ' :' });
+});

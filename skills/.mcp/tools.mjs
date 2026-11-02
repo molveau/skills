@@ -214,9 +214,20 @@ function getPlaybook({ skill, query }, ctx) {
 
 // ---------- the tools ----------
 
-const lineCol = (text, index) => {
-  const before = text.slice(0, index);
-  return { line: before.split('\n').length, column: index - before.lastIndexOf('\n') };
+// Line and column (both from 1) of each index in text. The line starts are found once and searched,
+// so a text with a finding on every line costs n log n, not n squared.
+const lineCols = (text) => {
+  const starts = [0];
+  for (let i = 0; i < text.length; i++) if (text[i] === '\n') starts.push(i + 1);
+  return (index) => {
+    let lo = 0;
+    let hi = starts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (starts[mid] <= index) lo = mid; else hi = mid - 1;
+    }
+    return { line: lo + 1, column: index - starts[lo] + 1 };
+  };
 };
 
 const supportedColours = '#rgb, #rgba, #rrggbb, #rrggbbaa, rgb(), rgba(), oklch(), oklab(), color(srgb r g b) and transparent (hsl() and colour names are not read)';
@@ -315,8 +326,10 @@ export const TOOLS = [
     },
     annotations: { title: 'French typography', ...READ_ONLY },
     run({ text, fix = false }) {
-      const list = (src) =>
-        checkFr(src).map((f) => ({ ...lineCol(src, f.index), rule: f.rule, match: f.match }));
+      const list = (src) => {
+        const at = lineCols(src);
+        return checkFr(src).map((f) => ({ ...at(f.index), rule: f.rule, match: f.match }));
+      };
       const quoted = (match) => JSON.stringify(visible(match));
       const lines = (found) => found.map((f) => `${f.line}:${f.column} ${f.rule} ${quoted(f.match)}\n`).join('');
       if (!fix) {

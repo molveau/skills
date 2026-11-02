@@ -2,6 +2,12 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.3.1] - 2026-11-02
+
+### Fixed
+
+- `fr_typo` placed each finding by reading the text from the start again, so a long text with many findings took quadratic time: 57 seconds for 200,000 characters with a finding on every line. Line starts are now found once and searched, and the same text takes about 40 ms. This matters most on the hosted endpoint, where one request could hold a worker for seconds.
+
 ## [1.3.0] - 2026-11-02
 
 ### Added
