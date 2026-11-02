@@ -265,6 +265,10 @@ export function isScannable(path, size, includeTests) {
   return includeTests || !/\.(?:test|spec)\.[^.]+$/.test(base);
 }
 
+// Vue and Svelte single-file components are not a kind of their own: callers that read one (the MCP server,
+// the hook) scan it under this name, as HTML.
+export const sfcAsHtml = (path) => (/\.(?:vue|svelte)$/i.test(path) ? `${path}.html` : path);
+
 // The text report: one line per finding, then the summary line.
 export function formatFindings(findings, scanned) {
   let out = '';

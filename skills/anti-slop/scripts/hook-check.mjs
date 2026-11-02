@@ -7,7 +7,7 @@
 import { readFileSync, statSync, realpathSync } from 'node:fs';
 import { resolve, extname, basename, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { detectTells, isScannable } from './detect-tells.mjs';
+import { detectTells, isScannable, sfcAsHtml } from './detect-tells.mjs';
 
 const CODE = new Set(['.tsx', '.jsx', '.ts', '.js', '.css', '.html', '.vue', '.svelte']);
 const MAX_BYTES = 1_000_000;
@@ -34,8 +34,7 @@ async function loadFrTypo() {
 export async function check(path, text) {
   const ext = extname(path).toLowerCase();
   if (CODE.has(ext)) {
-    // detect-tells reads .vue and .svelte single-file components as HTML.
-    const scanned = ext === '.vue' || ext === '.svelte' ? `${path}.html` : path;
+    const scanned = sfcAsHtml(path);
     if (!isScannable(scanned, text.length, false)) return [];
     return detectTells([{ path: scanned, text }]).map((f) => `${path}:${f.line}  #${f.tell} ${f.label}  ${f.match}`);
   }

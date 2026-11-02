@@ -54,6 +54,7 @@ export function handle(msg, tools = TOOLS, ctx = { cwd: process.cwd() }) {
     if ('result' in msg || 'error' in msg) return null; // a reply to a request we never send
     return fail(hasId ? msg.id : null, -32600, 'Invalid Request');
   }
+  if ('id' in msg && !hasId) return fail(null, -32600, 'Invalid Request: id must be a string or a number');
   if (!hasId) return null; // notification: notifications/initialized, cancelled and the rest
 
   const { id, method, params } = msg;
@@ -88,6 +89,30 @@ export function handle(msg, tools = TOOLS, ctx = { cwd: process.cwd() }) {
   }
 }
 
+/**
+ * Splits a stream of text chunks into lines. A line longer than `max` characters is dropped whole, up to its
+ * newline, with one call to onOverflow. Returns the function to feed chunks to.
+ */
+export function lineSplitter(onLine, onOverflow, max = MAX_LINE) {
+  let buf = '';
+  let skipping = false;
+  return (chunk) => {
+    buf += chunk;
+    let i;
+    while ((i = buf.indexOf('\n')) >= 0) {
+      const lineText = buf.slice(0, i);
+      buf = buf.slice(i + 1);
+      if (skipping) skipping = false;
+      else onLine(lineText);
+    }
+    if (!skipping && buf.length > max) {
+      skipping = true;
+      onOverflow();
+    }
+    if (skipping) buf = '';
+  };
+}
+
 function serve() {
   const send = (reply) => process.stdout.write(JSON.stringify(reply) + '\n');
   const onLine = (raw) => {
@@ -103,25 +128,10 @@ function serve() {
     const reply = handle(msg);
     if (reply) send(reply);
   };
-  let buf = '';
+  const push = lineSplitter(onLine, () => send(fail(null, -32700, 'Parse error: message too large')));
   process.stdin.setEncoding('utf8');
-  process.stdin.on('data', (chunk) => {
-    buf += chunk;
-    let i;
-    while ((i = buf.indexOf('\n')) >= 0) {
-      const lineText = buf.slice(0, i);
-      buf = buf.slice(i + 1);
-      onLine(lineText);
-    }
-    if (buf.length > MAX_LINE) {
-      buf = '';
-      send(fail(null, -32700, 'Parse error: message too large'));
-    }
-  });
-  process.stdin.on('end', () => {
-    if (buf.trim()) onLine(buf);
-    buf = '';
-  });
+  process.stdin.on('data', push);
+  process.stdin.on('end', () => push('\n')); // a last message with no newline
   process.stdout.on('error', () => process.exit(0)); // client went away
   process.on('uncaughtException', (e) => process.stderr.write(`molveau-skills: ${e?.stack ?? e}\n`));
 }

@@ -4,7 +4,7 @@
 import { readFileSync, readdirSync, statSync, realpathSync, existsSync } from 'node:fs';
 import { join, resolve, relative, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { detectTells, isScannable, formatFindings as formatTells, SKIP_DIRS } from '../anti-slop/scripts/detect-tells.mjs';
+import { detectTells, isScannable, sfcAsHtml, formatFindings as formatTells, SKIP_DIRS } from '../anti-slop/scripts/detect-tells.mjs';
 import { parseColor, composite, contrastRatio, threshold, formatRatio } from '../anti-slop/scripts/story-contrast.mjs';
 import { checkFr, fixFr, visible } from '../french-typography/scripts/fr-typo.mjs';
 import { checkMotion, formatFindings as formatMotion, EXTS as MOTION_EXTS } from '../motion/scripts/check-motion.mjs';
@@ -57,7 +57,8 @@ export function checkArgs(schema, args) {
 // real path and refused or skipped when it leaves `root`, so a symlink cannot reach outside.
 export function collectInside(root, paths, { maxFiles = 2000, maxBytes = 1_000_000 } = {}) {
   const base = realpathSync(root);
-  const inside = (p) => p === base || p.startsWith(base + sep);
+  const prefix = base.endsWith(sep) ? base : base + sep; // the filesystem root already ends with one
+  const inside = (p) => p === base || p.startsWith(prefix);
   const files = [];
   const seen = new Set();
   let truncated = false;
@@ -180,7 +181,7 @@ function getPlaybook({ skill, query }) {
   const source = playbook ? `skills/${skill}/references/playbook.md` : `skills/${skill}/SKILL.md`;
   const all = sections(searched);
   const headings = all.map((s) => s.heading).filter(Boolean);
-  const footer = `From ${source}. Ask again with a query to read other sections:\n${headings.join('\n')}`;
+  const footerFor = (from) => `From ${from}. Ask again with a query to read other sections:\n${headings.join('\n')}`;
 
   const words = [...new Set(String(query ?? '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 1 && !STOP.has(w)))];
   if (!words.length) {
@@ -188,7 +189,7 @@ function getPlaybook({ skill, query }) {
     const first = playbook && sections(playbook).find((s) => /^## Do this first\b/.test(s.heading));
     const text = gate ? gate.text : first ? first.text : skillMd.split('\n').slice(0, 80).join('\n');
     const from = gate ? `skills/${skill}/SKILL.md` : first ? source : `skills/${skill}/SKILL.md (first 80 lines)`;
-    return { text, footer: footer.replace(`From ${source}.`, `From ${from}.`), data: { skill, source: from, sections: headings } };
+    return { text, footer: footerFor(from), data: { skill, source: from, sections: headings } };
   }
 
   const phrase = words.join(' ');
@@ -200,7 +201,8 @@ function getPlaybook({ skill, query }) {
   if (!ranked.length) {
     return { text: `No section of ${source} matches "${query}". Sections:\n${headings.join('\n')}`, data: { skill, source, matched: [], sections: headings } };
   }
-  return { text: fitSections(ranked), footer, data: { skill, source, matched: ranked.map((s) => s.heading) } };
+  // No footer here: the reply holds at most 12,000 characters in all.
+  return { text: fitSections(ranked), data: { skill, source, matched: ranked.map((s) => s.heading) } };
 }
 
 // ---------- the tools ----------
@@ -223,7 +225,7 @@ export const TOOLS = [
       type: 'object',
       properties: {
         code: { type: 'string', description: 'Source to scan, such as a component or a stylesheet.' },
-        filename: { type: 'string', description: 'Name that sets the file kind for `code` (.tsx, .jsx, .ts, .js, .css, .html, .md, .mdx, .json). Default snippet.tsx.' },
+        filename: { type: 'string', description: 'Name that sets the file kind for `code` (.tsx, .jsx, .ts, .js, .css, .html, .vue, .svelte, .md, .mdx, .json). Default snippet.tsx.' },
         paths: { type: 'array', items: { type: 'string' }, minItems: 1, description: 'Files or folders to scan, relative to the working directory. At most 2,000 files, 1 MB each.' },
       },
       additionalProperties: false,
@@ -235,14 +237,15 @@ export const TOOLS = [
       let truncated = false;
       if (code !== undefined) {
         const name = filename || 'snippet.tsx';
-        if (!isScannable(name, 0, true)) throw new Error(`"${name}" is not a kind detect_tells reads: use .tsx, .jsx, .ts, .js, .css, .html, .md, .mdx or .json.`);
-        files = [{ path: name, text: code }];
+        const scanned = sfcAsHtml(name);
+        if (!isScannable(scanned, 0, true)) throw new Error(`"${name}" is not a kind detect_tells reads: use .tsx, .jsx, .ts, .js, .css, .html, .vue, .svelte, .md, .mdx or .json.`);
+        files = [{ path: scanned, text: code }];
       } else if (paths) {
         ({ files, truncated } = collectInside(ctx.cwd, paths));
       } else {
         throw new Error('Give code (a snippet) or paths (files or folders inside the working directory).');
       }
-      const findings = detectTells(files);
+      const findings = detectTells(files).map((f) => (code !== undefined ? { ...f, path: filename || 'snippet.tsx' } : f));
       let text = formatTells(findings, files.length);
       if (truncated) text += 'Stopped at 2,000 files: scan a narrower folder for the rest.\n';
       return { text, data: { count: findings.length, scanned: files.length, truncated, findings } };
@@ -252,7 +255,7 @@ export const TOOLS = [
     name: 'check_contrast',
     title: 'Check colour contrast',
     description:
-      'WCAG contrast ratio of a text colour on a background, with the threshold that applies (WCAG 1.4.3 AA: 4.5:1, or 3:1 for large text, 24px and up or 18.66px bold and up; 1.4.6 AAA: 7:1 or 4.5:1). Reads #hex, rgb(), rgba(), oklch(), oklab() and color(srgb). A translucent text colour is laid over the background, a translucent background over white.',
+      'WCAG contrast ratio of a text colour on a background, with the threshold that applies (WCAG 1.4.3 AA: 4.5:1, or 3:1 for large text, 24px and up or 18.66px bold and up; 1.4.6 AAA: 7:1 or 4.5:1), and for each level whether the pair meets it (a success) or fails it. Reads #hex, rgb(), rgba(), oklch(), oklab() and color(srgb). A translucent text colour is laid over the background, a translucent background over white.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -365,8 +368,6 @@ export const TOOLS = [
       additionalProperties: false,
     },
     annotations: { title: 'Read a skill playbook', ...READ_ONLY },
-    run(args) {
-      return getPlaybook(args);
-    },
+    run: getPlaybook,
   },
 ];

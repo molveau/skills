@@ -329,3 +329,50 @@ test('get_playbook refuses a skill outside the list', async () => {
   const r = await callOne('get_playbook', { skill: '../../etc' });
   assert.equal(r.isError, true);
 });
+
+test('collectInside works when the working directory is the filesystem root', async () => {
+  const { collectInside } = await import('../skills/.mcp/tools.mjs');
+  const d = realpathSync(mkdtempSync(join(tmpdir(), 'mcp-root-')));
+  writeFileSync(join(d, 'a.css'), '.a{}\n');
+  const { files } = collectInside('/', [d.slice(1)]);
+  assert.equal(files.length, 1);
+});
+
+test('a request id that is neither a string nor a number is an invalid request', async () => {
+  const { handle } = await import('../skills/.mcp/server.mjs');
+  for (const id of [{}, [], true, null]) {
+    const r = handle({ jsonrpc: '2.0', id, method: 'ping' });
+    assert.equal(r?.error?.code, -32600, JSON.stringify(id));
+    assert.equal(r.id, null);
+  }
+});
+
+test('an oversized line gives one parse error and the next message still works', async () => {
+  const { lineSplitter } = await import('../skills/.mcp/server.mjs');
+  const lines = [];
+  let overflows = 0;
+  const push = lineSplitter((l) => lines.push(l), () => overflows++, 10);
+  push('x'.repeat(8));
+  push('y'.repeat(8));
+  push('zzz\n{"a":1}\n');
+  push('{"b"');
+  push(':2}\n');
+  assert.equal(overflows, 1);
+  assert.deepEqual(lines, ['{"a":1}', '{"b":2}']);
+});
+
+test('get_playbook with a query stays within 12,000 characters in total', async () => {
+  for (const [skill, query] of [['ui', 'color dark mode typography spacing'], ['anti-slop', 'copy colour type icons']]) {
+    const r = await callOne('get_playbook', { skill, query });
+    const total = r.content.reduce((n, c) => n + c.text.length, 0);
+    assert.ok(total <= 12_000, `${skill}: ${total} chars`);
+  }
+});
+
+test('detect_tells reads .vue and .svelte snippets as HTML, like the hook', async () => {
+  for (const filename of ['Card.vue', 'Card.svelte']) {
+    const r = await callOne('detect_tells', { code: `<template><p>Fast ${EM} simple</p></template>\n`, filename });
+    assert.ok(!r.isError, textOf(r));
+    assert.match(textOf(r), new RegExp(`^${filename.replace('.', '\\.')}:1 {2}#16 `, 'm'));
+  }
+});
