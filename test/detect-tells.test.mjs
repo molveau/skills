@@ -162,3 +162,9 @@ test('formatFindings prints the CLI lines and summary', async () => {
   assert.match(text, /^1 finding\(s\) in 1 file\(s\) \(1 scanned; #16 1\)$/m);
   assert.equal(formatFindings([], 3), '0 finding(s) in 0 file(s) (3 scanned)\n');
 });
+
+test('a buzzword in a line of JSX text is reported once, not once per way of reading the line', () => {
+  const text = 'export function Hero() {\n  return (\n    <section>\n      <h1>Unlock seamless productivity</h1>\n    </section>\n  );\n}\n';
+  const found = detectTells([{ path: 'Hero.tsx', text }]).filter((f) => f.tell === 17).map((f) => `${f.line} ${f.match}`);
+  assert.deepEqual(found, ['4 Unlock', '4 seamless']);
+});

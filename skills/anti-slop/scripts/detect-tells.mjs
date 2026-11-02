@@ -155,11 +155,12 @@ function classScope(lines, i) {
 // Copy-only view of a code line: string literals and JSX text, nothing else.
 function copyOnly(kind, line) {
   if (kind !== 'js') return line;
+  const t = line.trim();
+  // A line that reads as text is copy as a whole; its strings and tag texts are already in it.
+  if (t && !/^(?:const|let|var|function|export|import|return|type|interface|class|async)\b/.test(t) && !/[=;(){}[\]]/.test(t) && /\s/.test(t)) return t;
   const parts = [];
   for (const m of line.matchAll(/"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`[^`]*`/g)) parts.push(m[0]);
   for (const m of line.matchAll(/>([^<>{}]*[A-Za-z][^<>{}]*)(?=<)/g)) parts.push(m[1]);
-  const t = line.trim();
-  if (t && !/^(?:const|let|var|function|export|import|return|type|interface|class|async)\b/.test(t) && !/[=;(){}[\]]/.test(t) && /\s/.test(t)) parts.push(t);
   return parts.join(' ');
 }
 
