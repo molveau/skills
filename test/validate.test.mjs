@@ -218,6 +218,17 @@ test('the plugin stays small and ships no video or archive', () => {
   for (const f of files) assert.ok(statSync(f).size < 256 * 1024, `${rel(f)} is over 256 KB, which the directory only reads in part`);
 });
 
+test('plugin.json carries the directory listing links, each pointing at a real page', () => {
+  const plugin = JSON.parse(readFileSync(PLUGIN, 'utf8'));
+  const repoFile = (url) => url.replace('https://github.com/molveau/skills/blob/main/', '');
+  for (const key of ['documentationUrl', 'supportUrl', 'privacyPolicyUrl', 'termsOfServiceUrl']) {
+    assert.match(plugin[key] ?? '', /^https:\/\//, `${key} must be an https URL`);
+  }
+  for (const key of ['privacyPolicyUrl', 'termsOfServiceUrl']) {
+    assert.ok(existsSync(join(ROOT, repoFile(plugin[key]))), `${key} points at a file missing from the repo`);
+  }
+});
+
 test('every skill sits in exactly one bundle', () => {
   assert.deepEqual(Object.values(BUNDLES).flat().sort(), skillDirs().sort());
 });
