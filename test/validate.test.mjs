@@ -334,3 +334,13 @@ test('the plugin declares the MCP server and no hooks', () => {
   assert.ok(statSync(join(SKILLS, '.mcp', 'server.mjs')).mode & 0o100, 'server.mjs must be executable for the npm bin');
   assert.match(readFileSync(join(SKILLS, '.mcp', 'server.mjs'), 'utf8'), /^#!\/usr\/bin\/env node\n/);
 });
+
+test('README documents the MCP server and the opt-in hook; anti-slop points to both', () => {
+  const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
+  for (const must of ['## MCP server', '## Opt-in hook', 'claude mcp add molveau-skills -- npx -y @molveau/skills', '"args": ["-y", "@molveau/skills"]', '"matcher": "Edit|Write|MultiEdit"', '.claude/skills/anti-slop/scripts/hook-check.mjs']) {
+    assert.ok(readme.includes(must), `README lacks ${must}`);
+  }
+  for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
+  const skill = readFileSync(join(SKILLS, 'anti-slop', 'SKILL.md'), 'utf8');
+  assert.ok(skill.includes('detect_tells') && skill.includes('scripts/hook-check.mjs'), 'anti-slop SKILL.md should point to the MCP tools and the hook');
+});

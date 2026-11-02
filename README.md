@@ -61,6 +61,67 @@ node <skill folder>/scripts/fr-typo.mjs --check messages/fr.json
 
 Each `SKILL.md` documents the options.
 
+## MCP server
+
+The same checks, plus the playbooks, as five tools for any MCP client. No dependencies and read-only: it reads the skills' own files and, when asked, files inside the folder it runs in, and it makes no network request.
+
+| Tool | What it does |
+|---|---|
+| `detect_tells` | Scans a snippet, or files and folders inside the working directory, for the anti-slop tells; returns `path:line  #N label  match` lines, a summary and the count |
+| `check_contrast` | WCAG contrast of a text colour on a background (hex, `rgb()`, `oklch()`, `oklab()`, `color(srgb)`), with the AA and AAA thresholds for that size and weight |
+| `fr_typo` | Checks French spacing and punctuation in a text, or returns it fixed with the number of changes |
+| `check_motion` | Runs the motion guardrails on a snippet |
+| `get_playbook` | A skill's direction gate or "Do this first" block, or the playbook sections that match a query |
+
+In Claude Code, the plugin (`/plugin install molveau-skills@molveau`) starts the server for you: nothing else to install.
+
+Other clients run it from npm, with Node 20 or newer. Claude Code without the plugin:
+
+```sh
+claude mcp add molveau-skills -- npx -y @molveau/skills
+```
+
+Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) and other clients that read an `mcpServers` block:
+
+```json
+{
+  "mcpServers": {
+    "molveau-skills": {
+      "command": "npx",
+      "args": ["-y", "@molveau/skills"]
+    }
+  }
+}
+```
+
+`detect_tells` with `paths` reads only inside the folder the client starts the server in (usually the project), follows no link out of it, skips `node_modules`, `.git`, build folders and tests, and stops at 2,000 files of 1 MB at most.
+
+## Opt-in hook
+
+`anti-slop/scripts/hook-check.mjs` is a Claude Code `PostToolUse` hook. After each edit it checks the one file just written: UI code (`.tsx`, `.jsx`, `.ts`, `.js`, `.css`, `.html`, `.vue`, `.svelte`) with `detect-tells`, and French message files (`fr.json`, `*.fr.json`, `fr/*.json`, `*.fr.md`) with `fr-typo` when the `french-typography` skill is installed beside it. Findings go back to the agent, which fixes them or says why one is intended. A clean file, any other file and any error in the hook itself let the edit through in silence.
+
+The plugin does not turn it on, because it runs on every edit. To use it in a project where the skills CLI installed the skills, add this to the project's `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/skills/anti-slop/scripts/hook-check.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+For a global install (`npx skills add molveau/skills -g`), point the command at `~/.claude/skills/anti-slop/scripts/hook-check.mjs` instead, or at wherever your agent keeps the `anti-slop` folder.
+
 ## How updates work
 
 `sources.json` pins every upstream repo to a commit. The copies under `skills/*/references/vendor/` are never edited by hand; Molveau's own words live in each `SKILL.md`, `scripts/` and the playbooks.

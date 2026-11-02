@@ -125,6 +125,12 @@ is installed alone. Exit 0 clean, 1 findings, 2 usage. It skips `node_modules .g
 .open-next coverage` and test files. It reports `path:line  #tell label  match`. Limits are listed at
 the end of `references/tells.md`; treat a hit as "look here".
 
+The same checks run without a shell through the plugin's MCP server: `detect_tells` (a snippet or project
+paths), `check_contrast` (any colour pair the screen ships), `fr_typo`, `check_motion`, and `get_playbook`
+to read this playbook by section. `scripts/hook-check.mjs` is an opt-in Claude Code PostToolUse hook that
+runs this detector on each edited UI file and hands the findings back to the agent; it stays off until the
+project's settings register it (snippet in the repository README).
+
 ## Ratchet test in a project
 
 A ratchet pins today's count and fails when it goes up, so the tells can only shrink. Sketch for
