@@ -117,3 +117,11 @@ test('CLI skips a broken symlink inside a folder without crashing', () => {
   assert.equal(JSON.parse(r.stdout).length, 1);
   assert.equal(cli([join(d, 'src', 'dangling.tsx')]).status, 2);
 });
+
+test('formatFindings prints the CLI lines and summary', async () => {
+  const { formatFindings } = await import('../skills/motion/scripts/check-motion.mjs');
+  const findings = checkMotion([{ path: 'a.css', text: '.a { transition: all 200ms; }\n' }]);
+  const text = formatFindings(findings, 1);
+  assert.match(text, /^a\.css:1 {2}transition-all {2}/m);
+  assert.match(text, /^1 finding\(s\) in 1 file\(s\) \(1 scanned; transition-all 1\)$/m);
+});

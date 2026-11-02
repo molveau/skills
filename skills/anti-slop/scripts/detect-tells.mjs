@@ -6,7 +6,7 @@ import { readFileSync, readdirSync, statSync, existsSync, realpathSync } from 'n
 import { join, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const SKIP_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'build', '.open-next', 'coverage']);
+export const SKIP_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'build', '.open-next', 'coverage']);
 const EXTS = new Set(['.tsx', '.jsx', '.ts', '.js', '.mjs', '.cjs', '.css', '.html', '.md', '.mdx', '.json']);
 const MAX_BYTES = 1_000_000;
 const EM = '\u2014';
@@ -256,6 +256,25 @@ export function detectTells(files) {
   return findings.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : a.line - b.line || a.tell - b.tell));
 }
 
+// Whether a file is one the CLI scans: a known kind, at most 1 MB, not minified, a declaration file, a lockfile
+// or (unless includeTests) a test file.
+export function isScannable(path, size, includeTests) {
+  const base = path.split(/[\\/]/).pop();
+  if (!kindOf(path) || size > MAX_BYTES) return false;
+  if (/\.min\.|\.d\.ts$|^(?:package-lock|pnpm-lock|bun)\./.test(base)) return false;
+  return includeTests || !/\.(?:test|spec)\.[^.]+$/.test(base);
+}
+
+// The text report: one line per finding, then the summary line.
+export function formatFindings(findings, scanned) {
+  let out = '';
+  for (const f of findings) out += `${f.path}:${f.line}  #${f.tell} ${f.label}  ${f.match}\n`;
+  const counts = {};
+  for (const f of findings) counts[f.tell] = (counts[f.tell] ?? 0) + 1;
+  const summary = Object.keys(counts).map((t) => `#${t} ${counts[t]}`).join(', ');
+  return out + `${findings.length} finding(s) in ${new Set(findings.map((f) => f.path)).size} file(s) (${scanned} scanned${summary ? `; ${summary}` : ''})\n`;
+}
+
 function collect(target, includeTests, acc) {
   let st;
   try { st = statSync(target); } catch { return; } // broken symlink or vanished file: skip
@@ -268,10 +287,7 @@ function collect(target, includeTests, acc) {
     }
     return;
   }
-  const base = target.split(sep).pop();
-  if (!kindOf(target) || st.size > MAX_BYTES) return;
-  if (/\.min\.|\.d\.ts$|^(?:package-lock|pnpm-lock|bun)\./.test(base)) return;
-  if (!includeTests && /\.(?:test|spec)\.[^.]+$/.test(base)) return;
+  if (!isScannable(target, st.size, includeTests)) return;
   try { acc.push({ path: target, text: readFileSync(target, 'utf8') }); } catch { /* unreadable: skip */ }
 }
 
@@ -297,11 +313,7 @@ function main(argv) {
   if (flags.has('--json')) {
     process.stdout.write(JSON.stringify(findings, null, 2) + '\n');
   } else {
-    for (const f of findings) process.stdout.write(`${f.path}:${f.line}  #${f.tell} ${f.label}  ${f.match}\n`);
-    const counts = {};
-    for (const f of findings) counts[f.tell] = (counts[f.tell] ?? 0) + 1;
-    const summary = Object.keys(counts).map((t) => `#${t} ${counts[t]}`).join(', ');
-    process.stdout.write(`${findings.length} finding(s) in ${new Set(findings.map((f) => f.path)).size} file(s) (${files.length} scanned${summary ? `; ${summary}` : ''})\n`);
+    process.stdout.write(formatFindings(findings, files.length));
   }
   return findings.length ? 1 : 0;
 }

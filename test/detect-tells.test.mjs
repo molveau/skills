@@ -139,3 +139,26 @@ test('tell 17: copy only, not identifiers', () => {
   assert.ok(tells([tsx('<p>Effortless setup</p>')]).includes(17));
   assert.ok(tells([{ path: 'a.md', text: 'We make it seamless.' }]).includes(17));
 });
+
+// Shared with the MCP server and the hook, so they scan and report exactly like the CLI.
+test('isScannable and SKIP_DIRS match what the CLI walks', async () => {
+  const { isScannable, SKIP_DIRS } = await import('../skills/anti-slop/scripts/detect-tells.mjs');
+  assert.ok(isScannable('src/app.tsx', 10, false));
+  assert.ok(!isScannable('src/app.test.tsx', 10, false));
+  assert.ok(isScannable('src/app.test.tsx', 10, true));
+  assert.ok(!isScannable('src/types.d.ts', 10, false));
+  assert.ok(!isScannable('src/app.min.js', 10, false));
+  assert.ok(!isScannable('package-lock.json', 10, false));
+  assert.ok(!isScannable('src/app.py', 10, false));
+  assert.ok(!isScannable('src/big.css', 1_000_001, false));
+  for (const d of ['node_modules', '.git', '.next', 'dist', 'build', 'coverage']) assert.ok(SKIP_DIRS.has(d));
+});
+
+test('formatFindings prints the CLI lines and summary', async () => {
+  const { formatFindings } = await import('../skills/anti-slop/scripts/detect-tells.mjs');
+  const findings = detectTells([{ path: 'a.tsx', text: `<p>Fast ${EM} simple</p>\n` }]);
+  const text = formatFindings(findings, 1);
+  assert.match(text, /^a\.tsx:1 {2}#16 Em dash in copy {2}/m);
+  assert.match(text, /^1 finding\(s\) in 1 file\(s\) \(1 scanned; #16 1\)$/m);
+  assert.equal(formatFindings([], 3), '0 finding(s) in 0 file(s) (3 scanned)\n');
+});

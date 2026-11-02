@@ -170,3 +170,8 @@ test('fences: a longer opener is not closed by a shorter fence line (check and f
   assert.deepEqual(scanText('a.md', md).map((f) => f.line), [7]);
   assert.equal(fixText('a.md', md), '````md\n```\nVraiment ?\n```\nencore ?\n````\nVraiment' + NB + '?\n');
 });
+
+test('visible shows the two no-break spaces by name', async () => {
+  const { visible } = await import('../skills/french-typography/scripts/fr-typo.mjs');
+  assert.equal(visible(`a${NB}b${NN}c d`), 'a<nbsp>b<nnbsp>c d');
+});

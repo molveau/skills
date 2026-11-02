@@ -71,6 +71,9 @@ export function checkFr(text) {
   return found.sort((a, b) => a.index - b.index || a.rule.localeCompare(b.rule));
 }
 
+/** Names the two invisible no-break spaces so a report shows them. */
+export const visible = (s) => s.replace(/\u00a0/g, '<nbsp>').replace(/\u202f/g, '<nnbsp>');
+
 const lineOf = (text, index) => text.slice(0, index).split('\n').length;
 
 // JSON string literals that are values (not keys).
@@ -211,7 +214,7 @@ function main(argv) {
     process.stdout.write(JSON.stringify(findings, null, 2) + '\n');
   } else {
     for (const f of findings) {
-      const shown = f.match.replace(/ /g, '<nbsp>').replace(/ /g, '<nnbsp>');
+      const shown = visible(f.match);
       process.stdout.write(`${f.path}:${f.line}${f.column ? ':' + f.column : ''} ${f.rule} ${JSON.stringify(shown)}\n`);
     }
     process.stdout.write(`${files.length} file(s) scanned${flags.has('--fix') ? `, ${fixed} fixed` : ''}, ${findings.length} finding(s)${flags.has('--fix') && findings.length ? ' (em dashes need a manual edit)' : ''}\n`);

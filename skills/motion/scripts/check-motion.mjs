@@ -7,7 +7,7 @@ import { join, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const SKIP_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'build', '.open-next', 'coverage']);
-const EXTS = new Set(['.tsx', '.jsx', '.ts', '.js', '.mjs', '.cjs', '.css', '.html']);
+export const EXTS = new Set(['.tsx', '.jsx', '.ts', '.js', '.mjs', '.cjs', '.css', '.html']);
 const MAX_BYTES = 1_000_000;
 
 const blank = (s) => s.replace(/[^\n]/g, ' ');
@@ -158,6 +158,16 @@ export function checkMotion(files) {
     .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : a.line - b.line || (a.rule < b.rule ? -1 : 1)));
 }
 
+// The text report: one line per finding, then the summary line.
+export function formatFindings(findings, scanned) {
+  let out = '';
+  for (const f of findings) out += `${f.path}:${f.line}  ${f.rule}  ${f.match}\n`;
+  const counts = {};
+  for (const f of findings) counts[f.rule] = (counts[f.rule] ?? 0) + 1;
+  const summary = Object.keys(counts).map((r) => `${r} ${counts[r]}`).join(', ');
+  return out + `${findings.length} finding(s) in ${new Set(findings.map((f) => f.path)).size} file(s) (${scanned} scanned${summary ? `; ${summary}` : ''})\n`;
+}
+
 function collect(target, includeTests, acc) {
   let st;
   try { st = statSync(target); } catch { return; } // broken symlink or vanished file: skip
@@ -197,11 +207,7 @@ function main(argv) {
   if (flags.has('--json')) {
     process.stdout.write(JSON.stringify(findings, null, 2) + '\n');
   } else {
-    for (const f of findings) process.stdout.write(`${f.path}:${f.line}  ${f.rule}  ${f.match}\n`);
-    const counts = {};
-    for (const f of findings) counts[f.rule] = (counts[f.rule] ?? 0) + 1;
-    const summary = Object.keys(counts).map((r) => `${r} ${counts[r]}`).join(', ');
-    process.stdout.write(`${findings.length} finding(s) in ${new Set(findings.map((f) => f.path)).size} file(s) (${files.length} scanned${summary ? `; ${summary}` : ''})\n`);
+    process.stdout.write(formatFindings(findings, files.length));
   }
   return findings.length ? 1 : 0;
 }
