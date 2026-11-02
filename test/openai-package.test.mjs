@@ -92,3 +92,12 @@ test('the script writes the zip, and refuses to without a demo URL', () => {
   assert.equal(manifest.version, pkg.version);
   assert.equal(openai(manifest).review.demo_recording_url, DEMO);
 });
+
+test('--draft writes a zip with no demo URL, to upload before the demo is recorded', () => {
+  const out = mkdtempSync(join(tmpdir(), 'openai-pkg-'));
+  const r = spawnSync(process.execPath, [SCRIPT, '--out', out, '--draft'], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  const zip = join(out, `molveau-skills-openai-${pkg.version}-draft.zip`);
+  const manifest = JSON.parse(spawnSync('unzip', ['-p', zip, 'plugin.json'], { encoding: 'utf8' }).stdout);
+  assert.equal(openai(manifest).review.demo_recording_url, undefined);
+});
