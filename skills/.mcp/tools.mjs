@@ -180,7 +180,7 @@ function getPlaybook({ skill, query }) {
   const source = playbook ? `skills/${skill}/references/playbook.md` : `skills/${skill}/SKILL.md`;
   const all = sections(searched);
   const headings = all.map((s) => s.heading).filter(Boolean);
-  const footer = `From ${source}. Pass a query to read other sections:\n${headings.join('\n')}`;
+  const footer = `From ${source}. Ask again with a query to read other sections:\n${headings.join('\n')}`;
 
   const words = [...new Set(String(query ?? '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 1 && !STOP.has(w)))];
   if (!words.length) {
