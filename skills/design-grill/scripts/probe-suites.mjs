@@ -45,7 +45,7 @@ function subdirNames(dir) {
  * so it must be discovered rather than assumed. Observed on-disk layouts
  * differ by plugin: some put skills directly at `<version>/skills`, others
  * nest them one level deeper at `<version>/.claude/skills` (matching that
- * plugin's own plugin.json `"skills"` pointer) - both are checked.
+ * plugin's own manifest `"skills"` pointer) - both are checked.
  */
 function pluginCacheSkillsDirs(homeDir) {
   const cacheDir = join(homeDir, '.claude', 'plugins', 'cache');

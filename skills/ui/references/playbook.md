@@ -71,7 +71,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - Hidden content gets a cue: the next item peeks 16-32px past a scroll edge, a disclosure names what it
   hides ("Show 12 more results"), a truncated value has a keyboard-reachable way to the full text. [Jakub]
 - Content bleeds, controls float: media to the edges, text and controls in the margins and safe areas
-  (the safe-area insets need `viewport-fit=cover`); sticky headers set `scroll-padding-block-start`. [Jakub]
+  (the safe-area insets need `viewport-fit=cover`); sticky headers get `scroll-padding-block-start`. [Jakub]
 - Logical properties for anything that mirrors (`margin-inline-start`, `text-align: start`); progressions
   (stars, steps) mirror in RTL, digits never reverse. [Jakub] [Impeccable]
 - Plan for growth: `max-width` and `min-height`, never fixed text boxes; budget 30-40% for translation;
@@ -103,7 +103,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - Tabular figures on anything that changes while visible (timers, prices, numeric columns), proportional in
   prose; check the face. Truncate with a way back (`truncate`, `line-clamp-3`). [Jakub] [feel] [Molveau/Emil]
 - A heavier weight (one step, often 600), never italic, for UI emphasis; underline only for links, from the
-  font's metrics. Store natural case, set it with `text-transform`. Curly quotes, en dash ranges, the `…`
+  font's metrics. Store natural case, apply it with `text-transform`. Curly quotes, en dash ranges, the `…`
   character, a non-breaking space in `10 km`; code keeps straight quotes. [Molveau/Emil] [Jakub]
 - Size floors, in `rem`: long-form body 16px (move only for a reason you can name), inputs and menus 14px,
   captions 13px, small text 12px (11px only for dense app metadata such as table timestamps). Inputs
@@ -167,7 +167,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - Hit areas follow `ux` §14 (44 touch, 40 dense pointer), extended by a pseudo-element and shrunk where it
   would overlap a neighbor; concentric targets stay sibling buttons, never nested. [feel] [Molveau/Emil]
 - Hover styling behind `@media (hover: hover) and (pointer: fine)` (Tailwind 4's `hover:` covers only the
-  first condition, Tailwind 3's neither: add a variant); self-drawn pressed states set
+  first condition, Tailwind 3's neither: add a variant); self-drawn pressed states use
   `-webkit-tap-highlight-color: transparent`; scrollable overlays get `overscroll-behavior: contain`. [Jakub] [Molveau]
 - Focus rings follow `ux` §12 (the browser ring with `outline-offset: 2px`, or the project's focus token);
   on a red error field an inset white ring can replace the outset ring. Decorative text (drop caps,

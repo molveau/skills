@@ -189,12 +189,12 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 | Finished reference screens (images) | `references/vendor/unslop/unslop/references/refs.md` |
 | Snapshot a live URL to work on a copy | `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
 | A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | `references/vendor/taste/taste-skill.md` |
-| Dashboards, admin and settings screens in depth | `references/vendor/taste/taste-skill/references/app-screens.md` |
+| Dashboards, admin and settings screens in depth | playbook §12; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/app-screens.md |
 | Copy deck, two-line arithmetic, proof without inventing it | `references/vendor/taste/taste-skill/references/copy.md` |
 | Type scale, display setting, font loading | `references/vendor/taste/taste-skill/references/type.md` |
 | Palette roles, fields, dark pages, contrast | `references/vendor/taste/taste-skill/references/colour.md` |
 | Margins, empty space, the frame, sections, the phone | `references/vendor/taste/taste-skill/references/layout.md` |
-| Finding, crediting, placing and treating pictures and video | `references/vendor/taste/taste-skill/references/imagery.md` |
+| Finding, crediting, placing and treating pictures and video | playbook §13; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/imagery.md |
 | Motion recipes (opt-in: `motion` playbook §9) and scroll scenes | `references/vendor/taste/taste-skill/references/motion.md`, `references/vendor/taste/taste-skill/references/scenes.md` |
 | Judging a result with a rubric | `references/vendor/taste/taste-skill/references/critique.md` |
 | The dated tells registry by wave | `references/vendor/taste/taste-skill/references/tells.md` |

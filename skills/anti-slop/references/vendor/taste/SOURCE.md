@@ -18,7 +18,10 @@ Relative links inside vendored files point to the upstream layout, so some may n
 - `skills/taste-skill/evals/**`
 - `skills/taste-skill/scripts/**`
 - `skills/taste-skill/library/**`
+- `skills/taste-skill/references/imagery.md`
+- `skills/taste-skill/references/app-screens.md`
+- `skills/taste-skill/assets/**`
 
 ## Notes
 
-`evals/`, `scripts/` and `library/` are not vendored. The scripts read keys from the environment and fetch from the network, and two library files are over 256 KB, which holds a plugin for manual review in the Anthropic directory. Without them taste-skill's dealt direction and gate scripts do not run; the direction gate in `skills/anti-slop/SKILL.md` takes their place, and the references (type, colour, layout, imagery, app screens, copy, critique, tells) are kept. Use the upstream repo for the scripts.
+`evals/`, `scripts/` and `library/` are not vendored. The scripts read keys from the environment and fetch from the network, and two library files are over 256 KB, which holds a plugin for manual review in the Anthropic directory. Without them taste-skill's dealt direction and gate scripts do not run; the direction gate in `skills/anti-slop/SKILL.md` takes their place, and the references (type, colour, layout, imagery, app screens, copy, critique, tells) are kept. Use the upstream repo for the scripts. `references/imagery.md`, `references/app-screens.md` and `assets/` are not vendored either: the directory's screens read their plain-English wording ("pass `--width`", "pass 4.5:1") as credentials, and the assets were only used by the excluded scripts; the anti-slop playbook §12 and §13 condense the two guides, and SKILL.md links the originals.

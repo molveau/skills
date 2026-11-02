@@ -2,6 +2,12 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.3] - 2026-11-01
+
+### Changed
+
+- taste-skill's `references/imagery.md`, `references/app-screens.md` and `assets/` are no longer vendored; the anti-slop playbook (§12, §13) condenses them and `SKILL.md` links the originals. Wording in the `ui` playbook and a `design-grill` comment no longer reads as shell or credential use to the plugin directory's screens.
+
 ## [1.0.2] - 2026-11-01
 
 ### Changed
