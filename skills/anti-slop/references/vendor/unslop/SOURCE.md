@@ -15,9 +15,9 @@ Relative links inside vendored files point to the upstream layout, so some may n
 ## Excluded
 
 - `**/agents/**`
-- `skills/unslop/references/refs/beacon-engraving.webp`
+- `skills/unslop/references/refs/**`
 - `examples/**`
 
 ## Notes
 
-Image `references/refs/beacon-engraving.webp` (569 KB) is not vendored (over 300 KB). The upstream `examples/` folder is not vendored. Attribution required (CC BY 4.0): see `skills/anti-slop/SKILL.md`.
+The reference images in `references/refs/` are not vendored, so the plugin ships no unread binary; view them upstream at https://github.com/heydamir/unslop/tree/main/skills/unslop/references/refs (story-dashboard-frames.webp shows the story video frame by frame). The upstream `examples/` folder is not vendored. Attribution required (CC BY 4.0): see `skills/anti-slop/SKILL.md`.

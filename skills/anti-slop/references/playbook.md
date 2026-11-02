@@ -22,8 +22,8 @@ read what" in `SKILL.md`). Tags and credits are at the end.
   size it. **Heavy slop**: full direction and every pass. **Light slop**: fix only what the audit found,
   keep brand, palette, type, layout and visual, bigger ideas in the report. **No slop**: say so, offer two
   or three refinements with exact values, apply only on agreement. [unslop]
-- A page from scratch or a deep redesign uses taste-skill's run (inventory, argument, dealt direction,
-  idea, copy deck, build still, gate, look, move); a component or section skips the draw and matches its
+- A page from scratch or a deep redesign uses taste-skill's run (inventory, argument, direction from the
+  gate, idea, copy deck, build still, look, move); a component or section skips the direction and matches its
   surroundings; a review stops at findings plus the three changes that would move it most. A redesign
   keeps stack, content, routes, forms and behaviour; check the dependency file before adding. [taste]
 

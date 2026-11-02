@@ -18,10 +18,10 @@
       ],
       "exclude": [
         "**/agents/**",
-        "skills/unslop/references/refs/beacon-engraving.webp",
+        "skills/unslop/references/refs/**",
         "examples/**"
       ],
-      "notes": "Image `references/refs/beacon-engraving.webp` (569 KB) is not vendored (over 300 KB). The upstream `examples/` folder is not vendored. Attribution required (CC BY 4.0): see `skills/anti-slop/SKILL.md`.",
+      "notes": "The reference images in `references/refs/` are not vendored, so the plugin ships no unread binary; view them upstream at https://github.com/heydamir/unslop/tree/main/skills/unslop/references/refs (story-dashboard-frames.webp shows the story video frame by frame). The upstream `examples/` folder is not vendored. Attribution required (CC BY 4.0): see `skills/anti-slop/SKILL.md`.",
       "attribution": {
         "title": "unslop",
         "author": "Damir Sokolovsky",
@@ -47,9 +47,11 @@
       ],
       "exclude": [
         "**/agents/**",
-        "skills/taste-skill/evals/**"
+        "skills/taste-skill/evals/**",
+        "skills/taste-skill/scripts/**",
+        "skills/taste-skill/library/**"
       ],
-      "notes": "`evals/` (six test briefs the upstream author uses to benchmark the skill against a no-skill baseline) is not vendored: nothing in the skill reads it during an agent run. `library/` (1.6 MB) and `scripts/` (332 KB) are kept on purpose: `scripts/draw.mjs` loads every `library/*.json` file at start (directions, heroes, sections, type, palettes, photos, sites, motions) and `scripts/lib/app-draw.mjs` loads `library/app.json`, so dealing a direction, the core of the page and app-screen runs, fails without them; `lint.mjs`, `inspect.mjs` (with `scripts/lib/`), `scenes.mjs` and `assets.mjs` are the gate and the image search the run calls by name."
+      "notes": "`evals/`, `scripts/` and `library/` are not vendored. The scripts read keys from the environment and fetch from the network, and two library files are over 256 KB, which holds a plugin for manual review in the Anthropic directory. Without them taste-skill's dealt direction and gate scripts do not run; the direction gate in `skills/anti-slop/SKILL.md` takes their place, and the references (type, colour, layout, imagery, app screens, copy, critique, tells) are kept. Use the upstream repo for the scripts."
     },
     {
       "id": "emil",
@@ -217,7 +219,8 @@
         "stageshow/examples/slack/**",
         "stageshow/examples/spotify/**",
         "stageshow/examples/telegram/**",
-        "stageshow/examples/dynamic-island/**"
+        "stageshow/examples/dynamic-island/**",
+        "stageshow/examples/wikipedia/**"
       ],
       "licenseFrom": "stageshow",
       "notes": "Third-party artwork is not vendored: `assets/app-icons.ts` and `kit/brands/**` (not MIT, see NOTICE.md), so imports of them in `kit/` and `examples/` do not resolve. Also not vendored: `package*.json`, `playground/`, `teaching/` and `scripts/` (tooling, not needed to read the skill). Example scenes that embed or import third-party marks are not vendored: phones, bento, parts (import `assets/app-icons.ts`); google-docs, google-calendar, gmail, figma, kit-extras, brand-marks (import `kit/brands` marks of Google, Figma, Slack, Notion, Linear, Gmail and others); linear and excel (replicas of Linear and Microsoft Excel product marks and glyphs); hero-demo (icons copied from a real product toolbar); wikipedia `index.tsx` and `wiki.css` (draw the Wikipedia globe and wordmark). The CC0 photographs and `examples/wikipedia/PHOTOS.md` are kept. `kit/BrandMark` code is kept but its artwork is not, so brand names do not resolve. Also excluded, to keep the public repo clear of real-product replicas: finder, finder-glass, imessage, dynamic-island (Apple), notion, powerpoint, raycast, slack, spotify, telegram. Kept, but not all of it is the author's own artwork: `kit/phone.tsx` glyphs are adapted from Apple's iOS UI kit, `kit/cursors.tsx` has traced macOS cursors and `kit/parts/Icon.tsx` is SF Symbols-style. Check the upstream NOTICE.md before reusing these in a product."

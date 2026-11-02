@@ -45,6 +45,7 @@ Relative links inside vendored files point to the upstream layout, so some may n
 - `stageshow/examples/spotify/**`
 - `stageshow/examples/telegram/**`
 - `stageshow/examples/dynamic-island/**`
+- `stageshow/examples/wikipedia/**`
 
 ## Notes
 

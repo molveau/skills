@@ -151,7 +151,8 @@ Lower the baseline whenever you fix one; never raise it.
 
 A square clip, about 10 seconds, where the screen unslops itself step by step with redlines. Make it only
 when asked. Build the story file exactly as unslop's "Story video" section says
-(`references/vendor/unslop/unslop.md`: one `story.html`, `.s1` to `.s5` CSS on top, `data-gap`,
+(`references/vendor/unslop/unslop.md`; its reference frames are upstream, not vendored:
+https://github.com/heydamir/unslop/blob/main/skills/unslop/references/refs/story-dashboard-frames.webp; one `story.html`, `.s1` to `.s5` CSS on top, `data-gap`,
 `data-radius`, `data-slop`, swaps), then render it with this skill's adapted renderer:
 
 ```bash
@@ -187,7 +188,7 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 | Glyph, halftone, dither and duotone code | `references/vendor/unslop/unslop/references/effects.md` |
 | Finished reference screens (images) | `references/vendor/unslop/unslop/references/refs.md` |
 | Snapshot a live URL to work on a copy | `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
-| A page from scratch or a deep redesign: inventory, dealt direction, idea, house rules, gate | `references/vendor/taste/taste-skill.md` |
+| A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | `references/vendor/taste/taste-skill.md` |
 | Dashboards, admin and settings screens in depth | `references/vendor/taste/taste-skill/references/app-screens.md` |
 | Copy deck, two-line arithmetic, proof without inventing it | `references/vendor/taste/taste-skill/references/copy.md` |
 | Type scale, display setting, font loading | `references/vendor/taste/taste-skill/references/type.md` |
@@ -200,6 +201,7 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 | The study behind taste's numbers | `references/vendor/taste/taste-skill/references/research.md` |
 
 The vendored files keep their upstream layout, so a few relative links inside them may not resolve
-here. taste-skill's scripts read its `library/` folder (do not read it whole; run `draw.mjs`); some
-scripts need Node 22, a browser, Playwright, ffmpeg or network access. Which visual checks to run is
+here. taste-skill's `scripts/` and `library/` are not vendored (they read keys and the network, and the
+library is too large for the plugin directory's review): its dealt direction is replaced by the direction
+gate above; get the scripts from the upstream repo if you want them. Which visual checks to run is
 decided in the `ui` playbook, conflict 14 (this playbook's conflict 14 points there).

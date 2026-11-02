@@ -26,7 +26,7 @@ const isText = (buf) => !buf.subarray(0, 8000).includes(0);
 
 function skillDirs() {
   if (!existsSync(SKILLS)) return [];
-  return readdirSync(SKILLS).filter((n) => statSync(join(SKILLS, n)).isDirectory());
+  return readdirSync(SKILLS).filter((n) => !n.startsWith('.') && statSync(join(SKILLS, n)).isDirectory());
 }
 const readJson = (f) => JSON.parse(readFileSync(join(ROOT, f), 'utf8'));
 
@@ -189,20 +189,33 @@ const BUNDLES = {
   playbooks: ['saas', 'vitrine', 'workflow'],
 };
 
-test('one plugin: plugin.json carries the skills and a valid icon, the marketplace lists it once', () => {
-  const plugin = readJson('.claude-plugin/plugin.json');
+// The plugin is the skills/ folder only, so tests, fixtures, the example video and the repo scripts stay
+// out of what the Anthropic plugin directory screens (they caused its manual-review holds).
+const PLUGIN = join(SKILLS, '.claude-plugin', 'plugin.json');
+
+test('one plugin rooted at skills/: plugin.json, a valid icon, the marketplace points there once', () => {
+  assert.ok(!existsSync(join(ROOT, '.claude-plugin', 'plugin.json')), 'the plugin manifest lives in skills/.claude-plugin/');
+  const plugin = JSON.parse(readFileSync(PLUGIN, 'utf8'));
   assert.equal(plugin.name, 'molveau-skills');
-  assert.equal(plugin.skills, './skills');
-  assert.ok(existsSync(join(ROOT, plugin.icon)), `icon ${plugin.icon} missing`);
-  const png = readFileSync(join(ROOT, plugin.icon));
+  assert.equal(plugin.skills, './');
+  const icon = join(SKILLS, plugin.icon);
+  assert.ok(existsSync(icon), `icon ${plugin.icon} missing`);
+  const png = readFileSync(icon);
   assert.equal(png.subarray(1, 4).toString(), 'PNG');
   const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
   assert.ok(w === h && w >= 512 && w <= 2048 && png.length < 2 * 1024 * 1024, `icon must be a square PNG 512-2048 px under 2 MB, got ${w}x${h}`);
   const plugins = readJson('.claude-plugin/marketplace.json').plugins;
   assert.equal(plugins.length, 1);
   assert.equal(plugins[0].name, 'molveau-skills');
-  assert.equal(plugins[0].source, './');
+  assert.equal(plugins[0].source, './skills');
   assert.equal(plugins[0].skills, undefined, 'skills belong in plugin.json, not in the marketplace entry');
+});
+
+test('the plugin stays small and ships no video or archive', () => {
+  const files = walk(SKILLS);
+  assert.ok(files.length < 480, `skills/ has ${files.length} files; the directory screens only the first 512`);
+  for (const f of files) assert.ok(!/\.(mp4|mov|webm|zip|tgz|gz)$/i.test(f), `${rel(f)} is a binary the directory cannot read`);
+  for (const f of files) assert.ok(statSync(f).size < 256 * 1024, `${rel(f)} is over 256 KB, which the directory only reads in part`);
 });
 
 test('every skill sits in exactly one bundle', () => {
@@ -221,7 +234,7 @@ test('one version everywhere, with a changelog entry', () => {
   const version = readJson('package.json').version;
   assert.match(version, /^\d+\.\d+\.\d+$/);
   for (const p of readJson('.claude-plugin/marketplace.json').plugins) assert.equal(p.version, version, `${p.name}: version`);
-  assert.equal(readJson('.claude-plugin/plugin.json').version, version, 'plugin.json version');
+  assert.equal(JSON.parse(readFileSync(PLUGIN, 'utf8')).version, version, 'plugin.json version');
   const changelog = readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8');
   assert.match(changelog, new RegExp(`^## \\[${version.replace(/\./g, '\\.')}\\] - \\d{4}-\\d{2}-\\d{2}$`, 'm'), `CHANGELOG.md has no "## [${version}] - YYYY-MM-DD" entry`);
 });

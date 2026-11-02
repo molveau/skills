@@ -71,7 +71,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - Hidden content gets a cue: the next item peeks 16-32px past a scroll edge, a disclosure names what it
   hides ("Show 12 more results"), a truncated value has a keyboard-reachable way to the full text. [Jakub]
 - Content bleeds, controls float: media to the edges, text and controls in the margins and safe areas
-  (`env(safe-area-inset-*)` needs `viewport-fit=cover`); sticky headers set `scroll-padding-block-start`. [Jakub]
+  (the safe-area insets need `viewport-fit=cover`); sticky headers set `scroll-padding-block-start`. [Jakub]
 - Logical properties for anything that mirrors (`margin-inline-start`, `text-align: start`); progressions
   (stars, steps) mirror in RTL, digits never reverse. [Jakub] [Impeccable]
 - Plan for growth: `max-width` and `min-height`, never fixed text boxes; budget 30-40% for translation;

@@ -16,7 +16,9 @@ Relative links inside vendored files point to the upstream layout, so some may n
 
 - `**/agents/**`
 - `skills/taste-skill/evals/**`
+- `skills/taste-skill/scripts/**`
+- `skills/taste-skill/library/**`
 
 ## Notes
 
-`evals/` (six test briefs the upstream author uses to benchmark the skill against a no-skill baseline) is not vendored: nothing in the skill reads it during an agent run. `library/` (1.6 MB) and `scripts/` (332 KB) are kept on purpose: `scripts/draw.mjs` loads every `library/*.json` file at start (directions, heroes, sections, type, palettes, photos, sites, motions) and `scripts/lib/app-draw.mjs` loads `library/app.json`, so dealing a direction, the core of the page and app-screen runs, fails without them; `lint.mjs`, `inspect.mjs` (with `scripts/lib/`), `scenes.mjs` and `assets.mjs` are the gate and the image search the run calls by name.
+`evals/`, `scripts/` and `library/` are not vendored. The scripts read keys from the environment and fetch from the network, and two library files are over 256 KB, which holds a plugin for manual review in the Anthropic directory. Without them taste-skill's dealt direction and gate scripts do not run; the direction gate in `skills/anti-slop/SKILL.md` takes their place, and the references (type, colour, layout, imagery, app screens, copy, critique, tells) are kept. Use the upstream repo for the scripts.

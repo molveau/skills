@@ -2,6 +2,13 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-11-01
+
+### Changed
+
+- The Claude Code plugin is now the `skills/` folder only (`skills/.claude-plugin/plugin.json`), so tests, fixtures, the example video and the repo scripts are no longer part of it.
+- Fewer vendored files: unslop's reference images, Stageshow's two Wikipedia photos, and taste-skill's `scripts/` and `library/` are no longer copied (links to upstream instead). The direction gate replaces taste-skill's dealt direction.
+
 ## [1.0.1] - 2026-11-01
 
 ### Changed
