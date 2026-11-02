@@ -13,6 +13,7 @@ The same five tools are also served at https://www.molveau.ca/api/mcp, for MCP c
 - **What it receives:** the text a client sends in each request, such as a code snippet, two colours, a piece of French text or a question about a skill.
 - **What it does with it:** it processes that text in memory to answer the request, and stores none of it. It reads none of your files (it scans only the code sent to it) and passes nothing on to anyone.
 - **No account, no cookie, no identifier:** the endpoint needs no account, sets no cookie and assigns no identifier.
+- **Rate limit:** to stop runaway clients, the endpoint counts requests per IP address in memory for one minute at a time. The count is never written down and is gone when the window ends.
 - **Hosting:** the hosting provider, Vercel, keeps standard request logs (time, IP address, path and status code) for a limited period under its own policy: https://vercel.com/legal/privacy-policy.
 - **Audience:** the endpoint is for general audiences.
 

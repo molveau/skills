@@ -1,0 +1,114 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "molveau-skills",
+  "description": "Five read-only design checks for UI code and French copy: AI-look tells, WCAG contrast, French typography, motion guardrails, and the design playbooks behind them.",
+  "author": {
+    "name": "Molveau Studio",
+    "url": "https://www.molveau.ca"
+  },
+  "homepage": "https://www.molveau.ca/skills",
+  "repository": "https://github.com/molveau/skills",
+  "license": "MIT",
+  "keywords": [
+    "design",
+    "ui",
+    "accessibility",
+    "wcag",
+    "french",
+    "typography",
+    "motion"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Molveau Skills",
+        "shortDescription": "Design checks for UI code",
+        "longDescription": "Paste a component, a stylesheet, two colours or a piece of French text, and get a precise, line-by-line answer.\n\n- Detect tells: flags the mechanical marks of generated interfaces in UI code, such as violet gradients, gradient text, emoji in copy, buttons that fade on hover, reveal-on-scroll and buzzword copy, with the line of each one.\n- Check contrast: the WCAG 2 contrast ratio of a text colour on a background, and whether it meets AA and AAA for its size and weight. Reads hex, rgb(), oklch(), oklab() and color(srgb).\n- French typography: the spacing rules of Québec and France French (no-break space before : ; ! ? and inside « », narrow no-break space between digit groups, space before $ and %) and curly apostrophes. It can return the corrected text.\n- Check motion: animation code against simple guardrails, such as transition-all, whileInView, scroll-reveal libraries and continuous motion with no reduced-motion handling.\n- Get playbook: reads the design doctrine behind the checks (UI, UX, motion, SaaS, marketing sites, French typography, Québec Law 25 for websites and more), whole or by topic.\n\nEvery tool is read-only. Nothing you send is stored, and no account is needed. The same tools are open source and run locally as an MCP server: https://github.com/molveau/skills.",
+        "developerName": "Molveau Studio",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Find AI-look tells in UI code, line by line",
+          "Measure WCAG contrast for a text colour on a background",
+          "Check and fix French typography (Québec and France)",
+          "Review animation code for motion guardrails",
+          "Read design playbooks by topic"
+        ],
+        "websiteURL": "https://www.molveau.ca/skills",
+        "supportURL": "https://github.com/molveau/skills/issues",
+        "privacyPolicyURL": "https://github.com/molveau/skills/blob/main/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/molveau/skills/blob/main/TERMS.md",
+        "defaultPrompt": [
+          "Check this component for AI-look tells:",
+          "Does #9ca3af on white pass WCAG AA for body text?",
+          "Fix the French typography in this text:"
+        ],
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png"
+      },
+      "onboardingSkill": "./skills/get-started/SKILL.md",
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Find AI-look tells in a React component",
+              "prompt": "Check this React component for AI-look tells:\n\nexport function Hero() {\n  return (\n    <section className=\"bg-gradient-to-r from-purple-500 to-indigo-600 py-24\">\n      <h1>Unlock seamless productivity 🚀</h1>\n      <button className=\"hover:opacity-80\">Get started</button>\n    </section>\n  );\n}",
+              "tools_triggered": "detect_tells",
+              "expected_behavior": "Calls detect_tells with the code and a .tsx filename. Reports 5 findings with their lines: the violet gradient (from-purple-500, line 3), the emoji in copy (line 4), the buzzwords Unlock and seamless (line 4) and the button that fades on hover (hover:opacity-80, line 5)."
+            },
+            {
+              "description": "Measure the contrast of grey text on white",
+              "prompt": "Does #9ca3af text on a white background pass WCAG AA for 16px body text?",
+              "tools_triggered": "check_contrast",
+              "expected_behavior": "Calls check_contrast with foreground #9ca3af, background #ffffff and a 16px size. Answers that the ratio is 2.5:1, which fails AA (4.5:1 needed) and AAA (7:1 needed)."
+            },
+            {
+              "description": "Fix the typography of a French sentence",
+              "prompt": "Fix the French typography in this sentence: Prix : 1 900 $ par année ! C'est « simple ».",
+              "tools_triggered": "fr_typo",
+              "expected_behavior": "Calls fr_typo with the text and fix: true. Returns the corrected sentence, with no-break spaces before : and ! and inside « », a narrow no-break space in 1 900, a no-break space before $ and a curly apostrophe in C’est, and says 8 characters changed with no finding left."
+            },
+            {
+              "description": "Review a Framer Motion component for motion problems",
+              "prompt": "Review this animation code for motion problems:\n\nimport { motion } from 'framer-motion';\nexport const Card = () => (\n  <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} className=\"transition-all duration-500\" />\n);",
+              "tools_triggered": "check_motion",
+              "expected_behavior": "Calls check_motion with the code and a .tsx filename. Reports 2 findings on line 3: transition-all and whileInView, and explains each one."
+            },
+            {
+              "description": "Read the empty-state guidance of the UI playbook",
+              "prompt": "What does the Molveau UI playbook say about empty states?",
+              "tools_triggered": "get_playbook",
+              "expected_behavior": "Calls get_playbook with skill ui and the query empty states. Answers from the returned sections, such as: every data view ships an empty state, and an empty state teaches the next action."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Out of scope, travel booking. The plugin only checks design and copy, so no tool is called and ChatGPT answers on its own or says it cannot book.",
+              "prompt": "Book me a flight from Montréal to Paris next Friday."
+            },
+            {
+              "description": "The plugin cannot read files or folders on the user's machine. No tool is called with a path; ChatGPT asks the user to paste the code instead.",
+              "prompt": "Scan every file in ~/projects/my-app for AI-look tells."
+            },
+            {
+              "description": "Out of scope, image generation. None of the tools draws or generates images, so no tool is called.",
+              "prompt": "Draw a logo for my bakery in Québec City."
+            }
+          ]
+        },
+        "demo_recording_url": "",
+        "commerce": false,
+        "commerce_description": "This plugin does not sell products or process payments."
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "First release: five read-only tools (detect_tells, check_contrast, fr_typo, check_motion, get_playbook) served from https://www.molveau.ca/api/mcp, with no account and nothing stored.",
+        "translations": {
+          "fr-FR": {
+            "subtitle": "Contrôles de design pour l’UI",
+            "description": "Collez un composant, une feuille de style, deux couleurs ou un texte en français, et obtenez une réponse précise, ligne par ligne.\n\n- Signes d’IA : repère dans le code d’interface les marques mécaniques des interfaces générées, comme les dégradés violets, le texte en dégradé, les emojis dans le texte, les boutons qui pâlissent au survol, les apparitions au défilement et les mots creux, avec la ligne de chacune.\n- Contraste : le ratio de contraste WCAG 2 d’une couleur de texte sur un fond, et s’il atteint AA et AAA selon la taille et la graisse.\n- Typographie française : les règles d’espacement du français du Québec et de France (espace insécable avant : ; ! ? et dans les « », espace fine entre les groupes de chiffres, espace avant $ et %) et les apostrophes courbes. L’outil peut aussi rendre le texte corrigé.\n- Animation : vérifie le code d’animation selon des garde-fous simples, comme transition-all, whileInView, les bibliothèques d’apparition au défilement et les animations continues qui ignorent la préférence de mouvement réduit.\n- Guides : lit la doctrine de design derrière ces contrôles (UI, UX, animation, SaaS, sites vitrines, typographie française, Loi 25 pour les sites web et plus), en entier ou par sujet.\n\nTous les outils sont en lecture seule. Rien de ce que vous envoyez n’est conservé, et aucun compte n’est requis. Les mêmes outils sont libres et roulent aussi en local comme serveur MCP : https://github.com/molveau/skills."
+          }
+        }
+      }
+    }
+  }
+}

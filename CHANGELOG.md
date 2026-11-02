@@ -2,6 +2,20 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.3.2] - 2026-11-02
+
+### Added
+
+- `openai/` and `scripts/openai-package.mjs`: the ChatGPT plugin package for the hosted endpoint (manifest, `mcp.json`, an onboarding skill, the icon, five positive and three negative review cases). `node scripts/openai-package.mjs --demo <url>` checks the directory's limits and writes `dist/molveau-skills-openai-<version>.zip`.
+
+### Fixed
+
+- `detect_tells` reported each buzzword twice on a line of JSX text, once for the whole line and once for the text between its tags.
+
+### Changed
+
+- `PRIVACY.md` says how the hosted endpoint's rate limit uses the IP address.
+
 ## [1.3.1] - 2026-11-02
 
 ### Fixed
