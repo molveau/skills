@@ -180,38 +180,40 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
   }
 });
 
-// Bundles live only in the marketplace (strict: false). A root plugin.json that also lists skills makes
-// Claude Code refuse every bundle with "conflicting manifests" (checked by hand on 1 Nov 2026).
+// One Claude Code plugin with every skill: the Anthropic plugin directory requires .claude-plugin/plugin.json
+// and refuses skills declared in a marketplace entry, and a root plugin.json conflicts with inline bundles.
+// Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
-  'molveau-skills': null, // every skill
-  'molveau-design': ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index'],
-  'molveau-quebec': ['french-typography', 'loi-25-website'],
-  'molveau-playbooks': ['saas', 'vitrine', 'workflow'],
+  design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index'],
+  quebec: ['french-typography', 'loi-25-website'],
+  playbooks: ['saas', 'vitrine', 'workflow'],
 };
 
-test('marketplace defines the bundles, no root plugin.json', () => {
-  assert.ok(!existsSync(join(ROOT, '.claude-plugin', 'plugin.json')), 'remove .claude-plugin/plugin.json: it conflicts with the bundles');
+test('one plugin: plugin.json carries the skills and a valid icon, the marketplace lists it once', () => {
+  const plugin = readJson('.claude-plugin/plugin.json');
+  assert.equal(plugin.name, 'molveau-skills');
+  assert.equal(plugin.skills, './skills');
+  assert.ok(existsSync(join(ROOT, plugin.icon)), `icon ${plugin.icon} missing`);
+  const png = readFileSync(join(ROOT, plugin.icon));
+  assert.equal(png.subarray(1, 4).toString(), 'PNG');
+  const [w, h] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+  assert.ok(w === h && w >= 512 && w <= 2048 && png.length < 2 * 1024 * 1024, `icon must be a square PNG 512-2048 px under 2 MB, got ${w}x${h}`);
   const plugins = readJson('.claude-plugin/marketplace.json').plugins;
-  assert.deepEqual(plugins.map((p) => p.name), Object.keys(BUNDLES));
-  for (const p of plugins) {
-    assert.equal(p.source, './', `${p.name}: source`);
-    assert.equal(p.strict, false, `${p.name}: strict must be false`);
-    const want = BUNDLES[p.name] ? BUNDLES[p.name].map((d) => `./skills/${d}`) : ['./skills'];
-    assert.deepEqual(p.skills, want, `${p.name}: skills`);
-    for (const path of p.skills) assert.ok(existsSync(join(ROOT, path)), `${p.name}: ${path} missing`);
-  }
+  assert.equal(plugins.length, 1);
+  assert.equal(plugins[0].name, 'molveau-skills');
+  assert.equal(plugins[0].source, './');
+  assert.equal(plugins[0].skills, undefined, 'skills belong in plugin.json, not in the marketplace entry');
 });
 
-test('every skill sits in exactly one bundle besides the full set', () => {
-  const placed = Object.values(BUNDLES).filter(Boolean).flat();
-  assert.deepEqual([...placed].sort(), skillDirs().sort());
+test('every skill sits in exactly one bundle', () => {
+  assert.deepEqual(Object.values(BUNDLES).flat().sort(), skillDirs().sort());
 });
 
-test('README shows the install command of every bundle', () => {
+test('README shows the install command of every bundle and the plugin', () => {
   const readme = readFileSync(join(ROOT, 'README.md'), 'utf8');
+  assert.ok(readme.includes('/plugin install molveau-skills@molveau'));
   for (const [name, skills] of Object.entries(BUNDLES)) {
-    assert.ok(readme.includes(`/plugin install ${name}@molveau`), `README lacks /plugin install ${name}@molveau`);
-    if (skills) assert.ok(readme.includes('npx skills add molveau/skills ' + skills.map((d) => `-s ${d}`).join(' ')), `README lacks the skills CLI command for ${name}`);
+    assert.ok(readme.includes('npx skills add molveau/skills ' + skills.map((d) => `-s ${d}`).join(' ')), `README lacks the skills CLI command for ${name}`);
   }
 });
 
@@ -219,6 +221,7 @@ test('one version everywhere, with a changelog entry', () => {
   const version = readJson('package.json').version;
   assert.match(version, /^\d+\.\d+\.\d+$/);
   for (const p of readJson('.claude-plugin/marketplace.json').plugins) assert.equal(p.version, version, `${p.name}: version`);
+  assert.equal(readJson('.claude-plugin/plugin.json').version, version, 'plugin.json version');
   const changelog = readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8');
   assert.match(changelog, new RegExp(`^## \\[${version.replace(/\./g, '\\.')}\\] - \\d{4}-\\d{2}-\\d{2}$`, 'm'), `CHANGELOG.md has no "## [${version}] - YYYY-MM-DD" entry`);
 });

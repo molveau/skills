@@ -38,17 +38,17 @@ npx skills add molveau/skills -s anti-slop     # just one
 
 Or one bundle:
 
-| Bundle | Skills CLI | Claude Code plugin |
-|---|---|---|
-| Everything | `npx skills add molveau/skills` | `/plugin install molveau-skills@molveau` |
-| Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index` | `/plugin install molveau-design@molveau` |
-| Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` | `/plugin install molveau-quebec@molveau` |
-| Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` | `/plugin install molveau-playbooks@molveau` |
+| Bundle | Skills CLI |
+|---|---|
+| Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index` |
+| Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` |
+| Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` |
 
-For the Claude Code plugins, add the marketplace once:
+In Claude Code, all eleven as one plugin:
 
 ```
 /plugin marketplace add molveau/skills
+/plugin install molveau-skills@molveau
 ```
 
 The scripts have no dependencies and run on Node 20 or newer. After installing, call them from the skill folder, for example:

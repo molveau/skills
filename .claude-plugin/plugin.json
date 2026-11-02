@@ -1,0 +1,24 @@
+{
+  "name": "molveau-skills",
+  "description": "Eleven agent skills by Molveau Studio: anti-slop, UI, UX, motion, a deep design audit, an inspiration index, French typography, Québec Law 25, SaaS and showcase-site playbooks and a delivery workflow.",
+  "version": "1.0.1",
+  "author": {
+    "name": "Molveau Studio",
+    "url": "https://www.molveau.ca"
+  },
+  "homepage": "https://www.molveau.ca/skills",
+  "repository": "https://github.com/molveau/skills",
+  "license": "MIT",
+  "keywords": [
+    "design",
+    "ui",
+    "ux",
+    "motion",
+    "accessibility",
+    "anti-slop",
+    "french",
+    "quebec"
+  ],
+  "skills": "./skills",
+  "icon": "./.claude-plugin/icon.png"
+}
