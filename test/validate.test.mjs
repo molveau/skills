@@ -318,3 +318,19 @@ test('npm test runs every test file and nothing under test/fixtures', () => {
   assert.deepEqual([...matched].sort(), all.sort());
   assert.ok(!matched.some((p) => p.includes('fixtures')));
 });
+
+// The plugin starts the MCP server from skills/.mcp.json; the anti-slop hook stays opt-in, so the plugin
+// registers no hooks of its own.
+test('the plugin declares the MCP server and no hooks', () => {
+  const mcp = JSON.parse(readFileSync(join(SKILLS, '.mcp.json'), 'utf8'));
+  const server = mcp.mcpServers['molveau-skills'];
+  assert.equal(server.command, 'node');
+  assert.deepEqual(server.args, ['${CLAUDE_PLUGIN_ROOT}/.mcp/server.mjs']);
+  assert.ok(existsSync(join(SKILLS, server.args[0].replace('${CLAUDE_PLUGIN_ROOT}/', ''))));
+  assert.equal(server.env, undefined);
+  assert.ok(!existsSync(join(SKILLS, 'hooks')), 'skills/hooks/ would register hooks for every user');
+  const plugin = JSON.parse(readFileSync(PLUGIN, 'utf8'));
+  assert.equal(plugin.hooks, undefined);
+  assert.ok(statSync(join(SKILLS, '.mcp', 'server.mjs')).mode & 0o100, 'server.mjs must be executable for the npm bin');
+  assert.match(readFileSync(join(SKILLS, '.mcp', 'server.mjs'), 'utf8'), /^#!\/usr\/bin\/env node\n/);
+});
