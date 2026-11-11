@@ -75,8 +75,8 @@ Use the plain verb. Keep the buzzword when it is literal ("unlock the door", "ha
 
 The em dash (U+2014) stands in for a decision about punctuation. Pick a colon, a comma, parentheses or a full stop. A French dialogue dash at the start of a line is fine.
 
-- Before: The tool is fast, reliable and simple, and that is the point.
-- After: The tool is fast, reliable and simple. That is the point.
+- Before: `The tool is fast — reliable — and simple.`
+- After: The tool is fast, reliable and simple.
 - Avant : L’outil est rapide, fiable et simple, et c’est là tout l’intérêt.
 - Après : L’outil est rapide, fiable et simple. C’est tout l’intérêt.
 
