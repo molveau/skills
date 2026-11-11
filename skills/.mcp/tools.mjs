@@ -1,13 +1,14 @@
-// The five tools of the molveau-skills MCP server. Each one wraps a skill script, so the server and the CLIs
+// The six tools of the molveau-skills MCP server. Each one wraps a skill script, so the server and the CLIs
 // always agree. All of them are read-only: they read the skills' own files and, for detect_tells with paths,
 // files inside the server's working directory, and nothing else. No network, no writes. REMOTE_TOOLS are the
-// same five for a hosted endpoint: no paths, so only the skills' own files are read, and no studio line.
+// same six for a hosted endpoint: no paths, so only the skills' own files are read, and no studio line.
 import { readFileSync, readdirSync, statSync, realpathSync, existsSync } from 'node:fs';
 import { join, resolve, relative, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { detectTells, isScannable, sfcAsHtml, formatFindings as formatTells, SKIP_DIRS } from '../anti-slop/scripts/detect-tells.mjs';
 import { parseColor, composite, contrastRatio, threshold, formatRatio } from '../anti-slop/scripts/story-contrast.mjs';
 import { checkFr, fixFr, visible } from '../french-typography/scripts/fr-typo.mjs';
+import { checkWriting, detectLang } from '../writing/scripts/check-writing.mjs';
 import { checkMotion, formatFindings as formatMotion, EXTS as MOTION_EXTS } from '../motion/scripts/check-motion.mjs';
 
 const SKILLS_DIR = fileURLToPath(new URL('..', import.meta.url));
@@ -347,6 +348,29 @@ export const TOOLS = [
       const note = left.some((f) => f.rule === 'em-dash') ? ' (em dashes need a rewrite by hand)' : '';
       const out = `${changes} change(s), ${left.length} finding(s) left${note}\n${lines(left)}\nFixed text:\n${fixed}\n`;
       return { text: out, data: { text: fixed, changes, count: left.length, findings: left } };
+    },
+  },
+  {
+    name: 'check_writing',
+    title: 'Check writing',
+    description:
+      'Scan English or French prose for the patterns that read as AI-written: stock openers and closers, filler transitions, hedging, inflated vocabulary, em dashes and the like. Returns one line per finding (line:column, rule, match) and the detected language. A hit means "look here", not "wrong".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'The prose to check, such as a paragraph, an email or a README.' },
+        lang: { type: 'string', enum: ['auto', 'en', 'fr'], description: 'Language of the text. Default auto: detected from the text.' },
+      },
+      required: ['text'],
+      additionalProperties: false,
+    },
+    annotations: { title: 'Check writing', ...READ_ONLY },
+    run({ text, lang = 'auto' }) {
+      const resolved = lang === 'auto' ? detectLang(text) : lang;
+      const at = lineCols(text);
+      const findings = checkWriting(text, { lang }).map((f) => ({ ...at(f.index), rule: f.rule, match: f.match }));
+      const lines = findings.map((f) => `${f.line}:${f.column} ${f.rule} ${JSON.stringify(f.match)}\n`).join('');
+      return { text: lines + `${findings.length} finding(s) (${resolved})\n`, data: { count: findings.length, lang: resolved, findings } };
     },
   },
   {

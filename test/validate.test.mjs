@@ -355,7 +355,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
     assert.ok(readme.includes(must), `README lacks ${must}`);
   }
   assert.ok(!readme.includes('## Opt-in hook'), 'the hook is on by default in the plugin now');
-  for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
+  for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'check_writing', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
   const skill = readFileSync(join(SKILLS, 'anti-slop', 'SKILL.md'), 'utf8');
   assert.ok(skill.includes('detect_tells') && skill.includes('scripts/hook-check.mjs'), 'anti-slop SKILL.md should point to the MCP tools and the hook');
   assert.ok(!skill.includes('opt-in Claude Code'), 'anti-slop SKILL.md still calls the hook opt-in');

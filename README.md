@@ -65,13 +65,14 @@ Each `SKILL.md` documents the options.
 
 ## MCP server
 
-The same checks, plus the playbooks, as five tools for any MCP client. No dependencies and read-only: it reads the skills' own files and, when asked, files inside the folder it runs in, and it makes no network request.
+The same checks, plus the playbooks, as six tools for any MCP client. No dependencies and read-only: it reads the skills' own files and, when asked, files inside the folder it runs in, and it makes no network request.
 
 | Tool | What it does |
 |---|---|
 | `detect_tells` | Scans a snippet, or files and folders inside the working directory, for the anti-slop tells; returns `path:line  #N label  match` lines, a summary and the count |
 | `check_contrast` | WCAG contrast of a text colour on a background (hex, `rgb()`, `oklch()`, `oklab()`, `color(srgb)`), with the AA and AAA thresholds for that size and weight |
 | `fr_typo` | Checks French spacing and punctuation in a text, or returns it fixed with the number of changes |
+| `check_writing` | Flags AI-sounding prose in English or French (stock openers, filler, hedging, inflated words), with line, column and rule |
 | `check_motion` | Runs the motion guardrails on a snippet |
 | `get_playbook` | A skill's direction gate or "Do this first" block, or the playbook sections that match a query |
 
