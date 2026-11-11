@@ -40,7 +40,7 @@ const PHRASES = {
     'transition-opener': ['il est important de noter', 'il convient de souligner', 'il est à noter', 'force est de constater'],
     'scene-setting': ['dans un monde en constante évolution', "à l'ère du numérique", "avec l'avènement de", 'de nos jours', "dans le monde d'aujourd'hui"],
     hedging: ['il semblerait que', 'on pourrait dire que', 'certains diront que', 'selon certaines études'],
-    inflated: ['absolument essentiel', 'absolument essentielle', 'absolument essentiels', 'absolument essentielles', "d'une importance capitale", 'primordial', 'primordiale', 'primordiaux', 'primordiales', 'incontournable', 'incontournables', 'révolutionnaire', 'révolutionnaires', 'un rôle clé', 'de pointe'],
+    inflated: ['absolument essentiel', 'absolument essentielle', 'absolument essentiels', 'absolument essentielles', "d'une importance capitale", 'primordial', 'primordiale', 'primordiaux', 'primordiales', 'incontournable', 'incontournables', 'révolutionnaire', 'révolutionnaires', 'un rôle clé', 'technologie de pointe', 'solution de pointe', 'à la pointe'],
     'cliche-conclusion': ['en résumé', 'en conclusion', 'pour conclure', 'en somme', 'en définitive', 'au final'],
     'buzzword-verb': ['tirer parti', 'tirez parti', 'tirons parti', 'booster', 'boostez', 'boostons', 'impacter', 'impacté', 'impactée', 'impactés', 'impactées', 'dynamiser', 'dynamisez', 'propulser', 'propulsez', 'révolutionner', 'révolutionnez', 'sublimer', 'sublimez'],
     'chat-filler': ["n'hésitez pas à", "j'espère que cela vous aide", 'excellente question', 'plongeons', "au plaisir d'échanger", 'je serais ravi de'],
@@ -84,10 +84,10 @@ const STARTERS_NEEDED = 3;
 
 const STOP = {
   en: new Set(['the', 'and', 'is', 'are', 'was', 'it', 'its', 'of', 'to', 'in', 'that', 'this', 'for', 'with', 'you', 'we', 'i', 'not', 'be', 'can', 'or', 'on', 'as', 'at', 'by', 'from', 'your', 'our', 'will', 'have', 'has', 'they', 'he', 'she', 'but', 'if', 'into', 'than', 'then', 'whether']),
-  fr: new Set(['le', 'la', 'les', 'un', 'une', 'des', 'du', 'de', 'et', 'est', 'sont', 'en', 'dans', 'que', 'qui', 'pour', 'avec', 'vous', 'nous', 'je', 'il', 'elle', 'ils', 'ne', 'pas', 'ce', 'cette', 'ces', 'se', 'sur', 'au', 'aux', 'ou', 'mais', 'plus', 'par', 'votre', 'notre', 'cela', 'ça', 'tout', 'faut', 'être', 'sont', 'soyez', 'lisez']),
+  fr: new Set(['le', 'la', 'les', 'un', 'une', 'des', 'du', 'de', 'et', 'est', 'sont', 'en', 'dans', 'que', 'qui', 'pour', 'avec', 'vous', 'nous', 'je', 'il', 'elle', 'ils', 'ne', 'pas', 'ce', 'cette', 'ces', 'se', 'sur', 'au', 'aux', 'ou', 'mais', 'plus', 'par', 'votre', 'notre', 'cela', 'ça', 'tout', 'faut', 'être', 'sont', 'soyez', 'lisez', 'à', 'y', 'on', 'son', 'sa', 'ses', 'leur', 'leurs', 'nos', 'vos', 'mon', 'ma', 'mes', 'me', 'te', 'sans', 'sous', 'comme', 'donc', 'car', 'très', 'avez', 'avons', 'ai', 'suis', 'es']),
 };
 
-/** Guesses the language by counting stopwords (plus accented letters for French). French only when it wins. */
+/** Guesses the language by counting stopwords. French only when it wins with at least two stopwords, so one borrowed word (a place name) does not flip English; otherwise English. */
 export function detectLang(text) {
   let en = 0;
   let fr = 0;
@@ -95,22 +95,24 @@ export function detectLang(text) {
     if (STOP.en.has(m[0])) en++;
     if (STOP.fr.has(m[0])) fr++;
   }
-  fr += (text.match(/[àâçéèêëîïôùûœ]/gi) ?? []).length;
-  return fr > en ? 'fr' : 'en';
+  return fr > en && fr >= 2 ? 'fr' : 'en';
 }
 
-/** Lists the tells in one string. `index` is a UTF-16 offset. Sorted by index then rule. */
-export function checkWriting(text, opts = {}) {
-  const lang = opts.lang && opts.lang !== 'auto' ? opts.lang : detectLang(text);
+function assertLang(lang) {
+  if (lang !== undefined && !['auto', 'en', 'fr'].includes(lang)) throw new Error('lang must be auto, en or fr');
+}
+
+// Checks one stretch of text in one language. `offset` shifts indexes back to the whole text.
+function checkIn(text, lang, offset) {
   const found = [];
   const add = (rule, re) => {
-    for (const m of text.matchAll(re)) found.push({ index: m.index, rule, match: m[0], lang });
+    for (const m of text.matchAll(re)) found.push({ index: offset + m.index, rule, match: m[0], lang });
   };
   for (const [rule, list] of Object.entries(PATTERNS[lang])) for (const re of list) add(rule, re);
   add('listing-words', ALWAYS_RE[lang]);
   const starters = [...text.matchAll(STARTER_RE[lang])];
   if (starters.length >= STARTERS_NEEDED) {
-    for (const m of starters) found.push({ index: m.index, rule: 'listing-words', match: m[0], lang });
+    for (const m of starters) found.push({ index: offset + m.index, rule: 'listing-words', match: m[0], lang });
   }
   for (const m of text.matchAll(/\u2014/g)) {
     // A French dialogue dash opens a line and is followed by a space.
@@ -118,7 +120,32 @@ export function checkWriting(text, opts = {}) {
       const lineStart = text.lastIndexOf('\n', m.index - 1) + 1;
       if (text.slice(lineStart, m.index).trim() === '' && /^[ \u00a0\u202f]/.test(text.slice(m.index + 1))) continue;
     }
-    found.push({ index: m.index, rule: 'em-dash', match: m[0], lang });
+    found.push({ index: offset + m.index, rule: 'em-dash', match: m[0], lang });
+  }
+  return found;
+}
+
+/**
+ * Lists the tells in one string. `index` is a UTF-16 offset. Sorted by index then rule.
+ * With lang 'auto' (default) each paragraph (split on blank lines) is checked in its own detected language;
+ * with 'en' or 'fr' the whole text uses that language.
+ */
+export function checkWriting(text, opts = {}) {
+  assertLang(opts.lang);
+  let found = [];
+  if (opts.lang && opts.lang !== 'auto') {
+    found = checkIn(text, opts.lang, 0);
+  } else {
+    let start = 0;
+    const flush = (end) => {
+      const part = text.slice(start, end);
+      if (part.trim() !== '') found.push(...checkIn(part, detectLang(part), start));
+    };
+    for (const m of text.matchAll(/\r?\n(?:[ \t\f\v\u00a0]*\r?\n)+/g)) {
+      flush(m.index);
+      start = m.index + m[0].length;
+    }
+    flush(text.length);
   }
   return found.sort((a, b) => a.index - b.index || a.rule.localeCompare(b.rule));
 }
@@ -132,7 +159,7 @@ function maskMarkdown(text) {
   return text
     .split('\n')
     .map((line) => {
-      const f = line.match(/^\s*(`{3,}|~{3,})(.*)$/);
+      const f = line.replace(/\r$/, '').match(/^\s*(`{3,}|~{3,})(.*)$/);
       if (fence) {
         if (f && f[1][0] === fence[0] && f[1].length >= fence.length && f[2].trim() === '') fence = null;
         return blank(line);
@@ -163,6 +190,7 @@ const position = (text, index) => {
 
 /** Findings for one file: [{ path, line, column, rule, match, lang }]. */
 export function scanText(text, path, opts = {}) {
+  assertLang(opts.lang);
   const found = [];
   const ext = extname(path).toLowerCase();
   if (ext === '.json') {
@@ -225,7 +253,14 @@ function main(argv) {
   const files = [];
   for (const p of paths) collectFiles(p, files);
   const findings = [];
-  for (const file of files) findings.push(...scanText(readFileSync(file, 'utf8'), file, { lang }));
+  for (const file of files) {
+    let text;
+    try { text = readFileSync(file, 'utf8'); } catch {
+      process.stderr.write(`check-writing: cannot read ${file}\n`);
+      return 2;
+    }
+    findings.push(...scanText(text, file, { lang }));
+  }
   process.stdout.write(json ? JSON.stringify(findings, null, 2) + '\n' : formatFindings(findings, files.length));
   return findings.length ? 1 : 0;
 }

@@ -2,7 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, writeFileSync, chmodSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { RULES, EXTS, detectLang, checkWriting, scanText, formatFindings } from '../skills/writing/scripts/check-writing.mjs';
 
@@ -163,4 +164,74 @@ test('CLI: --json prints a parseable array, --lang forces a language', () => {
   for (const it of items) for (const k of ['path', 'line', 'column', 'rule', 'match', 'lang']) assert.ok(k in it, k);
   const forced = JSON.parse(run('--lang=en', '--json', join(FIX, 'tells.fr.md')).stdout);
   assert.ok(forced.every((i) => i.lang === 'en'));
+});
+
+test('CRLF Markdown masks fenced code, indented code and inline spans like LF', () => {
+  const crlf = 'Intro.\r\n\r\n```\r\nIn conclusion\r\n```\r\n\r\n    In conclusion\r\n\r\nInline `In conclusion` span.\r\n\r\nIn conclusion, done.\r\n';
+  const found = scanText(crlf, 'a.md');
+  assert.equal(found.length, 1);
+  assert.equal(found[0].line, 11);
+  assert.equal(found[0].column, 1);
+  assert.deepEqual(scanText(crlf.replace(/\r\n/g, '\n'), 'a.md').map((f) => f.line), [11]);
+});
+
+test('language detection uses stopwords only, so accents do not flip English', () => {
+  const a = checkWriting('Feel free to email Hélène.');
+  assert.deepEqual(a.map((f) => [f.rule, f.lang]), [['chat-filler', 'en']]);
+  const b = checkWriting("Leverage Québec's Société des alcools data.");
+  assert.deepEqual(b.map((f) => [f.rule, f.lang]), [['buzzword-verb', 'en']]);
+});
+
+test('auto language is detected per paragraph', () => {
+  const text = 'Le rapport est prêt.\n\nIn conclusion, it works.';
+  const found = checkWriting(text);
+  assert.equal(found.length, 1);
+  assert.equal(found[0].rule, 'cliche-conclusion');
+  assert.equal(found[0].lang, 'en');
+  assert.equal(found[0].index, text.indexOf('In conclusion'));
+  const both = 'En conclusion, le rapport est prêt pour les clients.\r\n \r\nIn conclusion, it is ready for the team.';
+  const f2 = checkWriting(both);
+  assert.deepEqual(f2.map((f) => [f.rule, f.lang]), [['cliche-conclusion', 'fr'], ['cliche-conclusion', 'en']]);
+  assert.equal(f2[1].index, both.indexOf('In conclusion'));
+  const forced = checkWriting(text, { lang: 'fr' });
+  assert.ok(forced.every((f) => f.lang === 'fr'));
+});
+
+test('listing-words threshold is counted per paragraph', () => {
+  const split = 'Additionally, it is fast. Furthermore, it is small.\n\nMoreover, it is free.';
+  assert.equal(rulesOf(split).length, 0);
+  const one = 'Additionally, it is fast.\n\nFurthermore, it is small.\n\nMoreover, it is free.';
+  assert.equal(rulesOf(one).length, 0);
+});
+
+test('lang option is validated', () => {
+  assert.throws(() => checkWriting('Hello.', { lang: 'de' }), /lang must be auto, en or fr/);
+  assert.throws(() => scanText('Hello.', 'a.md', { lang: 'de' }), /lang must be auto, en or fr/);
+});
+
+test('French inflated: "de pointe" needs a technology word, not rush hour', () => {
+  assert.equal(rulesOf('On évite les heures de pointe.', { lang: 'fr' }).filter((r) => r === 'inflated').length, 0);
+  assert.equal(rulesOf('Une solution de pointe.', { lang: 'fr' }).filter((r) => r === 'inflated').length, 1);
+});
+
+test('whole-word matching: listed forms only, accented boundaries respected', () => {
+  assert.equal(rulesOf('We leveraged it.', { lang: 'en' }).length, 0);
+  assert.equal(rulesOf('We leverage it.', { lang: 'en' }).length, 1);
+  assert.equal(rulesOf('Il le fait primordialement.', { lang: 'fr' }).filter((r) => r === 'inflated').length, 0);
+  assert.equal(rulesOf('C’est primordial.', { lang: 'fr' }).filter((r) => r === 'inflated').length, 1);
+});
+
+test('CLI exits 2 when a file cannot be read', { skip: process.getuid?.() === 0 }, () => {
+  const dir = mkdtempSync(join(tmpdir(), 'cw-'));
+  const file = join(dir, 'locked.md');
+  writeFileSync(file, 'Hello.\n');
+  chmodSync(file, 0o000);
+  try {
+    const r = run(file);
+    assert.equal(r.status, 2);
+    assert.match(r.stderr, /check-writing: cannot read /);
+  } finally {
+    chmodSync(file, 0o600);
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

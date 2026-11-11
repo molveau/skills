@@ -7,7 +7,7 @@ All notable changes to this project are written here. The format follows [Keep a
 ### Added
 
 - `writing`, a twelfth skill that finds AI-sounding prose in English and French: transition openers, scene-setting intros, hedging, inflated wording, mechanical listing words, cliché conclusions, buzzword verbs, em dashes, and three house tells: "it's not X, it's Y", "whether you're X or Y", and chat filler. Its playbook is served by `get_playbook`.
-- `check-writing`, the zero-dependency script for the `writing` skill. `node skills/writing/scripts/check-writing.mjs [--lang en|fr|auto] [--json] <paths...>` reports each finding with its line.
+- `check-writing`, the zero-dependency script for the `writing` skill. `node skills/writing/scripts/check-writing.mjs [--lang en|fr|auto] [--json] <paths...>` reports each finding with its line. In `auto` mode it detects the language per paragraph.
 - `check_writing`, a sixth MCP tool on the stdio server and the hosted endpoint.
 
 ### Changed
