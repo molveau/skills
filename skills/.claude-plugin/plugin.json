@@ -1,7 +1,7 @@
 {
   "name": "molveau-skills",
   "description": "Twelve agent skills by Molveau Studio: anti-slop, UI, UX, motion, a deep design audit, an inspiration index, French typography, Québec Law 25, SaaS and showcase-site playbooks, a delivery workflow and a writing check, with four commands, two review agents and an edit check.",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "author": {
     "name": "Molveau Studio",
     "url": "https://www.molveau.ca"
