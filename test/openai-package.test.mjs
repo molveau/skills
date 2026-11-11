@@ -48,8 +48,9 @@ test('review has exactly 5 positive and 3 negative cases, the positive ones nami
     for (const key of ['description', 'prompt', 'tools_triggered', 'expected_behavior']) assert.ok(c[key], key);
     for (const tool of c.tools_triggered.split(',').map((s) => s.trim())) assert.ok(names.has(tool), tool);
   }
-  // Every tool is exercised once.
-  assert.deepEqual(new Set(positive.map((c) => c.tools_triggered)), names);
+  // Every tool is exercised by at least one positive case (a case may trigger several tools).
+  const triggered = new Set(positive.flatMap((c) => c.tools_triggered.split(',').map((s) => s.trim())));
+  assert.deepEqual(triggered, names);
   for (const c of negative) for (const key of ['description', 'prompt']) assert.ok(c[key], key);
 });
 
