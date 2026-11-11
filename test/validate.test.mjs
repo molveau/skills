@@ -186,7 +186,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 // and refuses skills declared in a marketplace entry, and a root plugin.json conflicts with inline bundles.
 // Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
-  design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index'],
+  design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
   quebec: ['french-typography', 'loi-25-website'],
   playbooks: ['saas', 'vitrine', 'workflow'],
 };
@@ -363,7 +363,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
 
 test('skillDirs leaves out the plugin component folders', () => {
   for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
-  assert.equal(skillDirs().length, 11);
+  assert.equal(skillDirs().length, 12);
 });
 
 // Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment
