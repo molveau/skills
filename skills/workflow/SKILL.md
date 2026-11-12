@@ -16,7 +16,7 @@ deploy). On a solo project that is you; on a team it is whoever the team names.
 ## The loop
 
 Every non-trivial task goes through these steps in order. A one-line fix can skip planning, never
-verification.
+verification. Before each step, read its section in `references/delivery-loop.md` (§N matches the step number).
 
 1. **Inspect** (§1). Read the repository and the existing implementation before proposing anything: the code
    around the change, its tests, the project's agent notes (`AGENTS.md`, `CLAUDE.md` or equivalent),
@@ -35,8 +35,6 @@ verification.
 6. **Verify** (§6). Run the checks and read their output before saying anything works. Evidence before claims.
 7. **Report** (§7). Say what is done and what remains, in the RESULT format, and separate implemented, tested,
    reviewed, committed, pushed, merged and deployed.
-
-Before each step, read its section in `references/delivery-loop.md` (§N matches the step number).
 
 ## Always on
 
