@@ -54,7 +54,7 @@ In this order, before any AI review and before calling a UI change done:
 4. The `anti-slop` skill: its 20 tells and its detector script over the changed files. A detector catches
    part of the tells; check the rest by reading against the list.
 5. Then the review: code review on the diff, the decision owner on the visuals. For a deep audit of a
-   screen, the `design-grill` skill.
+   screen, suggest `/design-grill` to the user (costly, their call).
 
 ## Motion
 

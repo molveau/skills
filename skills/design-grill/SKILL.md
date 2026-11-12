@@ -1,6 +1,7 @@
 ---
 name: design-grill
-description: Deep multi-lens design audit of a file, component or route. Runs seven read-only lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and reports ranked, deduplicated flaws with concrete fixes. Use when asked to grill a design, audit a UI, find design flaws or review a screen in depth. Fans out several agents through Claude Code's Workflow tool (costly, see Requirements), with a manual fallback. Read-only on source.
+description: Deep design audit of a file, component or route, run only when you type /design-grill. Seven read-only lenses, one ranked report. Costly, it fans out several agents.
+disable-model-invocation: true
 ---
 
 # design-grill

@@ -2,6 +2,22 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] - 2026-11-12
+
+### Changed
+
+- Skills read only the playbook section a task needs, not the whole playbook.
+- Credits and vendor notes moved to `references/vendor/README.md` in each skill.
+- Each rule has one owner skill. The others point to it.
+- Descriptions are shorter, with one trigger per kind of request.
+- `design-grill` runs only when you type `/design-grill`. Other skills suggest it instead of running it.
+- `workflow` reads the section of `references/delivery-loop.md` for the step it is on.
+- Every numbered playbook section of `ui`, `ux`, `motion` and `anti-slop` is routed from its `SKILL.md`, and a test checks it.
+
+### Fixed
+
+- Rules that had drifted between skills: mockup first in `saas`, and the French-only `fr-typo` check in `vitrine`.
+
 ## [1.4.0] - 2026-11-11
 
 ### Added

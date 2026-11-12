@@ -49,7 +49,7 @@ Exits take 65-75% of their entrance. Anything over 300 ms on a frequent action f
 
 ## 5. Reduced motion means the final state
 
-Under `prefers-reduced-motion`, do not just slow things down: show the end state (or one chosen static frame) and drop the movement. Keep spinners, progress indicators, brief press feedback and opacity changes that carry meaning; remove translation, scale-in, parallax, loops and autoplay.
+The rule is in the playbook, §10. The code:
 
 Global CSS safety net:
 
@@ -64,7 +64,7 @@ Global CSS safety net:
 }
 ```
 
-JS animation needs its own branch, because the CSS rule does not stop a `requestAnimationFrame` loop:
+JS animation branches on the preference (playbook §10):
 
 ```ts
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

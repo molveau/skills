@@ -1,6 +1,6 @@
 ---
 name: french-typography
-description: Fixes and checks French (Québec and France) typography in UI copy, JSON message files and Markdown, including non-breaking spaces before colons, semicolons, exclamation and question marks, guillemets, thousands and currency spacing, curly apostrophes and the no-em-dash rule. Use when writing or reviewing French copy, translating a site, editing fr.json or i18n messages, or adding a CI guard test for French typography in next-intl or i18next. Includes a zero-dependency check and fix script.
+description: French typography (Québec and France) for UI copy, JSON message files and Markdown, covering non-breaking spaces before colons and ; ! ?, guillemets, number and price spacing, curly apostrophes. Use when writing, translating or reviewing French copy or fr.json and other i18n messages (next-intl, i18next), or adding a CI guard for French typography. Includes a check and fix script.
 ---
 
 # French typography
@@ -19,7 +19,7 @@ Spacing in French is part of the text, not decoration. A price that wraps as `1`
 | Word before a price | non-breaking space, so the amount never starts a line | U+00A0 |
 | Percent | non-breaking space between number and `%` (`3,5 %`); an extension, Molveau's original `frTypo` has no percent rule | U+00A0 |
 | Apostrophe | curly `’`, never `'`; `--fix` converts letter-apostrophe-letter only | U+2019 |
-| Em dash | never in copy; rewrite the sentence (colon, comma, full stop) | U+2014 |
+| Em dash | rewrite as a colon, comma or full stop (rule wording: the `writing` skill) | U+2014 |
 
 Left alone on purpose: URLs, times (`10:30`), ICU placeholders (`{count}`), phone numbers (`514 555-1234`, `1-514 555-1234`) and numbers that are not groups of three (`1 2345`, or a lone digit such as `2 pages`).
 
@@ -47,14 +47,14 @@ node <skill folder>/scripts/fr-typo.mjs --fix <files-or-dirs...>
 - Rules reported: `high-punct`, `thousands`, `currency`, `guillemets`, `em-dash`, `straight-apostrophe`.
 - `--fix` repairs spacing, percent and apostrophes (straight to `’` between two letters only; never in code, URLs, or next to ICU braces and quoting such as `'{'`). Em dashes need a manual edit, so they keep the exit code at 1.
 - Exit 0 clean (or fixed), 1 findings, 2 usage error. Skips `node_modules .git .next dist build .open-next coverage`.
-- Run it on French files only. English copy still needs the em dash rule, which `anti-slop` covers.
+- Run it on French files only. English copy follows the em dash rule of the `writing` skill.
 
 ## Add a guard test (next-intl, i18next)
 
 Make the rule a test, so a regression fails CI instead of reaching production.
 
 1. Pick the namespaces that have been cleaned (a list, so legacy keys do not block the first commit) and grow the list over time.
-2. Walk the French messages tree, collect every string leaf with its dotted path, and fail when `s !== frTypo(s)` or when the string contains `—`. Fail on an English string that contains `—` too.
+2. Walk the French messages tree, collect every string leaf with its dotted path, and fail when `s !== frTypo(s)` or when the string contains `—`. Walk the English tree too and fail on `—` there.
 3. Copy `frTypo` and `checkFr` from `scripts/fr-typo.mjs` into the project (the file is dependency-free ESM), or call the script with `--check --json` and assert an empty array. The script route is stricter than step 2: it also reports straight apostrophes and `%` spacing, which `frTypo` alone does not.
 4. A missing namespace is a failure, not a pass, so a rename cannot silently disable the guard.
 
@@ -65,5 +65,5 @@ Tests worth keeping: compliant text passes; an em dash fails in both locales; pl
 - Every `: ; ! ?` preceded by U+00A0, none by a plain space.
 - Prices as `1 900 $` with U+202F and U+00A0, and the word before them tied with U+00A0.
 - Quotes as `«`, nbsp, text, nbsp, `»`; curly apostrophes everywhere.
-- No `—` in copy; no phone number, time or placeholder altered by the fixer.
+- No phone number, time or placeholder altered by the fixer.
 - Re-running `--fix` changes nothing (idempotent).

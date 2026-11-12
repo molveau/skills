@@ -74,10 +74,9 @@ read what" in `SKILL.md`). Tags and credits are at the end.
   statement or quote is a `<p>` or `<blockquote>`, about 25 words, at most 36px desktop, 24px phone. [taste]
 - Avoid the mad-lib ("the AI-powered platform for..."), tricolons, "not just X, it's Y", "reimagined",
   "Welcome to", unasked questions, name-plus-colon, greeting headlines (title the page or period). [unslop] [taste]
-- No hype (`seamless`, `unlock`, `supercharge`, `elevate`, `effortless`, `magic`, `empower`, `streamline`,
-  `cutting-edge`, `all-in-one`, "AI-powered" on everything): plain words for the user's task. [unslop] [taste] [Molveau]
+- Hype and buzzword verbs: the `writing` skill owns the word list (its playbook, "Buzzword verbing"); the detector row is tell 17. [unslop] [taste] [Molveau]
 - No exclamation marks; headlines, labels, buttons and captions take no final period; sentence case. [unslop] [taste]
-- No em dashes in copy (two sentences, a colon, parentheses or a middle dot); a lone dash only as an empty cell. [Molveau]
+- Em dashes in copy: the `writing` skill owns the wording (its playbook, "Em dash madness"); the detector row is tell 16. [Molveau]
 - Short labels (`Search`, not `Search anything...`). Buttons name the action in 1-3 words; the primary
   keeps one name everywhere; "Get started" and "Learn more" are stock; one arrow at most. [unslop] [taste]
   A change names its baseline (`+12% vs last month`). [unslop]
@@ -233,6 +232,7 @@ read what" in `SKILL.md`). Tags and credits are at the end.
 
 ## 12. App screens
 
+- The app's home is the user's work, not a pitch: no marketing hero. [Molveau]
 - Inventory objects and fields with units, realistic magnitudes (new accounts stay small), who opens
   the screen and how often, the most frequent job, the product's own things. Render from a data file;
   totals computed from the rows as displayed and asserted; a fact shown twice is one variable. [taste]
@@ -398,6 +398,3 @@ read what" in `SKILL.md`). Tags and credits are at the end.
   sources below, some values reconciled ("Where sources disagree"). Original in `references/vendor/unslop/`.
 - `[taste]` taste-skill by Leonxlnx, https://github.com/Leonxlnx/taste-skill, MIT, in `references/vendor/taste/`.
 - `[Molveau]` the 20 tells (`references/tells.md`), the detector and this skill's house choices, MIT.
-
-Pointed to, not owned: product type, colour, contrast, spacing scale, radius math, icon stroke, UI motion
-(`ui`); curves, scroll, reduced motion (`motion`); forms, states, focus, targets, WCAG (`ux`).

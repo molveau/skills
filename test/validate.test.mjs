@@ -508,3 +508,140 @@ test('the Law 25 report ends with one line pointing at the fixed-price package',
     assert.match(readFileSync(join(SKILLS, f), 'utf8'), /closing line/, `${f} must keep the report's closing line`);
   }
 });
+
+// Domain skills point at one playbook section, not the whole 400-line file.
+const PLAYBOOK_SKILLS = ['ui', 'ux', 'motion', 'anti-slop'];
+
+test('domain skills point at playbook sections, not the whole file', () => {
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    assert.doesNotMatch(text, /Read `references\/playbook\.md` first/, `${name}: reads the whole playbook`);
+    assert.match(text, /Do this first/, `${name}: names the "Do this first" block`);
+  }
+});
+
+test('every playbook § cited in a SKILL.md exists', () => {
+  const headings = (name) => {
+    const text = readFileSync(join(SKILLS, name, 'references', 'playbook.md'), 'utf8');
+    return new Set([...text.matchAll(/^## (\d+)\./gm)].map((m) => m[1]));
+  };
+  // "playbook §2", "`ui` playbook §3, §5", "playbook §3 to §14"
+  // Also "`motion` §9": a skill name in backticks, then the section, with or without "playbook".
+  const cited = /(?:`(ui|ux|motion|anti-slop)` (?:playbook )?|(?:`([\w-]+)` )?playbook )((?:§\d+(?:, | and | to )?)+)/g;
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const refs = [];
+    for (const line of text.split('\n')) {
+      for (const m of line.matchAll(cited)) {
+        for (const n of m[3].matchAll(/§(\d+)/g)) refs.push([m[1] || m[2] || name, n[1]]);
+      }
+      // Rows of the "What to read" table carry a bare §N for this skill's own playbook.
+      if (line.startsWith('|')) {
+        for (const n of line.replace(cited, '').matchAll(/§(\d+)/g)) refs.push([name, n[1]]);
+      }
+    }
+    assert.ok(refs.length > 0, `${name}: cites no playbook section`);
+    for (const [owner, n] of refs) {
+      assert.ok(headings(owner).has(n), `${name}: cites ${owner} playbook §${n}, which has no "## ${n}." heading`);
+    }
+  }
+});
+
+// Rows that point at a vendor file with no matching playbook section (matched by exact first cell).
+const NO_SECTION_ROWS = new Set([
+  'Finished reference screens (images)', // pictures only, no playbook section
+  'The dated tells registry by wave', // upstream registry, the playbook has the 20 tells
+  "The study behind taste's numbers", // research background
+  'The philosophy and the invisible details of polish', // philosophy, not a rule
+]);
+
+test('every table row that cites a vendor file also names a playbook section', () => {
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const rows = text.split('\n').filter((l) => l.startsWith('| ') && l.includes('references/vendor/'));
+    assert.ok(rows.length > 0, `${name}: no table rows with vendor files`);
+    for (const row of rows) {
+      const first = row.split('|')[1].trim();
+      if (NO_SECTION_ROWS.has(first)) continue;
+      assert.match(row, /§\d+/, `${name}: row "${first}" names no playbook section`);
+    }
+  }
+});
+
+test('vendored skills keep credits in references/vendor/README.md', () => {
+  for (const name of ['ui', 'ux', 'motion', 'anti-slop']) {
+    const dir = join(SKILLS, name);
+    const readme = join(dir, 'references', 'vendor', 'README.md');
+    assert.ok(existsSync(readme), `${name}: references/vendor/README.md missing`);
+    assert.ok(readFileSync(readme, 'utf8').includes('Credits and licenses'), `${name}: README has no "Credits and licenses"`);
+    const body = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+    assert.ok(body.includes('references/vendor/README.md'), `${name}: SKILL.md does not cite references/vendor/README.md`);
+    assert.doesNotMatch(body, /^## (Credits|Notes on the vendored files)/m, `${name}: credits block still in SKILL.md`);
+    assert.ok(!body.includes('Keep this credit'), `${name}: "Keep this credit" still in SKILL.md`);
+  }
+});
+
+test('ui routes the start of a SaaS or a showcase site to saas and vitrine', () => {
+  const body = readFileSync(join(SKILLS, 'ui', 'SKILL.md'), 'utf8');
+  assert.ok(body.includes('`saas`'), 'ui does not name `saas`');
+  assert.ok(body.includes('`vitrine`'), 'ui does not name `vitrine`');
+});
+
+test("saas follows ui's mockup-first rule", () => {
+  const body = readFileSync(join(SKILLS, 'saas', 'SKILL.md'), 'utf8');
+  assert.ok(!body.includes('if the owner wants to judge it'), 'saas still makes the mockup optional');
+  assert.ok(body.includes('mockup-first'), 'saas does not cite mockup-first');
+});
+
+test('vitrine points to loi-25-website instead of listing its obligations', () => {
+  const body = readFileSync(join(SKILLS, 'vitrine', 'SKILL.md'), 'utf8');
+  assert.ok(!body.includes('person in charge'), 'vitrine still lists Law 25 obligations');
+  assert.ok(body.includes('loi-25-website'), 'vitrine does not name loi-25-website');
+  assert.ok(body.includes('A contact form is enough to trigger it. Run `loi-25-website`'), 'vitrine lost its Law 25 pointer');
+  assert.match(body, /^## Done when$/m, 'vitrine has no Done when section');
+});
+
+test('design-grill is user-invoked', () => {
+  const { data } = parseFrontmatter(readFileSync(join(SKILLS, 'design-grill', 'SKILL.md'), 'utf8'));
+  assert.equal(data['disable-model-invocation'], 'true', 'design-grill must set disable-model-invocation: true');
+  const desc = String(data.description ?? '');
+  assert.ok(desc.length >= 40, 'description too short');
+  assert.ok(!/use when/i.test(desc), 'description is a trigger list, not a human summary');
+});
+
+test('skills suggest /design-grill instead of running it', () => {
+  for (const d of ['ui', 'anti-slop', 'workflow']) {
+    const body = readFileSync(join(SKILLS, d, 'SKILL.md'), 'utf8');
+    assert.ok(body.includes('/design-grill'), `${d} does not suggest /design-grill`);
+  }
+});
+
+test("workflow reads each step's delivery-loop section", () => {
+  const body = readFileSync(join(SKILLS, 'workflow', 'SKILL.md'), 'utf8');
+  assert.ok(body.includes('read its section in `references/delivery-loop.md`'), 'workflow lacks the per-step pointer');
+});
+
+// Sections a SKILL.md deliberately leaves unrouted: "<skill>:<n>" -> reason.
+const UNROUTED_SECTIONS = new Map([
+  ['anti-slop:16', 'a closing "Do not" list, read as part of the whole playbook, not for a task'],
+]);
+
+test('every numbered playbook section is routed from its SKILL.md', () => {
+  const cited = /(?:`(ui|ux|motion|anti-slop)` (?:playbook )?|(?:`([\w-]+)` )?playbook )((?:§\d+(?:, | and | to )?)+)/g;
+  for (const name of PLAYBOOK_SKILLS) {
+    const heads = [...readFileSync(join(SKILLS, name, 'references', 'playbook.md'), 'utf8').matchAll(/^## (\d+)\./gm)].map((m) => Number(m[1]));
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const own = new Set();
+    const addList = (list) => {
+      const nums = [...list.matchAll(/§(\d+)/g)].map((m) => Number(m[1]));
+      nums.forEach((n) => own.add(n));
+      for (const r of list.matchAll(/§(\d+) to §(\d+)/g)) for (let i = Number(r[1]); i <= Number(r[2]); i++) own.add(i);
+    };
+    for (const line of text.split('\n')) {
+      for (const m of line.matchAll(cited)) if ((m[1] || m[2] || name) === name) addList(m[3]);
+      if (line.startsWith('|')) addList(line.replace(cited, ''));
+    }
+    const missing = heads.filter((n) => !own.has(n) && !UNROUTED_SECTIONS.has(`${name}:${n}`));
+    assert.deepEqual(missing, [], `${name}: playbook sections cited nowhere in SKILL.md: ${missing.map((n) => '§' + n).join(', ')}`);
+  }
+});
