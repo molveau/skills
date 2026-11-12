@@ -28,7 +28,7 @@ verification. Before each step, read its section in `references/delivery-loop.md
    For anything user-facing, write the user flow and the user stories first: good UX is planned, not
    patched.
 4. **Implement test-first** (§4). Red, then green, then refactor, for every feature and every bugfix. One fresh
-   implementer per bounded task; a reviewer per task (spec compliance first, then quality).
+   implementer per bounded task; a reviewer per task (spec compliance first, then quality). For a bug, start with §4 Debugging (reproduce, root cause, regression test).
 5. **Review** (§5). After substantive work, run a code review on the whole change. Resolve every confident,
    material finding, then review again. UI is reviewed by the decision owner on a mockup, not by an
    automated visual pass.

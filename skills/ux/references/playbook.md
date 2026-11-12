@@ -9,8 +9,8 @@
 5. **Check**: the §17 grep list, a keyboard-only and a screen-reader walk, an automated audit; unseen is `Not verified`.
 
 One doctrine for how an interface reads, holds up and works for everyone, from every source in this skill;
-vendor files only for depth or worked examples (index: "What to read for which task" in `SKILL.md`). Tags,
-credits and what this file points to are at the end.
+vendor files only for depth or worked examples (index: "What to read for which task" in `SKILL.md`). Tags
+and credits are at the end.
 
 ## 1. Before writing or fixing
 
@@ -31,7 +31,7 @@ credits and what this file points to are at the end.
 
 - Plain words that name the user's task, chosen for a tired reader on the first pass; delete every word
   that does no work. No idioms, colloquialisms or humor that will not translate, no greetings, no jargon
-  the user did not choose. Hype and stock phrases: `anti-slop`. [Molveau] [Jakub] [Impeccable]
+  the user did not choose. Hype: `writing` (playbook, "Buzzword verbing"); stock CTAs: `anti-slop` §4. [Molveau] [Jakub] [Impeccable]
 - One voice, tone by stakes: success, onboarding and empty states warm; routine actions and settings
   neutral and minimal; errors and destructive confirmations calm and plain; data loss, privacy, payment
   and security serious and explicit, warm but never joking. [Jakub] [Impeccable]

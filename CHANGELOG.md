@@ -12,6 +12,7 @@ All notable changes to this project are written here. The format follows [Keep a
 - Descriptions are shorter, with one trigger per kind of request.
 - `design-grill` runs only when you type `/design-grill`. Other skills suggest it instead of running it.
 - `workflow` reads the section of `references/delivery-loop.md` for the step it is on.
+- Every numbered playbook section of `ui`, `ux`, `motion` and `anti-slop` is routed from its `SKILL.md`, and a test checks it.
 
 ### Fixed
 

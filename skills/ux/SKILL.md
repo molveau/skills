@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Writes and reviews interface copy and accessibility. Use when writing button labels, error messages, empty states or onboarding copy, when improving an onboarding or signup flow, when handling errors, edge cases, long text or i18n, or when checking accessibility (keyboard, focus, ARIA, screen readers, forms, touch targets, WCAG).
+description: Writes and reviews interface copy and accessibility. Use when writing button labels, error messages, empty states or onboarding copy, when improving an onboarding, signup or any other flow, when handling errors, edge cases, long text or i18n, or when checking accessibility (keyboard, focus, ARIA, screen readers, forms, touch targets, WCAG).
 ---
 
 # UX
@@ -11,7 +11,7 @@ fixing-accessibility and Molveau's always-on rules into one playbook.
 
 ## Start here
 
-Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the section(s) its row in the table below names. Stop there. Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -36,18 +36,19 @@ All paths are relative to this skill folder.
 | Task | Read (§ = this skill's playbook) |
 |---|---|
 | Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
-| Write or review any interface copy: labels, errors, empty states, confirmations | §2, §3, §4; `references/vendor/jakub/better-writing.md` |
+| Write or review any interface copy: labels, errors, confirmations | §1, §2, §3, §4, §5; `references/vendor/jakub/better-writing.md` |
 | Rewrite unclear UX copy and instructions | §2; `references/vendor/impeccable/clarify.md` |
-| Onboarding, first run, empty states, teaching a feature | §7; `references/vendor/impeccable/onboard.md` |
+| Onboarding, first run, teaching a feature | §6, §7; `references/vendor/impeccable/onboard.md` |
 | Error handling, edge cases, i18n, text overflow, production resilience | §4, §9, §10; `references/vendor/impeccable/harden.md` |
-| Accessibility engineering: focus, keyboard, ARIA, forms and validation, screen readers | §8, §11, §12, §13; `references/vendor/jakub/better-accessibility.md` |
+| Accessibility engineering: focus, keyboard, targets, ARIA, forms and validation, screen readers | §8, §11, §12, §13, §14; `references/vendor/jakub/better-accessibility.md` |
+| Timed UI, carousels, auto-advancing content, media | §16 |
 | Audit and fix HTML accessibility issues against WCAG | §15, §17; `references/vendor/a11y/fixing-accessibility.md` |
 | Layout, type, color, polish | the `ui` skill |
 | Animation, reduced motion | the `motion` skill |
 | A UI that looks generic or vibe-coded | the `anti-slop` skill |
 | French copy, Québec privacy for forms | the `french-typography` and `loi-25-website` skills |
 
-For a full pass on an existing screen, follow playbook §17: copy, then states and edge cases, then
-accessibility, then a keyboard-only and a screen-reader walk.
+For a full pass on an existing screen, follow playbook §17 and §18: copy, then states and edge cases, then
+accessibility, then a keyboard-only and a screen-reader walk. Verify with §18 before calling it done.
 
 Vendor files are unmodified upstream copies: take the guidance, skip pointers to missing tools. Credits and licences: `references/vendor/README.md`. Where Impeccable hands off to `/impeccable polish`, use the `ui` skill's polish pass.

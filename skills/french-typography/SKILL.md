@@ -1,6 +1,6 @@
 ---
 name: french-typography
-description: French typography (Québec and France) for UI copy, JSON message files and Markdown, covering non-breaking spaces before colons and ; ! ?, guillemets, number and price spacing, curly apostrophes. Use when writing, translating or reviewing French copy or fr.json messages, or adding a CI guard for French typography. Includes a check and fix script.
+description: French typography (Québec and France) for UI copy, JSON message files and Markdown, covering non-breaking spaces before colons and ; ! ?, guillemets, number and price spacing, curly apostrophes. Use when writing, translating or reviewing French copy or fr.json and other i18n messages (next-intl, i18next), or adding a CI guard for French typography. Includes a check and fix script.
 ---
 
 # French typography
@@ -54,7 +54,7 @@ node <skill folder>/scripts/fr-typo.mjs --fix <files-or-dirs...>
 Make the rule a test, so a regression fails CI instead of reaching production.
 
 1. Pick the namespaces that have been cleaned (a list, so legacy keys do not block the first commit) and grow the list over time.
-2. Walk the French messages tree, collect every string leaf with its dotted path, and fail when `s !== frTypo(s)` or when the string contains `—`, in both locales.
+2. Walk the French messages tree, collect every string leaf with its dotted path, and fail when `s !== frTypo(s)` or when the string contains `—`. Walk the English tree too and fail on `—` there.
 3. Copy `frTypo` and `checkFr` from `scripts/fr-typo.mjs` into the project (the file is dependency-free ESM), or call the script with `--check --json` and assert an empty array. The script route is stricter than step 2: it also reports straight apostrophes and `%` spacing, which `frTypo` alone does not.
 4. A missing namespace is a failure, not a pass, so a rename cannot silently disable the guard.
 

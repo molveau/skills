@@ -1,6 +1,6 @@
 ---
 name: anti-slop
-description: Removes the vibe-coded, AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks generic or generated, when asked to unslop a UI, and before shipping any UI (the 20 tells). Includes a detector script.
+description: Removes the vibe-coded, AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks generic or generated, when asked to unslop or de-AI a UI (purple gradients, gradient text, emoji labels, glow), and before shipping any UI (the 20 tells). Includes a detector script.
 ---
 
 # Anti-slop
@@ -13,7 +13,7 @@ Vendor files are unmodified upstream copies: take the guidance, skip pointers to
 
 ## Start here
 
-Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the section(s) its row in the table below names. Stop there. Open vendor files only for depth or worked examples.
 
 Overlap: this is the AI-look pass. Review depth (light, deep, AI-look) is set out in the `ui` skill's Neighbors; for a deep audit, suggest `/design-grill` to the user (costly, their call).
 

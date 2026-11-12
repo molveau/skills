@@ -1,6 +1,6 @@
 ---
 name: motion
-description: Designs, builds and reviews web animation. Use when animating anything (transitions, enter and exit, gestures, springs, scroll-linked motion, GSAP, Lottie), when an animation feels janky, when auditing animation code or finding places that should (or should not) animate, when naming an effect, or when building an animated product demo.
+description: Designs, builds and reviews web animation. Use when animating anything (transitions, enter and exit, gestures, springs, scroll-linked motion, reduced motion, GSAP, Lottie), when an animation feels janky, when auditing animation code or finding places that should (or should not) animate, when naming an effect, or when building an animated product demo.
 ---
 
 # Motion
@@ -10,7 +10,7 @@ animation, LottieFiles' motion-design skill, stageshow and Molveau's guardrails 
 
 ## Start here
 
-Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the section(s) its row in the table below names. Stop there. Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -35,6 +35,7 @@ All paths are relative to this skill folder.
 | Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | Code patterns for the guardrails (tokens, reduced motion, pausing, canvas) | §4, §10, §11; `references/guardrails.md` |
 | Build an animation from scratch, with recipes | §1 to §5; `references/vendor/emil/animate.md`, `references/vendor/emil/animate/RECIPES.md` (its 500ms drawer and 400ms toast exceed the playbook's 300ms overlay cap in UI: `ui` playbook §10 wins) |
+| Enter, exit, layout and shared-element transitions | §8; `references/vendor/emil/animate.md` |
 | Review animation code in a diff | §14; `references/vendor/emil/review-animations.md`, values in `references/vendor/emil/review-animations/STANDARDS.md` |
 | Audit a whole codebase's motion, get a prioritized plan | §14; `references/vendor/emil/improve-animations.md`, `references/vendor/emil/improve-animations/AUDIT.md` and `PLAN-TEMPLATE.md` |
 | Find places that should animate (and reject the rest) | §1; `references/vendor/emil/find-animation-opportunities.md` |

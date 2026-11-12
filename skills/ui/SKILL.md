@@ -1,6 +1,6 @@
 ---
 name: ui
-description: Builds, restyles and reviews user interfaces with taste. Use when building, restyling or improving a UI, page, screen or component (a hero, navbar, cards; layout, spacing, type, color, dark mode, tokens, responsive), when asked to make it pop, when something feels off and needs polish, for a light design review or UI roast, or when writing prompts that get production-grade UI out of an AI tool.
+description: Builds, restyles and reviews user interfaces with taste. Use when building, restyling, redesigning or improving a UI, page, screen or component (a hero, navbar, cards; layout, spacing, type, color, dark mode, tokens, responsive, hover, focus and press states), when asked to make it pop, when something feels off and needs polish, for a light design review or UI roast, or when writing prompts that get production-grade UI out of an AI tool.
 ---
 
 # UI
@@ -11,7 +11,7 @@ one playbook.
 
 ## Start here
 
-Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the section(s) its row in the table below names. Stop there. Open vendor files only for depth or worked examples.
 
 ## Direction gate
 

@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Removes the AI-written sound from prose, in English and French (README, docs, copy, email, UI strings). Use when a text sounds generated, generic or AI-written, or on "relis ce texte" or "ça sonne IA". Includes a checker for 11 tells and a rewrite method.
+description: Removes the AI-written sound from prose, in English and French (README, docs, copy, email, UI strings). Use when a text sounds generated, generic or AI-written, when asked to de-AI or humanize it, or on "relis ce texte" or "ça sonne IA". Includes a checker for 11 tells and a rewrite method.
 ---
 
 # Writing

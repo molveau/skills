@@ -620,3 +620,28 @@ test("workflow reads each step's delivery-loop section", () => {
   const body = readFileSync(join(SKILLS, 'workflow', 'SKILL.md'), 'utf8');
   assert.ok(body.includes('read its section in `references/delivery-loop.md`'), 'workflow lacks the per-step pointer');
 });
+
+// Sections a SKILL.md deliberately leaves unrouted: "<skill>:<n>" -> reason.
+const UNROUTED_SECTIONS = new Map([
+  ['anti-slop:16', 'a closing "Do not" list, read as part of the whole playbook, not for a task'],
+]);
+
+test('every numbered playbook section is routed from its SKILL.md', () => {
+  const cited = /(?:`(ui|ux|motion|anti-slop)` (?:playbook )?|(?:`([\w-]+)` )?playbook )((?:§\d+(?:, | and | to )?)+)/g;
+  for (const name of PLAYBOOK_SKILLS) {
+    const heads = [...readFileSync(join(SKILLS, name, 'references', 'playbook.md'), 'utf8').matchAll(/^## (\d+)\./gm)].map((m) => Number(m[1]));
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const own = new Set();
+    const addList = (list) => {
+      const nums = [...list.matchAll(/§(\d+)/g)].map((m) => Number(m[1]));
+      nums.forEach((n) => own.add(n));
+      for (const r of list.matchAll(/§(\d+) to §(\d+)/g)) for (let i = Number(r[1]); i <= Number(r[2]); i++) own.add(i);
+    };
+    for (const line of text.split('\n')) {
+      for (const m of line.matchAll(cited)) if ((m[1] || m[2] || name) === name) addList(m[3]);
+      if (line.startsWith('|')) addList(line.replace(cited, ''));
+    }
+    const missing = heads.filter((n) => !own.has(n) && !UNROUTED_SECTIONS.has(`${name}:${n}`));
+    assert.deepEqual(missing, [], `${name}: playbook sections cited nowhere in SKILL.md: ${missing.map((n) => '§' + n).join(', ')}`);
+  }
+});

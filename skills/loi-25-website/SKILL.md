@@ -1,6 +1,6 @@
 ---
 name: loi-25-website
-description: Law 25 (Loi 25) compliance for Québec websites, with a pass, fix or n.a. report per obligation. Use when a site collects personal information in Québec, when building a contact form, privacy policy, cookie or analytics setup, or when asked if a site is Law 25 compliant, needs a cookie banner or must be hosted in Canada. Not legal advice.
+description: Law 25 (Loi 25) compliance for Québec websites, with a pass, fix or n.a. report per obligation. Use when a site collects personal information in Québec, when building or reviewing a contact form, privacy policy, cookie, analytics or third-party tool setup, or when asked if a site is Law 25 compliant, needs a cookie banner or must be hosted in Canada. Not legal advice.
 ---
 
 # Law 25 for a website
