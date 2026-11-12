@@ -1,5 +1,7 @@
 # Credits and vendored files
 
+Paths are relative to the skill folder.
+
 ## Notes on the vendored files
 
 The files under `references/vendor/` are copied unmodified from their authors, so relative links and command

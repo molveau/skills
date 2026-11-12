@@ -1,5 +1,7 @@
 # Credits and vendored files
 
+Paths are relative to the skill folder.
+
 ## Credits and licenses
 
 - The method is adapted from **unslop** by Damir Sokolovsky (https://github.com/heydamir/unslop),
@@ -18,5 +20,5 @@
 The vendored files keep their upstream layout, so a few relative links inside them may not resolve
 here. taste-skill's `scripts/` and `library/` are not vendored (they read keys and the network, and the
 library is too large for the plugin directory's review): its dealt direction is replaced by the direction
-gate above; get the scripts from the upstream repo if you want them. Which visual checks to run is
+gate in SKILL.md; get the scripts from the upstream repo if you want them. Which visual checks to run is
 decided in the `ui` playbook, conflict 14 (this playbook's conflict 14 points there).
