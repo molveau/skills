@@ -21,7 +21,7 @@ A dashboard vibecoded by Claude Sonnet, unslopped by Claude Opus with the `anti-
 | `saas` | Playbook for a SaaS or app UI: what it needs, and which skills to apply in what order | Molveau only | none |
 | `vitrine` | Playbook for a local business showcase site | Molveau only | none |
 | `writing` | Removes the AI-written sound from English and French prose (README, docs, copy, email): 11 tells, a checker and a rewrite method | Molveau only | `check-writing` |
-| `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented | Molveau only | `merge-findings` and three helpers |
+| `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented. Runs only when you type `/design-grill` | Molveau only | `merge-findings` and three helpers |
 | `design-inspiration-index` | Routes a need (hero, navbar, CTA, motion, icons, brand) to the best public gallery or registry | Molveau only | none |
 | `workflow` | How to deliver with a coding agent: clarify, plan, test first, one implementer and one reviewer per task, verify, git hygiene, status and result reports; routes each step to the skills above | Molveau only | none |
 

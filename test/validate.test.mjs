@@ -600,3 +600,23 @@ test('vitrine points to loi-25-website instead of listing its obligations', () =
   assert.ok(body.includes('A contact form is enough to trigger it. Run `loi-25-website`'), 'vitrine lost its Law 25 pointer');
   assert.match(body, /^## Done when$/m, 'vitrine has no Done when section');
 });
+
+test('design-grill is user-invoked', () => {
+  const { data } = parseFrontmatter(readFileSync(join(SKILLS, 'design-grill', 'SKILL.md'), 'utf8'));
+  assert.equal(data['disable-model-invocation'], 'true', 'design-grill must set disable-model-invocation: true');
+  const desc = String(data.description ?? '');
+  assert.ok(desc.length >= 40, 'description too short');
+  assert.ok(!/use when/i.test(desc), 'description is a trigger list, not a human summary');
+});
+
+test('skills suggest /design-grill instead of running it', () => {
+  for (const d of ['ui', 'anti-slop', 'workflow']) {
+    const body = readFileSync(join(SKILLS, d, 'SKILL.md'), 'utf8');
+    assert.ok(body.includes('/design-grill'), `${d} does not suggest /design-grill`);
+  }
+});
+
+test("workflow reads each step's delivery-loop section", () => {
+  const body = readFileSync(join(SKILLS, 'workflow', 'SKILL.md'), 'utf8');
+  assert.ok(body.includes('read its section in `references/delivery-loop.md`'), 'workflow lacks the per-step pointer');
+});

@@ -57,8 +57,8 @@ real references.
 
 Neighbors: the `anti-slop` skill owns the vibe-coded tells and de-AI passes; `motion` owns animation beyond
 UI feedback; `ux` owns copy, forms, focus, targets, accessibility depth, errors, edge cases and onboarding.
-Depth of review: `design-grill` is the deep audit (seven lenses, ranked report), the critique rows below are the
-lighter single pass, and `anti-slop` is the AI-look pass.
+Depth of review: the critique rows below are the lighter single pass, and `anti-slop` is the AI-look pass. For a
+deep multi-lens audit, suggest `/design-grill` to the user; it is costly, so they decide.
 
 ## What to read for which task
 
@@ -75,7 +75,7 @@ All paths are relative to this skill folder.
 | Final polish: radii, shadows, optical alignment, icon states | §7, §8; `references/vendor/feel/make-interfaces-feel-better.md` and `references/vendor/impeccable/polish.md`; `references/vendor/jakub/better-ui.md` for exact values |
 | Whole-screen ranked review (accessibility and writing live in the `ux` skill) | §12; `references/vendor/jakub/better-interface.md`, the umbrella |
 | Review a branch or PR for UI regressions | §12; `references/vendor/jakub/interface-review.md` |
-| Full multi-lens design audit of a file, component or route (heavy: several agents) | the `design-grill` skill |
+| Full multi-lens design audit of a file, component or route (heavy: several agents) | suggest `/design-grill` to the user |
 | Visual references or inspiration for a hero, CTA, navbar, motion, icons | the `design-inspiration-index` skill |
 | Critique or design review of a screen | §12; `references/vendor/impeccable/critique.md` (heuristics, cognitive load, personas); quick teardown: prompt 4 in `references/prompts.md` |
 | Audit: performance, theming, responsive (for accessibility, use the `ux` skill) | §14, §6, §11; `references/vendor/impeccable/audit.md`, `references/vendor/impeccable/optimize.md` |

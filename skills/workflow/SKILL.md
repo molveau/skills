@@ -18,25 +18,25 @@ deploy). On a solo project that is you; on a team it is whoever the team names.
 Every non-trivial task goes through these steps in order. A one-line fix can skip planning, never
 verification.
 
-1. **Inspect.** Read the repository and the existing implementation before proposing anything: the code
+1. **Inspect** (§1). Read the repository and the existing implementation before proposing anything: the code
    around the change, its tests, the project's agent notes (`AGENTS.md`, `CLAUDE.md` or equivalent),
    `PRODUCT.md`, `DESIGN.md`, `CONTEXT.md` and ADRs when they exist.
-2. **Clarify.** Ask until the outcome, the workflow, the rules, the scope, the states and the success
+2. **Clarify** (§2). Ask until the outcome, the workflow, the rules, the scope, the states and the success
    criteria are clear. Do not plan or implement on a guess. One question at a time, with your recommended
    answer, works best.
-3. **Plan.** Break the work into bite-sized tasks, each with its files, its test and its done condition.
+3. **Plan** (§3). Break the work into bite-sized tasks, each with its files, its test and its done condition.
    For anything user-facing, write the user flow and the user stories first: good UX is planned, not
    patched.
-4. **Implement test-first.** Red, then green, then refactor, for every feature and every bugfix. One fresh
+4. **Implement test-first** (§4). Red, then green, then refactor, for every feature and every bugfix. One fresh
    implementer per bounded task; a reviewer per task (spec compliance first, then quality).
-5. **Review.** After substantive work, run a code review on the whole change. Resolve every confident,
+5. **Review** (§5). After substantive work, run a code review on the whole change. Resolve every confident,
    material finding, then review again. UI is reviewed by the decision owner on a mockup, not by an
    automated visual pass.
-6. **Verify.** Run the checks and read their output before saying anything works. Evidence before claims.
-7. **Report.** Say what is done and what remains, in the RESULT format, and separate implemented, tested,
+6. **Verify** (§6). Run the checks and read their output before saying anything works. Evidence before claims.
+7. **Report** (§7). Say what is done and what remains, in the RESULT format, and separate implemented, tested,
    reviewed, committed, pushed, merged and deployed.
 
-Details, rules and the reasons behind them: `references/delivery-loop.md`.
+Before each step, read its section in `references/delivery-loop.md` (§N matches the step number).
 
 ## Always on
 
@@ -62,7 +62,6 @@ All paths are relative to this skill folder.
 
 | Task | Read |
 |---|---|
-| Clarify a request, plan, TDD, implementer and reviewer per task, debugging, code review, verification | `references/delivery-loop.md` |
 | Anything with a UI: inspect first, component source order, mockup-first, checks before "done" | `references/ui-work.md` |
 | Branches, staging, commits, what needs authorisation | `references/git.md` |
 | STATUS and RESULT blocks, the delivery states, drafting emails and messages | `references/communication.md` |
@@ -77,7 +76,7 @@ This skill decides when and in what order; these skills decide how. Load the one
 | Interface copy, errors, empty states, edge cases, accessibility | `ux` |
 | Any animation or motion | `motion` |
 | Before calling any UI done: the 20 tells and the detector | `anti-slop` |
-| A deep, multi-lens design audit of a file, component or route | `design-grill` |
+| A deep, multi-lens design audit of a file, component or route | suggest `/design-grill` to the user (costly, their call) |
 | Visual references before designing | `design-inspiration-index` |
 | Prose, articles, docs, README and email copy, in English or French | `writing` |
 | French copy (Québec or France) | `french-typography` |

@@ -15,7 +15,7 @@ Vendor files are unmodified upstream copies: take the guidance, skip pointers to
 
 Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
-Overlap: this is the AI-look pass. Review depth (light, deep, AI-look) is set out in the `ui` skill's Neighbors; `design-grill` is the deep audit.
+Overlap: this is the AI-look pass. Review depth (light, deep, AI-look) is set out in the `ui` skill's Neighbors; for a deep audit, suggest `/design-grill` to the user (costly, their call).
 
 ## Direction gate
 
