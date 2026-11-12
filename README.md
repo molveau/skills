@@ -1,6 +1,6 @@
 # Molveau skills
 
-Eleven agent skills from [Molveau Studio](https://www.molveau.ca/?utm_source=github&utm_medium=readme&utm_campaign=skills), a web studio in Montréal. Eight of them cover a domain (anti-slop, UI, motion, UX, French typography, Law 25, SaaS, showcase sites) and route to the best material on it; two more are a deep design audit and an inspiration index; the last one is the delivery workflow that ties them together. The domain material comes from other authors' open skills, kept in this repo as pinned, unedited copies and checked against upstream every week. You install one skill instead of a dozen, and the work is split by task, so the agent opens the right file instead of loading everything.
+Twelve agent skills from [Molveau Studio](https://www.molveau.ca/?utm_source=github&utm_medium=readme&utm_campaign=skills), a web studio in Montréal. Nine of them cover a domain (anti-slop, UI, motion, UX, French typography, Law 25, SaaS, showcase sites, writing) and route to the best material on it; two more are a deep design audit and an inspiration index; the last one is the delivery workflow that ties them together. The domain material comes from other authors' open skills, kept in this repo as pinned, unedited copies and checked against upstream every week. You install one skill instead of a dozen, and the work is split by task, so the agent opens the right file instead of loading everything.
 
 ## See it work
 
@@ -20,6 +20,7 @@ A dashboard vibecoded by Claude Sonnet, unslopped by Claude Opus with the `anti-
 | `loi-25-website` | Audits a website against Québec's Law 25; general information, not legal advice | Molveau only | none |
 | `saas` | Playbook for a SaaS or app UI: what it needs, and which skills to apply in what order | Molveau only | none |
 | `vitrine` | Playbook for a local business showcase site | Molveau only | none |
+| `writing` | Removes the AI-written sound from English and French prose (README, docs, copy, email): 11 tells, a checker and a rewrite method | Molveau only | `check-writing` |
 | `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented | Molveau only | `merge-findings` and three helpers |
 | `design-inspiration-index` | Routes a need (hero, navbar, CTA, motion, icons, brand) to the best public gallery or registry | Molveau only | none |
 | `workflow` | How to deliver with a coding agent: clarify, plan, test first, one implementer and one reviewer per task, verify, git hygiene, status and result reports; routes each step to the skills above | Molveau only | none |
@@ -28,11 +29,11 @@ How each skill compares with the other open skills on its subject, and when to i
 
 ## Install
 
-All eleven, with the [skills CLI](https://github.com/vercel-labs/skills) (Claude Code, Codex, Cursor and other agents that read `SKILL.md`):
+All twelve, with the [skills CLI](https://github.com/vercel-labs/skills) (Claude Code, Codex, Cursor and other agents that read `SKILL.md`):
 
 ```sh
-npx skills add molveau/skills                  # all eleven, in this project
-npx skills add molveau/skills -g               # all eleven, for every project
+npx skills add molveau/skills                  # all twelve, in this project
+npx skills add molveau/skills -g               # all twelve, for every project
 npx skills add molveau/skills -s anti-slop     # just one
 ```
 
@@ -40,11 +41,11 @@ Or one bundle:
 
 | Bundle | Skills CLI |
 |---|---|
-| Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index` |
+| Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index -s writing` |
 | Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` |
 | Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` |
 
-In Claude Code, all eleven as one plugin, with the commands, agents, MCP server and hook described below:
+In Claude Code, all twelve as one plugin, with the commands, agents, MCP server and hook described below:
 
 ```
 /plugin marketplace add molveau/skills
@@ -57,19 +58,21 @@ The scripts have no dependencies and run on Node 20 or newer. After installing, 
 node <skill folder>/scripts/detect-tells.mjs src/
 node <skill folder>/scripts/check-motion.mjs src/
 node <skill folder>/scripts/fr-typo.mjs --check messages/fr.json
+node <skill folder>/scripts/check-writing.mjs README.md docs/
 ```
 
 Each `SKILL.md` documents the options.
 
 ## MCP server
 
-The same checks, plus the playbooks, as five tools for any MCP client. No dependencies and read-only: it reads the skills' own files and, when asked, files inside the folder it runs in, and it makes no network request.
+The same checks, plus the playbooks, as six tools for any MCP client. No dependencies and read-only: it reads the skills' own files and, when asked, files inside the folder it runs in, and it makes no network request.
 
 | Tool | What it does |
 |---|---|
 | `detect_tells` | Scans a snippet, or files and folders inside the working directory, for the anti-slop tells; returns `path:line  #N label  match` lines, a summary and the count |
 | `check_contrast` | WCAG contrast of a text colour on a background (hex, `rgb()`, `oklch()`, `oklab()`, `color(srgb)`), with the AA and AAA thresholds for that size and weight |
 | `fr_typo` | Checks French spacing and punctuation in a text, or returns it fixed with the number of changes |
+| `check_writing` | Flags AI-sounding prose in English or French (stock openers, filler, hedging, inflated words), with line, column and rule |
 | `check_motion` | Runs the motion guardrails on a snippet |
 | `get_playbook` | A skill's direction gate or "Do this first" block, or the playbook sections that match a query |
 

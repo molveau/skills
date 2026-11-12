@@ -48,7 +48,7 @@ test('the stdio server goes through handleRpc', () => {
 test('every tool carries a title and the four boolean hints, read-only and closed-world, in both modes', () => {
   for (const options of [{}, remote]) {
     const tools = listTools(options);
-    assert.equal(tools.length, 5);
+    assert.equal(tools.length, 6);
     for (const t of tools) {
       const a = t.annotations;
       assert.equal(typeof a?.title, 'string', `${t.name}: annotations.title`);
@@ -97,6 +97,7 @@ test('remote inputs over 200,000 characters are a tool error, not a crash; stdio
     ['check_contrast', { foreground: big, background: '#fff' }],
     ['fr_typo', { text: big }],
     ['check_motion', { code: big }],
+    ['check_writing', { text: big }],
     ['get_playbook', { skill: 'ui', query: big }],
   ]) {
     const r = call(name, args, remote);
@@ -117,6 +118,7 @@ function remoteOutputs() {
   outs.push(call('check_contrast', { foreground: '#777', background: '#fff' }, remote));
   outs.push(call('fr_typo', { text: "Prix : 1 900 $ l'an", fix: true }, remote));
   outs.push(call('check_motion', { code: '.a { transition: all 200ms; }', filename: 'a.css' }, remote));
+  outs.push(call('check_writing', { text: 'In conclusion, it works.' }, remote));
   for (const skill of SKILLS) {
     const first = call('get_playbook', { skill }, remote);
     outs.push(first);
@@ -125,6 +127,20 @@ function remoteOutputs() {
   }
   return outs;
 }
+
+test('check_writing flags AI-sounding prose, the same in both modes, and refuses bad input', () => {
+  for (const options of [{}, remote]) {
+    const r = call('check_writing', { text: 'In conclusion, it works.' }, options).result;
+    assert.ok(!r.isError);
+    assert.equal(r.structuredContent.count, 1);
+    assert.equal(r.structuredContent.lang, 'en');
+    assert.equal(r.structuredContent.findings[0].rule, 'cliche-conclusion');
+    assert.equal(r.structuredContent.findings[0].line, 1);
+    assert.match(textOf(r), /1 finding\(s\) \(en\)/);
+    assert.equal(call('check_writing', { text: '' }, options).result.structuredContent.count, 0);
+    assert.equal(call('check_writing', { text: 'x', lang: 'de' }, options).result.isError, true);
+  }
+});
 
 test('no remote output promotes the studio: no molveau.ca and no Molveau Studio line', () => {
   const outs = remoteOutputs();

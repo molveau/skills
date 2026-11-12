@@ -126,7 +126,7 @@ is installed alone. Exit 0 clean, 1 findings, 2 usage. It skips `node_modules .g
 the end of `references/tells.md`; treat a hit as "look here".
 
 The same checks run without a shell through the plugin's MCP server: `detect_tells` (a snippet or project
-paths), `check_contrast` (any colour pair the screen ships), `fr_typo`, `check_motion`, and `get_playbook`
+paths), `check_contrast` (any colour pair the screen ships), `fr_typo`, `check_motion`, `check_writing`, and `get_playbook`
 to read this playbook by section. `scripts/hook-check.mjs` is a Claude Code PostToolUse hook that runs this
 detector on each edited UI file and hands the findings back to the agent. The plugin registers it, on by
 default; "Check edited files" in `/config` turns it off. With the skills CLI, register it in the project's

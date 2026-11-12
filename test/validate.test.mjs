@@ -186,7 +186,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 // and refuses skills declared in a marketplace entry, and a root plugin.json conflicts with inline bundles.
 // Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
-  design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index'],
+  design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
   quebec: ['french-typography', 'loi-25-website'],
   playbooks: ['saas', 'vitrine', 'workflow'],
 };
@@ -355,7 +355,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
     assert.ok(readme.includes(must), `README lacks ${must}`);
   }
   assert.ok(!readme.includes('## Opt-in hook'), 'the hook is on by default in the plugin now');
-  for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
+  for (const tool of ['detect_tells', 'check_contrast', 'fr_typo', 'check_motion', 'check_writing', 'get_playbook']) assert.ok(readme.includes(`\`${tool}\``), `README lacks ${tool}`);
   const skill = readFileSync(join(SKILLS, 'anti-slop', 'SKILL.md'), 'utf8');
   assert.ok(skill.includes('detect_tells') && skill.includes('scripts/hook-check.mjs'), 'anti-slop SKILL.md should point to the MCP tools and the hook');
   assert.ok(!skill.includes('opt-in Claude Code'), 'anti-slop SKILL.md still calls the hook opt-in');
@@ -363,7 +363,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
 
 test('skillDirs leaves out the plugin component folders', () => {
   for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
-  assert.equal(skillDirs().length, 11);
+  assert.equal(skillDirs().length, 12);
 });
 
 // Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment

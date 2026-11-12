@@ -1,4 +1,4 @@
-// The MCP server in skills/.mcp/: newline-delimited JSON-RPC 2.0 over stdio, five read-only tools.
+// The MCP server in skills/.mcp/: newline-delimited JSON-RPC 2.0 over stdio, six read-only tools.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, symlinkSync, realpathSync, readdirSync, statSync } from 'node:fs';
@@ -100,10 +100,10 @@ test('stdout carries only protocol messages', async () => {
   for (const l of raw.split('\n').filter(Boolean)) assert.equal(JSON.parse(l).jsonrpc, '2.0');
 });
 
-test('tools/list: five tools with descriptions and closed object schemas', async () => {
+test('tools/list: six tools with descriptions and closed object schemas', async () => {
   const { replies } = await talk([req(1, 'tools/list')], { expect: 1 });
   const tools = replies[0].result.tools;
-  assert.deepEqual(tools.map((t) => t.name).sort(), ['check_contrast', 'check_motion', 'detect_tells', 'fr_typo', 'get_playbook']);
+  assert.deepEqual(tools.map((t) => t.name).sort(), ['check_contrast', 'check_motion', 'check_writing', 'detect_tells', 'fr_typo', 'get_playbook']);
   for (const t of tools) {
     assert.ok(t.description.length > 40, `${t.name}: description too short`);
     assert.equal(t.inputSchema.type, 'object');
@@ -118,7 +118,7 @@ test('get_playbook offers exactly the skills in skills/', async () => {
   const schema = replies[0].result.tools.find((t) => t.name === 'get_playbook').inputSchema;
   const dirs = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && !['commands', 'agents', 'hooks'].includes(n) && statSync(join(ROOT, 'skills', n)).isDirectory());
   assert.deepEqual([...schema.properties.skill.enum].sort(), dirs.sort());
-  assert.equal(dirs.length, 11);
+  assert.equal(dirs.length, 12);
 });
 
 test('unknown tool is -32602; bad arguments are a tool error, not a crash', async () => {

@@ -8,7 +8,7 @@ Nothing. They run on your machine, inside your agent. They send no data to Molve
 
 ## Hosted MCP endpoint
 
-The same five tools are also served at https://www.molveau.ca/api/mcp, for MCP clients that connect over the web.
+The same six tools are also served at https://www.molveau.ca/api/mcp, for MCP clients that connect over the web.
 
 - **What it receives:** the text a client sends in each request, such as a code snippet, two colours, a piece of French text or a question about a skill.
 - **What it does with it:** it processes that text in memory to answer the request, and stores none of it. It reads none of your files (it scans only the code sent to it) and passes nothing on to anyone.

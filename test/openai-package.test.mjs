@@ -48,8 +48,9 @@ test('review has exactly 5 positive and 3 negative cases, the positive ones nami
     for (const key of ['description', 'prompt', 'tools_triggered', 'expected_behavior']) assert.ok(c[key], key);
     for (const tool of c.tools_triggered.split(',').map((s) => s.trim())) assert.ok(names.has(tool), tool);
   }
-  // Every tool is exercised once.
-  assert.deepEqual(new Set(positive.map((c) => c.tools_triggered)), names);
+  // Every tool is exercised by at least one positive case (a case may trigger several tools).
+  const triggered = new Set(positive.flatMap((c) => c.tools_triggered.split(',').map((s) => s.trim())));
+  assert.deepEqual(triggered, names);
   for (const c of negative) for (const key of ['description', 'prompt']) assert.ok(c[key], key);
 });
 
@@ -91,4 +92,13 @@ test('the script writes the zip, and refuses to without a demo URL', () => {
   const manifest = JSON.parse(spawnSync('unzip', ['-p', zip, 'plugin.json'], { encoding: 'utf8' }).stdout);
   assert.equal(manifest.version, pkg.version);
   assert.equal(openai(manifest).review.demo_recording_url, DEMO);
+});
+
+test('--draft writes a zip with no demo URL, to upload before the demo is recorded', () => {
+  const out = mkdtempSync(join(tmpdir(), 'openai-pkg-'));
+  const r = spawnSync(process.execPath, [SCRIPT, '--out', out, '--draft'], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  const zip = join(out, `molveau-skills-openai-${pkg.version}-draft.zip`);
+  const manifest = JSON.parse(spawnSync('unzip', ['-p', zip, 'plugin.json'], { encoding: 'utf8' }).stdout);
+  assert.equal(openai(manifest).review.demo_recording_url, undefined);
 });
