@@ -398,6 +398,3 @@ read what" in `SKILL.md`). Tags and credits are at the end.
   sources below, some values reconciled ("Where sources disagree"). Original in `references/vendor/unslop/`.
 - `[taste]` taste-skill by Leonxlnx, https://github.com/Leonxlnx/taste-skill, MIT, in `references/vendor/taste/`.
 - `[Molveau]` the 20 tells (`references/tells.md`), the detector and this skill's house choices, MIT.
-
-Pointed to, not owned: product type, colour, contrast, spacing scale, radius math, icon stroke, UI motion
-(`ui`); curves, scroll, reduced motion (`motion`); forms, states, focus, targets, WCAG (`ux`).

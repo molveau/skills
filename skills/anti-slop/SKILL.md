@@ -24,7 +24,7 @@ dated tells with a script that catches the mechanical ones.
 
 ## Start here
 
-Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
 Overlap: this is the AI-look pass. The `ui` skill's critique rows are the lighter general design review, and
 `design-grill` is the deep multi-lens audit; use them for design quality beyond the tells.
@@ -181,9 +181,9 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 
 ## When to read what
 
-| Need | Read |
+| Need | Read (§ = this skill's playbook) |
 |---|---|
-| The merged rules, values and conflict calls | `references/playbook.md` |
+| Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | The 20 tells with replacements and the detector's limits | `references/tells.md` |
 | unslop's full method, direction, nine passes, checklist, story video | §3; `references/vendor/unslop/unslop.md` |
 | Exact values (spacing, type scale, ramps, motion curves) | §5, §7, §8; `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |

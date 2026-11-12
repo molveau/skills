@@ -11,7 +11,7 @@ one playbook.
 
 ## Start here
 
-Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
 ## Direction gate
 
@@ -64,9 +64,9 @@ lighter single pass, and `anti-slop` is the AI-look pass.
 
 All paths are relative to this skill folder.
 
-| Task | Read |
+| Task | Read (§ = this skill's playbook) |
 |---|---|
-| The merged rules, values and conflict calls | `references/playbook.md` |
+| Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | New or restyled screen that needs feedback (not a tiny tweak) | §15; `references/mockup-first.md` |
 | Taste defaults when a project has no tokens yet | §1; `references/taste.md` |
 | Layout, grouping, alignment, spacing | §3; `references/vendor/jakub/better-layout.md`, then `references/vendor/impeccable/layout.md` |
@@ -78,7 +78,7 @@ All paths are relative to this skill folder.
 | Full multi-lens design audit of a file, component or route (heavy: several agents) | the `design-grill` skill |
 | Visual references or inspiration for a hero, CTA, navbar, motion, icons | the `design-inspiration-index` skill |
 | Critique or design review of a screen | §12; `references/vendor/impeccable/critique.md` (heuristics, cognitive load, personas); quick teardown: prompt 4 in `references/prompts.md` |
-| Audit: performance, theming, responsive (for accessibility, use the `ux` skill) | §14; `references/vendor/impeccable/audit.md`, `references/vendor/impeccable/optimize.md` |
+| Audit: performance, theming, responsive (for accessibility, use the `ux` skill) | §14, §6, §11; `references/vendor/impeccable/audit.md`, `references/vendor/impeccable/optimize.md` |
 | Too busy or heavy | §13; `references/vendor/impeccable/distill.md`, `references/vendor/impeccable/quieter.md` |
 | Too bland or timid | §13; `references/vendor/impeccable/bolder.md`, `references/vendor/impeccable/colorize.md`, `references/vendor/impeccable/delight.md` |
 | Technically ambitious effects | §13; `references/vendor/impeccable/overdrive.md` |

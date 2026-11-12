@@ -395,6 +395,4 @@ function tick(t: number) { draw(t); frame = requestAnimationFrame(tick); }
 - `[Molveau]` `references/guardrails.md`, `scripts/check-motion.mjs`, the house rules and reconciliation calls, MIT.
 - `[Jakub]` appears only in conflicts, citing the copy vendored in the `ui` and `ux` skills.
 
-Paraphrased and condensed; the numbers are the sources'. Pointed to, not owned: UI feedback values (press,
-hover, popovers, UI stagger and durations: `ui` §10); the vibe-coded tells (`anti-slop` §14); accessibility
-depth, interrupted gestures and timed UI (`ux`).
+Paraphrased and condensed; the numbers are the sources'.

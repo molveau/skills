@@ -526,13 +526,14 @@ test('every playbook § cited in a SKILL.md exists', () => {
     return new Set([...text.matchAll(/^## (\d+)\./gm)].map((m) => m[1]));
   };
   // "playbook §2", "`ui` playbook §3, §5", "playbook §3 to §14"
-  const cited = /(?:`([\w-]+)` )?playbook ((?:§\d+(?:, | and | to )?)+)/g;
+  // Also "`motion` §9": a skill name in backticks, then the section, with or without "playbook".
+  const cited = /(?:`(ui|ux|motion|anti-slop)` (?:playbook )?|(?:`([\w-]+)` )?playbook )((?:§\d+(?:, | and | to )?)+)/g;
   for (const name of PLAYBOOK_SKILLS) {
     const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
     const refs = [];
     for (const line of text.split('\n')) {
       for (const m of line.matchAll(cited)) {
-        for (const n of m[2].matchAll(/§(\d+)/g)) refs.push([m[1] || name, n[1]]);
+        for (const n of m[3].matchAll(/§(\d+)/g)) refs.push([m[1] || m[2] || name, n[1]]);
       }
       // Rows of the "What to read" table carry a bare §N for this skill's own playbook.
       if (line.startsWith('|')) {
@@ -546,10 +547,23 @@ test('every playbook § cited in a SKILL.md exists', () => {
   }
 });
 
-test('every row of the What to read table that maps to a playbook section names it', () => {
+// Rows that point at a vendor file with no matching playbook section (matched by exact first cell).
+const NO_SECTION_ROWS = new Set([
+  'Finished reference screens (images)', // pictures only, no playbook section
+  'The dated tells registry by wave', // upstream registry, the playbook has the 20 tells
+  "The study behind taste's numbers", // research background
+  'The philosophy and the invisible details of polish', // philosophy, not a rule
+]);
+
+test('every table row that cites a vendor file also names a playbook section', () => {
   for (const name of PLAYBOOK_SKILLS) {
     const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
     const rows = text.split('\n').filter((l) => l.startsWith('| ') && l.includes('references/vendor/'));
-    assert.ok(rows.some((r) => /§\d+/.test(r)), `${name}: no table row names a playbook section`);
+    assert.ok(rows.length > 0, `${name}: no table rows with vendor files`);
+    for (const row of rows) {
+      const first = row.split('|')[1].trim();
+      if (NO_SECTION_ROWS.has(first)) continue;
+      assert.match(row, /§\d+/, `${name}: row "${first}" names no playbook section`);
+    }
   }
 });

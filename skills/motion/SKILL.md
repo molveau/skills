@@ -10,7 +10,7 @@ animation, LottieFiles' motion-design skill, stageshow and Molveau's guardrails 
 
 ## Start here
 
-Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -30,9 +30,9 @@ accessibility depth and the words of every state.
 
 All paths are relative to this skill folder.
 
-| Task | Read |
+| Task | Read (§ = this skill's playbook) |
 |---|---|
-| The merged rules, values and conflict calls | `references/playbook.md` |
+| Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | Code patterns for the guardrails (tokens, reduced motion, pausing, canvas) | §4, §10, §11; `references/guardrails.md` |
 | Build an animation from scratch, with recipes | §1 to §5; `references/vendor/emil/animate.md`, `references/vendor/emil/animate/RECIPES.md` (its 500ms drawer and 400ms toast exceed the playbook's 300ms overlay cap in UI: `ui` playbook §10 wins) |
 | Review animation code in a diff | §14; `references/vendor/emil/review-animations.md`, values in `references/vendor/emil/review-animations/STANDARDS.md` |

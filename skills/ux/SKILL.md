@@ -11,7 +11,7 @@ fixing-accessibility and Molveau's always-on rules into one playbook.
 
 ## Start here
 
-Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -33,9 +33,9 @@ owns French copy; `loi-25-website` owns what a Québec form must disclose.
 
 All paths are relative to this skill folder.
 
-| Task | Read |
+| Task | Read (§ = this skill's playbook) |
 |---|---|
-| The merged rules, values and conflict calls | `references/playbook.md` |
+| Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | Write or review any interface copy: labels, errors, empty states, confirmations | §2, §3, §4; `references/vendor/jakub/better-writing.md` |
 | Rewrite unclear UX copy and instructions | §2; `references/vendor/impeccable/clarify.md` |
 | Onboarding, first run, empty states, teaching a feature | §7; `references/vendor/impeccable/onboard.md` |
