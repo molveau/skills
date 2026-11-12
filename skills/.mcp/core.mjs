@@ -5,7 +5,7 @@ import { existsSync } from 'node:fs';
 import { TOOLS, REMOTE_TOOLS, PLAYBOOK_FILES, checkArgs } from './tools.mjs';
 
 // Kept equal to package.json by test/mcp-core.test.mjs, so no file is read to name the server.
-export const VERSION = '1.4.0';
+export const VERSION = '1.5.0';
 export const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 // In remote mode, a string argument longer than this is refused with a tool error.
 export const MAX_INPUT = 200_000;

@@ -1,6 +1,6 @@
 ---
 name: anti-slop
-description: Removes the AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks vibe-coded or generic (purple gradients, gradient text, emoji labels, glow, eyebrow pills, Inter everywhere, buzzword copy, uneven spacing), when the user asks to unslop, de-AI or make a page stop looking generated, and before shipping any UI to check the 20 tells. Includes a zero-dependency detector script and a ratchet-test recipe.
+description: Removes the vibe-coded, AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks generic or generated, when asked to unslop or de-AI a UI (purple gradients, gradient text, emoji labels, glow), and before shipping any UI (the 20 tells). Includes a detector script.
 ---
 
 # Anti-slop
@@ -9,28 +9,13 @@ Vibe-coded UI fails in the same predictable ways. This skill merges three things
 the pass-by-pass method from unslop, the art-direction machinery from taste-skill, and a list of 20
 dated tells with a script that catches the mechanical ones.
 
-## Credits and licenses
-
-- The method is adapted from **unslop** by Damir Sokolovsky (https://github.com/heydamir/unslop),
-  licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Adapted: condensed and merged with
-  taste-skill by Leonxlnx and Molveau's tells in `references/playbook.md`. Keep this credit in any copy or adaptation. The original is
-  vendored unmodified in `references/vendor/unslop/`.
-- The art-direction run, house rules and inspector come from **taste-skill** by Leonxlnx
-  (https://github.com/Leonxlnx/taste-skill), MIT, vendored unmodified in `references/vendor/taste/`.
-- The 20-tells list and `scripts/detect-tells.mjs` are Molveau's own (MIT).
-- `scripts/story.mjs` is adapted from unslop's renderer (CC BY 4.0, changes listed in its header); it
-  stays CC BY 4.0, as does `scripts/story-server.mjs`, its local server. `scripts/story-contrast.mjs` is
-  Molveau's own (MIT).
+Vendor files are unmodified upstream copies: take the guidance, skip pointers to missing tools. Credits and licences: `references/vendor/README.md`. taste-skill's `scripts/` and `library/` are not vendored: use the direction gate below.
 
 ## Start here
 
-**Read `references/playbook.md` first, starting with its "Do this first" block; open vendor files only for depth or worked examples.** The
-playbook is the merged doctrine (direction, passes, copy, spacing, colour, type, icons, details, data,
-app screens, imagery, motion, checks) with source tags and the calls made where the sources disagree.
-The "When to read what" table below is the depth index.
+Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the section(s) its row in the table below names. Stop there. Open vendor files only for depth or worked examples.
 
-Overlap: this is the AI-look pass. The `ui` skill's critique rows are the lighter general design review, and
-`design-grill` is the deep multi-lens audit; use them for design quality beyond the tells.
+Overlap: this is the AI-look pass. Review depth (light, deep, AI-look) is set out in the `ui` skill's Neighbors; for a deep audit, suggest `/design-grill` to the user (costly, their call).
 
 ## Direction gate
 
@@ -108,8 +93,8 @@ Full table with replacements: `references/tells.md`. Summary, with what the scri
 | 13 | Cursor-following glow | no |
 | 14 | Hover fade on buttons | yes |
 | 15 | Inconsistent spacing | no |
-| 16 | Em dashes in copy | yes |
-| 17 | Buzzword copy | yes |
+| 16 | Em dashes in copy (wording: the `writing` skill) | yes |
+| 17 | Buzzword copy (word list: the `writing` skill) | yes |
 | 18 | Serif italic accent words | no |
 | 19 | Space Grotesk with its usual display-serif partner (pair in `references/tells.md`) | yes |
 | 20 | Grain over a gradient | no |
@@ -184,31 +169,25 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 
 ## When to read what
 
-| Need | Read |
+| Need | Read (§ = this skill's playbook) |
 |---|---|
-| The merged rules, values and conflict calls | `references/playbook.md` |
+| Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | The 20 tells with replacements and the detector's limits | `references/tells.md` |
-| unslop's full method, direction, nine passes, checklist, story video | `references/vendor/unslop/unslop.md` |
-| Exact values (spacing, type scale, ramps, motion curves) | `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |
-| The audit list of signs | `references/vendor/unslop/unslop/references/signs.md` |
-| Hero visuals, image prompts, which styles work | `references/vendor/unslop/unslop/references/visuals.md` |
-| Glyph, halftone, dither and duotone code | `references/vendor/unslop/unslop/references/effects.md` |
+| unslop's full method, direction, nine passes, checklist, story video | §3; `references/vendor/unslop/unslop.md` |
+| Exact values (spacing, type scale, ramps, motion curves) | §5, §7, §8; `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |
+| The audit list of signs | §15; `references/vendor/unslop/unslop/references/signs.md` |
+| Hero visuals, image prompts, which styles work | §13; `references/vendor/unslop/unslop/references/visuals.md` |
+| Glyph, halftone, dither and duotone code | §13; `references/vendor/unslop/unslop/references/effects.md` |
 | Finished reference screens (images) | `references/vendor/unslop/unslop/references/refs.md` |
-| Snapshot a live URL to work on a copy | `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
-| A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | `references/vendor/taste/taste-skill.md` |
+| Snapshot a live URL to work on a copy | §15; `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
+| A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | §2; `references/vendor/taste/taste-skill.md` |
 | Dashboards, admin and settings screens in depth | playbook §12; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/app-screens.md |
-| Copy deck, two-line arithmetic, proof without inventing it | `references/vendor/taste/taste-skill/references/copy.md` |
-| Type scale, display setting, font loading | `references/vendor/taste/taste-skill/references/type.md` |
-| Palette roles, fields, dark pages, contrast | `references/vendor/taste/taste-skill/references/colour.md` |
-| Margins, empty space, the frame, sections, the phone | `references/vendor/taste/taste-skill/references/layout.md` |
+| Copy deck, two-line arithmetic, proof without inventing it | §4; `references/vendor/taste/taste-skill/references/copy.md` |
+| Type scale, display setting, font loading | §8; `references/vendor/taste/taste-skill/references/type.md` |
+| Palette roles, fields, dark pages, contrast | §7; `references/vendor/taste/taste-skill/references/colour.md` |
+| Margins, empty space, the frame, sections, the phone | §6; `references/vendor/taste/taste-skill/references/layout.md` |
 | Finding, crediting, placing and treating pictures and video | playbook §13; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/imagery.md |
-| Motion recipes (opt-in: `motion` playbook §9) and scroll scenes | `references/vendor/taste/taste-skill/references/motion.md`, `references/vendor/taste/taste-skill/references/scenes.md` |
-| Judging a result with a rubric | `references/vendor/taste/taste-skill/references/critique.md` |
+| Motion recipes (opt-in: `motion` playbook §9) and scroll scenes | §14; `references/vendor/taste/taste-skill/references/motion.md`, `references/vendor/taste/taste-skill/references/scenes.md` |
+| Judging a result with a rubric | §15; `references/vendor/taste/taste-skill/references/critique.md` |
 | The dated tells registry by wave | `references/vendor/taste/taste-skill/references/tells.md` |
 | The study behind taste's numbers | `references/vendor/taste/taste-skill/references/research.md` |
-
-The vendored files keep their upstream layout, so a few relative links inside them may not resolve
-here. taste-skill's `scripts/` and `library/` are not vendored (they read keys and the network, and the
-library is too large for the plugin directory's review): its dealt direction is replaced by the direction
-gate above; get the scripts from the upstream repo if you want them. Which visual checks to run is
-decided in the `ui` playbook, conflict 14 (this playbook's conflict 14 points there).

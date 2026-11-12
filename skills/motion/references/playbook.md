@@ -203,7 +203,8 @@ useGSAP(() => {
 
 - Under `prefers-reduced-motion: reduce`, show the final state (or one chosen still) and drop movement:
   translation, scale-in, parallax, springs, overshoot, loops, autoplay. Keep spinners, progress indicators,
-  brief press feedback and short opacity or color changes that carry meaning (Jakub's keep list, `ux` §15).
+  brief press feedback and short opacity or color changes that carry meaning (Jakub's keep list). Movement
+  may become an opacity cross-fade; the preference is opt-in under `no-preference`.
   Demos and scripted scenes show their poster: a complete frame that tells the story alone, never one
   caught mid-change. [Molveau] [Emil] [Lottie] [stageshow]
 - It ships with the animation, never as a follow-up. A global CSS rule does not stop a rAF loop, so every JS
@@ -395,6 +396,4 @@ function tick(t: number) { draw(t); frame = requestAnimationFrame(tick); }
 - `[Molveau]` `references/guardrails.md`, `scripts/check-motion.mjs`, the house rules and reconciliation calls, MIT.
 - `[Jakub]` appears only in conflicts, citing the copy vendored in the `ui` and `ux` skills.
 
-Paraphrased and condensed; the numbers are the sources'. Pointed to, not owned: UI feedback values (press,
-hover, popovers, UI stagger and durations: `ui` §10); the vibe-coded tells (`anti-slop` §14); accessibility
-depth, interrupted gestures and timed UI (`ux`).
+Paraphrased and condensed; the numbers are the sources'.

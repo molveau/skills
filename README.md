@@ -21,7 +21,7 @@ A dashboard vibecoded by Claude Sonnet, unslopped by Claude Opus with the `anti-
 | `saas` | Playbook for a SaaS or app UI: what it needs, and which skills to apply in what order | Molveau only | none |
 | `vitrine` | Playbook for a local business showcase site | Molveau only | none |
 | `writing` | Removes the AI-written sound from English and French prose (README, docs, copy, email): 11 tells, a checker and a rewrite method | Molveau only | `check-writing` |
-| `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented | Molveau only | `merge-findings` and three helpers |
+| `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented. Runs only when you type `/design-grill` | Molveau only | `merge-findings` and three helpers |
 | `design-inspiration-index` | Routes a need (hero, navbar, CTA, motion, icons, brand) to the best public gallery or registry | Molveau only | none |
 | `workflow` | How to deliver with a coding agent: clarify, plan, test first, one implementer and one reviewer per task, verify, git hygiene, status and result reports; routes each step to the skills above | Molveau only | none |
 
@@ -171,7 +171,7 @@ For a global install (`npx skills add molveau/skills -g`), point the command at 
 
 ## How updates work
 
-`sources.json` pins every upstream repo to a commit. The copies under `skills/*/references/vendor/` are never edited by hand; Molveau's own words live in each `SKILL.md`, `scripts/` and the playbooks.
+`sources.json` pins every upstream repo to a commit. The copies under `skills/*/references/vendor/` are never edited by hand, except each `references/vendor/README.md` (credits, Molveau's own); Molveau's own words live in each `SKILL.md`, `scripts/` and the playbooks.
 
 ```sh
 node scripts/sync-sources.mjs --check          # does any pinned repo have newer commits?
@@ -204,7 +204,7 @@ Exact repos, commits and licenses are in [THIRD_PARTY.md](THIRD_PARTY.md), and e
 
 Notes:
 
-- unslop is CC BY 4.0. The credit is repeated in `skills/anti-slop/SKILL.md` and `THIRD_PARTY.md`. The vendored copy is partial (a few files are excluded, listed in its `SOURCE.md`) and its files are unmodified. The parts of unslop adapted in `skills/anti-slop/SKILL.md` stay CC BY 4.0; Molveau's other files are MIT.
+- unslop is CC BY 4.0. The credit is repeated in `skills/anti-slop/references/vendor/README.md` and `THIRD_PARTY.md`. The vendored copy is partial (a few files are excluded, listed in its `SOURCE.md`) and its files are unmodified. The parts of unslop adapted in `skills/anti-slop/SKILL.md` stay CC BY 4.0; Molveau's other files are MIT.
 - Some stageshow examples are left out because they embed or replicate third-party logos and product marks. The reason for each exclusion is in the stageshow `SOURCE.md`. Its kit still includes phone glyphs adapted from Apple's iOS UI kit, traced macOS cursors and SF Symbols-style icons; check them before reusing in a product.
 - 12 principles of animation is pinned to its last published version: upstream archived the skill in October 2026 and removed it.
 

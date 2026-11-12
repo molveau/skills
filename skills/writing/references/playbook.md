@@ -66,6 +66,8 @@ A closing paragraph that repeats the page. Stop when the point is made, or end o
 
 Use the plain verb. Keep the buzzword when it is literal ("unlock the door", "harness" as a noun, "leverage ratio").
 
+UI copy hype to cut: `seamless`, `unlock`, `supercharge`, `next-level`, `elevate`, `effortless`, `magic`, `empower`, `streamline`, `cutting-edge`, `all-in-one`, and "AI-powered" on everything. Name the user's task instead. The `anti-slop` detector flags a subset in code (its tell 17).
+
 - Before: Leverage our API to streamline and supercharge your workflows.
 - After: Use our API to run your exports without a spreadsheet.
 - Avant : Boostez et dynamisez vos processus pour impacter vos résultats.
@@ -73,7 +75,7 @@ Use the plain verb. Keep the buzzword when it is literal ("unlock the door", "ha
 
 ## Em dash madness (`em-dash`)
 
-The em dash (U+2014) stands in for a decision about punctuation. Pick a colon, a comma, parentheses or a full stop. A French dialogue dash at the start of a line is fine.
+The em dash (U+2014) stands in for a decision about punctuation. Pick a colon, a comma, parentheses or a full stop. A French dialogue dash at the start of a line is fine. In UI, a lone dash stays legal only as the placeholder for an empty value in a table cell.
 
 - Before: `The tool is fast — reliable — and simple.`
 - After: The tool is fast, reliable and simple.
