@@ -11,11 +11,7 @@ one playbook.
 
 ## Start here
 
-**Read `references/playbook.md` first, starting with its "Do this first" block; open vendor files and the
-Molveau references only for depth or worked examples.** The playbook is the merged doctrine (before you start, shaping, layout, type, color, dark mode,
-surfaces, icons, components and states, feedback motion, responsive and native, reviews, refinement passes,
-performance, mockup-first, prompts) with source tags and the calls made where the sources disagree. The
-table below is the depth index.
+Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
 
 ## Direction gate
 
@@ -71,29 +67,29 @@ All paths are relative to this skill folder.
 | Task | Read |
 |---|---|
 | The merged rules, values and conflict calls | `references/playbook.md` |
-| New or restyled screen that needs feedback (not a tiny tweak) | `references/mockup-first.md` |
-| Taste defaults when a project has no tokens yet | `references/taste.md` |
-| Layout, grouping, alignment, spacing | `references/vendor/jakub/better-layout.md`, then `references/vendor/impeccable/layout.md` |
-| Typography: fonts, scale, line length, OpenType | `references/vendor/jakub/better-typography.md` and `references/vendor/impeccable/typeset.md` |
-| Color: palette, contrast, dark mode, tokens | `references/vendor/jakub/better-colors.md`, plus `references/vendor/impeccable/colorize.md` to add color |
-| Final polish: radii, shadows, optical alignment, icon states | `references/vendor/feel/make-interfaces-feel-better.md` and `references/vendor/impeccable/polish.md`; `references/vendor/jakub/better-ui.md` for exact values |
-| Whole-screen ranked review (accessibility and writing live in the `ux` skill) | `references/vendor/jakub/better-interface.md`, the umbrella |
-| Review a branch or PR for UI regressions | `references/vendor/jakub/interface-review.md` |
+| New or restyled screen that needs feedback (not a tiny tweak) | §15; `references/mockup-first.md` |
+| Taste defaults when a project has no tokens yet | §1; `references/taste.md` |
+| Layout, grouping, alignment, spacing | §3; `references/vendor/jakub/better-layout.md`, then `references/vendor/impeccable/layout.md` |
+| Typography: fonts, scale, line length, OpenType | §4; `references/vendor/jakub/better-typography.md` and `references/vendor/impeccable/typeset.md` |
+| Color: palette, contrast, dark mode, tokens | §5, §6; `references/vendor/jakub/better-colors.md`, plus `references/vendor/impeccable/colorize.md` to add color |
+| Final polish: radii, shadows, optical alignment, icon states | §7, §8; `references/vendor/feel/make-interfaces-feel-better.md` and `references/vendor/impeccable/polish.md`; `references/vendor/jakub/better-ui.md` for exact values |
+| Whole-screen ranked review (accessibility and writing live in the `ux` skill) | §12; `references/vendor/jakub/better-interface.md`, the umbrella |
+| Review a branch or PR for UI regressions | §12; `references/vendor/jakub/interface-review.md` |
 | Full multi-lens design audit of a file, component or route (heavy: several agents) | the `design-grill` skill |
 | Visual references or inspiration for a hero, CTA, navbar, motion, icons | the `design-inspiration-index` skill |
-| Critique or design review of a screen | `references/vendor/impeccable/critique.md` (heuristics, cognitive load, personas); quick teardown: prompt 4 in `references/prompts.md` |
-| Audit: performance, theming, responsive (for accessibility, use the `ux` skill) | `references/vendor/impeccable/audit.md`, `references/vendor/impeccable/optimize.md` |
-| Too busy or heavy | `references/vendor/impeccable/distill.md`, `references/vendor/impeccable/quieter.md` |
-| Too bland or timid | `references/vendor/impeccable/bolder.md`, `references/vendor/impeccable/colorize.md`, `references/vendor/impeccable/delight.md` |
-| Technically ambitious effects | `references/vendor/impeccable/overdrive.md` |
-| Plan a new design from scratch | `references/vendor/impeccable/shape.md`; `references/vendor/impeccable/new-work.md` and the mode files (`references/vendor/impeccable/mode-operate.md`, `mode-persuade.md`, `mode-read.md`) for a new visual identity |
-| App, dashboard and settings depth | `references/vendor/impeccable/operate.md` |
-| Small screens, touch, other platforms | `references/vendor/impeccable/adapt.md`; native: `references/vendor/impeccable/ios.md`, `references/vendor/impeccable/android.md`, `references/vendor/impeccable/adapt.native.md` |
-| Write or refresh `DESIGN.md`, extract tokens and components | `references/vendor/impeccable/document.md`, `references/vendor/impeccable/extract.md` |
-| Feedback motion recipes (press, enter and exit, icon swaps, theme switch) | `references/vendor/jakub/better-ui/animations.md`, `references/vendor/jakub/better-ui/enter-exit.md`, `references/vendor/jakub/better-ui/icon-transitions.md`; Emil's numbers in `references/animation.md` (full workflow: the `motion` skill). Some recipes there run longer (a ~500ms sheet, Sonner's 400ms): in UI the playbook caps overlays at 300ms (§10) |
-| Interactive component done-checklist (toasts, drawers, menus) | `references/components.md` |
-| Public marketing site that should be cited by LLMs | `references/discoverability.md` |
-| Prompts that force taste into AI-generated UI | `references/prompts.md` |
+| Critique or design review of a screen | §12; `references/vendor/impeccable/critique.md` (heuristics, cognitive load, personas); quick teardown: prompt 4 in `references/prompts.md` |
+| Audit: performance, theming, responsive (for accessibility, use the `ux` skill) | §14; `references/vendor/impeccable/audit.md`, `references/vendor/impeccable/optimize.md` |
+| Too busy or heavy | §13; `references/vendor/impeccable/distill.md`, `references/vendor/impeccable/quieter.md` |
+| Too bland or timid | §13; `references/vendor/impeccable/bolder.md`, `references/vendor/impeccable/colorize.md`, `references/vendor/impeccable/delight.md` |
+| Technically ambitious effects | §13; `references/vendor/impeccable/overdrive.md` |
+| Plan a new design from scratch | §2; `references/vendor/impeccable/shape.md`; `references/vendor/impeccable/new-work.md` and the mode files (`references/vendor/impeccable/mode-operate.md`, `mode-persuade.md`, `mode-read.md`) for a new visual identity |
+| App, dashboard and settings depth | §9; `references/vendor/impeccable/operate.md` |
+| Small screens, touch, other platforms | §11; `references/vendor/impeccable/adapt.md`; native: `references/vendor/impeccable/ios.md`, `references/vendor/impeccable/android.md`, `references/vendor/impeccable/adapt.native.md` |
+| Write or refresh `DESIGN.md`, extract tokens and components | §1; `references/vendor/impeccable/document.md`, `references/vendor/impeccable/extract.md` |
+| Feedback motion recipes (press, enter and exit, icon swaps, theme switch) | §10; `references/vendor/jakub/better-ui/animations.md`, `references/vendor/jakub/better-ui/enter-exit.md`, `references/vendor/jakub/better-ui/icon-transitions.md`; Emil's numbers in `references/animation.md` (full workflow: the `motion` skill). Some recipes there run longer (a ~500ms sheet, Sonner's 400ms): in UI the playbook caps overlays at 300ms (§10) |
+| Interactive component done-checklist (toasts, drawers, menus) | §9; `references/components.md` |
+| Public marketing site that should be cited by LLMs | §16; `references/discoverability.md` |
+| Prompts that force taste into AI-generated UI | §16; `references/prompts.md` |
 | The philosophy behind the rules | `references/quotes.md` |
 | UI looks vibe-coded or generic | the `anti-slop` skill |
 | Copy, errors, empty states, accessibility depth | the `ux` skill |

@@ -11,11 +11,7 @@ fixing-accessibility and Molveau's always-on rules into one playbook.
 
 ## Start here
 
-**Read `references/playbook.md` first, starting with its "Do this first" block; open vendor files only for depth or worked examples.** The playbook is
-the merged doctrine (voice and words, actions and links, errors, destructive actions, states, onboarding,
-forms and validation, strings and i18n, resilience, semantics and ARIA, keyboard and focus, screen readers,
-targets and gestures, contrast and zoom, timed UI, reviews, verification) with source tags and the calls made
-where the sources disagree. The table below is the depth index.
+Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -40,12 +36,12 @@ All paths are relative to this skill folder.
 | Task | Read |
 |---|---|
 | The merged rules, values and conflict calls | `references/playbook.md` |
-| Write or review any interface copy: labels, errors, empty states, confirmations | `references/vendor/jakub/better-writing.md` |
-| Rewrite unclear UX copy and instructions | `references/vendor/impeccable/clarify.md` |
-| Onboarding, first run, empty states, teaching a feature | `references/vendor/impeccable/onboard.md` |
-| Error handling, edge cases, i18n, text overflow, production resilience | `references/vendor/impeccable/harden.md` |
-| Accessibility engineering: focus, keyboard, ARIA, forms and validation, screen readers | `references/vendor/jakub/better-accessibility.md` |
-| Audit and fix HTML accessibility issues against WCAG | `references/vendor/a11y/fixing-accessibility.md` |
+| Write or review any interface copy: labels, errors, empty states, confirmations | §2, §3, §4; `references/vendor/jakub/better-writing.md` |
+| Rewrite unclear UX copy and instructions | §2; `references/vendor/impeccable/clarify.md` |
+| Onboarding, first run, empty states, teaching a feature | §7; `references/vendor/impeccable/onboard.md` |
+| Error handling, edge cases, i18n, text overflow, production resilience | §4, §9, §10; `references/vendor/impeccable/harden.md` |
+| Accessibility engineering: focus, keyboard, ARIA, forms and validation, screen readers | §8, §11, §12, §13; `references/vendor/jakub/better-accessibility.md` |
+| Audit and fix HTML accessibility issues against WCAG | §15, §17; `references/vendor/a11y/fixing-accessibility.md` |
 | Layout, type, color, polish | the `ui` skill |
 | Animation, reduced motion | the `motion` skill |
 | A UI that looks generic or vibe-coded | the `anti-slop` skill |

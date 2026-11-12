@@ -394,7 +394,3 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
   Rauno Freiberg's devouringdetails.com: `references/taste.md`, `animation.md`, `components.md`, `quotes.md`.
 - `[Molveau]` Molveau's house rules and reconciliation calls, `prompts.md`, `mockup-first.md` and
   `discoverability.md` (distilled from Suganthan Mohanadasan's research), MIT.
-
-Pointed to, not owned: the vibe-coded tells, de-AI passes and detector (`anti-slop`); curves, springs,
-gestures, scroll, timelines and reduced-motion detail (`motion`); copy, forms, states' words, focus,
-targets, ARIA and WCAG (`ux`).

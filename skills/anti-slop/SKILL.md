@@ -24,10 +24,7 @@ dated tells with a script that catches the mechanical ones.
 
 ## Start here
 
-**Read `references/playbook.md` first, starting with its "Do this first" block; open vendor files only for depth or worked examples.** The
-playbook is the merged doctrine (direction, passes, copy, spacing, colour, type, icons, details, data,
-app screens, imagery, motion, checks) with source tags and the calls made where the sources disagree.
-The "When to read what" table below is the depth index.
+Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
 
 Overlap: this is the AI-look pass. The `ui` skill's critique rows are the lighter general design review, and
 `design-grill` is the deep multi-lens audit; use them for design quality beyond the tells.
@@ -188,22 +185,22 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 |---|---|
 | The merged rules, values and conflict calls | `references/playbook.md` |
 | The 20 tells with replacements and the detector's limits | `references/tells.md` |
-| unslop's full method, direction, nine passes, checklist, story video | `references/vendor/unslop/unslop.md` |
-| Exact values (spacing, type scale, ramps, motion curves) | `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |
-| The audit list of signs | `references/vendor/unslop/unslop/references/signs.md` |
-| Hero visuals, image prompts, which styles work | `references/vendor/unslop/unslop/references/visuals.md` |
-| Glyph, halftone, dither and duotone code | `references/vendor/unslop/unslop/references/effects.md` |
+| unslop's full method, direction, nine passes, checklist, story video | §3; `references/vendor/unslop/unslop.md` |
+| Exact values (spacing, type scale, ramps, motion curves) | §5, §7, §8; `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |
+| The audit list of signs | §15; `references/vendor/unslop/unslop/references/signs.md` |
+| Hero visuals, image prompts, which styles work | §13; `references/vendor/unslop/unslop/references/visuals.md` |
+| Glyph, halftone, dither and duotone code | §13; `references/vendor/unslop/unslop/references/effects.md` |
 | Finished reference screens (images) | `references/vendor/unslop/unslop/references/refs.md` |
-| Snapshot a live URL to work on a copy | `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
-| A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | `references/vendor/taste/taste-skill.md` |
+| Snapshot a live URL to work on a copy | §15; `references/vendor/unslop/unslop/scripts/snapshot.mjs` |
+| A page from scratch or a deep redesign: inventory, idea, house rules (its dealt direction and gate scripts are not vendored; use the direction gate) | §2; `references/vendor/taste/taste-skill.md` |
 | Dashboards, admin and settings screens in depth | playbook §12; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/app-screens.md |
-| Copy deck, two-line arithmetic, proof without inventing it | `references/vendor/taste/taste-skill/references/copy.md` |
-| Type scale, display setting, font loading | `references/vendor/taste/taste-skill/references/type.md` |
-| Palette roles, fields, dark pages, contrast | `references/vendor/taste/taste-skill/references/colour.md` |
-| Margins, empty space, the frame, sections, the phone | `references/vendor/taste/taste-skill/references/layout.md` |
+| Copy deck, two-line arithmetic, proof without inventing it | §4; `references/vendor/taste/taste-skill/references/copy.md` |
+| Type scale, display setting, font loading | §8; `references/vendor/taste/taste-skill/references/type.md` |
+| Palette roles, fields, dark pages, contrast | §7; `references/vendor/taste/taste-skill/references/colour.md` |
+| Margins, empty space, the frame, sections, the phone | §6; `references/vendor/taste/taste-skill/references/layout.md` |
 | Finding, crediting, placing and treating pictures and video | playbook §13; the long original is upstream: https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/references/imagery.md |
-| Motion recipes (opt-in: `motion` playbook §9) and scroll scenes | `references/vendor/taste/taste-skill/references/motion.md`, `references/vendor/taste/taste-skill/references/scenes.md` |
-| Judging a result with a rubric | `references/vendor/taste/taste-skill/references/critique.md` |
+| Motion recipes (opt-in: `motion` playbook §9) and scroll scenes | §14; `references/vendor/taste/taste-skill/references/motion.md`, `references/vendor/taste/taste-skill/references/scenes.md` |
+| Judging a result with a rubric | §15; `references/vendor/taste/taste-skill/references/critique.md` |
 | The dated tells registry by wave | `references/vendor/taste/taste-skill/references/tells.md` |
 | The study behind taste's numbers | `references/vendor/taste/taste-skill/references/research.md` |
 

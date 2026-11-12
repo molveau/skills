@@ -508,3 +508,48 @@ test('the Law 25 report ends with one line pointing at the fixed-price package',
     assert.match(readFileSync(join(SKILLS, f), 'utf8'), /closing line/, `${f} must keep the report's closing line`);
   }
 });
+
+// Domain skills point at one playbook section, not the whole 400-line file.
+const PLAYBOOK_SKILLS = ['ui', 'ux', 'motion', 'anti-slop'];
+
+test('domain skills point at playbook sections, not the whole file', () => {
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    assert.doesNotMatch(text, /Read `references\/playbook\.md` first/, `${name}: reads the whole playbook`);
+    assert.match(text, /Do this first/, `${name}: names the "Do this first" block`);
+  }
+});
+
+test('every playbook § cited in a SKILL.md exists', () => {
+  const headings = (name) => {
+    const text = readFileSync(join(SKILLS, name, 'references', 'playbook.md'), 'utf8');
+    return new Set([...text.matchAll(/^## (\d+)\./gm)].map((m) => m[1]));
+  };
+  // "playbook §2", "`ui` playbook §3, §5", "playbook §3 to §14"
+  const cited = /(?:`([\w-]+)` )?playbook ((?:§\d+(?:, | and | to )?)+)/g;
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const refs = [];
+    for (const line of text.split('\n')) {
+      for (const m of line.matchAll(cited)) {
+        for (const n of m[2].matchAll(/§(\d+)/g)) refs.push([m[1] || name, n[1]]);
+      }
+      // Rows of the "What to read" table carry a bare §N for this skill's own playbook.
+      if (line.startsWith('|')) {
+        for (const n of line.replace(cited, '').matchAll(/§(\d+)/g)) refs.push([name, n[1]]);
+      }
+    }
+    assert.ok(refs.length > 0, `${name}: cites no playbook section`);
+    for (const [owner, n] of refs) {
+      assert.ok(headings(owner).has(n), `${name}: cites ${owner} playbook §${n}, which has no "## ${n}." heading`);
+    }
+  }
+});
+
+test('every row of the What to read table that maps to a playbook section names it', () => {
+  for (const name of PLAYBOOK_SKILLS) {
+    const text = readFileSync(join(SKILLS, name, 'SKILL.md'), 'utf8');
+    const rows = text.split('\n').filter((l) => l.startsWith('| ') && l.includes('references/vendor/'));
+    assert.ok(rows.some((r) => /§\d+/.test(r)), `${name}: no table row names a playbook section`);
+  }
+});

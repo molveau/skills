@@ -10,11 +10,7 @@ animation, LottieFiles' motion-design skill, stageshow and Molveau's guardrails 
 
 ## Start here
 
-**Read `references/playbook.md` first, starting with its "Do this first" block; open vendor files only for depth or worked examples.** The playbook is
-the merged doctrine (should it animate, purpose, tool, properties and performance, easing and duration,
-springs and gestures, interruption and exit, enter and exit, scroll and timelines, reduced motion, off-screen
-and canvas, product demos, Lottie and handoff, reviews and audits, naming) with source tags and the calls made
-where the sources disagree. The table below is the depth index.
+Read `references/playbook.md`: the "Do this first" block at the top, then only the numbered section the task needs (the table below gives the section; the `get_playbook` tool reads one section). Open vendor files only for depth or worked examples.
 
 ## Always on
 
@@ -37,24 +33,24 @@ All paths are relative to this skill folder.
 | Task | Read |
 |---|---|
 | The merged rules, values and conflict calls | `references/playbook.md` |
-| Code patterns for the guardrails (tokens, reduced motion, pausing, canvas) | `references/guardrails.md` |
-| Build an animation from scratch, with recipes | `references/vendor/emil/animate.md`, `references/vendor/emil/animate/RECIPES.md` (its 500ms drawer and 400ms toast exceed the playbook's 300ms overlay cap in UI: `ui` playbook §10 wins) |
-| Review animation code in a diff | `references/vendor/emil/review-animations.md`, values in `references/vendor/emil/review-animations/STANDARDS.md` |
-| Audit a whole codebase's motion, get a prioritized plan | `references/vendor/emil/improve-animations.md`, `references/vendor/emil/improve-animations/AUDIT.md` and `PLAN-TEMPLATE.md` |
-| Find places that should animate (and reject the rest) | `references/vendor/emil/find-animation-opportunities.md` |
-| Name an effect you can only describe | `references/vendor/emil/animation-vocabulary.md` |
-| Gestures, springs, drag, sheets, momentum, interruptible transitions | `references/vendor/emil/apple-design.md` |
+| Code patterns for the guardrails (tokens, reduced motion, pausing, canvas) | §4, §10, §11; `references/guardrails.md` |
+| Build an animation from scratch, with recipes | §1 to §5; `references/vendor/emil/animate.md`, `references/vendor/emil/animate/RECIPES.md` (its 500ms drawer and 400ms toast exceed the playbook's 300ms overlay cap in UI: `ui` playbook §10 wins) |
+| Review animation code in a diff | §14; `references/vendor/emil/review-animations.md`, values in `references/vendor/emil/review-animations/STANDARDS.md` |
+| Audit a whole codebase's motion, get a prioritized plan | §14; `references/vendor/emil/improve-animations.md`, `references/vendor/emil/improve-animations/AUDIT.md` and `PLAN-TEMPLATE.md` |
+| Find places that should animate (and reject the rest) | §1; `references/vendor/emil/find-animation-opportunities.md` |
+| Name an effect you can only describe | §15; `references/vendor/emil/animation-vocabulary.md` |
+| Gestures, springs, drag, sheets, momentum, interruptible transitions | §6, §7; `references/vendor/emil/apple-design.md` |
 | The philosophy and the invisible details of polish | `references/vendor/emil/emil-design-eng.md` |
-| Audit code against the 12 principles of animation | `references/vendor/principles/12-principles-of-animation.md` |
-| GSAP basics: tweens, easing, stagger, `matchMedia` | `references/vendor/gsap/gsap-core.md` |
-| GSAP in React or Next.js (`useGSAP`, cleanup) | `references/vendor/gsap/gsap-react.md` |
-| GSAP timelines and sequencing | `references/vendor/gsap/gsap-timeline.md` |
-| Scroll-linked animation, pinning, scrubbing | `references/vendor/gsap/gsap-scrolltrigger.md` |
-| GSAP performance | `references/vendor/gsap/gsap-performance.md` |
-| Motion design: personality, choreography, timing tables, patterns | `references/vendor/lottie/motion-design.md`, then its `references/vendor/lottie/motion-design/` folders |
-| Faux product UI, animated demo, cursor walkthrough, hero illustration | `references/vendor/stageshow/stageshow.md`, `references/vendor/stageshow/stageshow/examples/` (partial), then `references/vendor/stageshow/stageshow/references/motion.md`, `references/vendor/stageshow/stageshow/references/craft.md` and `references/vendor/stageshow/stageshow/references/framing.md` |
-| Bento grids of demos | `references/vendor/stageshow/stageshow/references/bento.md` |
-| The stageshow kit's parts and `Act` API | `references/vendor/stageshow/stageshow/references/kit.md` |
+| Audit code against the 12 principles of animation | §14; `references/vendor/principles/12-principles-of-animation.md` |
+| GSAP basics: tweens, easing, stagger, `matchMedia` | §3, §5; `references/vendor/gsap/gsap-core.md` |
+| GSAP in React or Next.js (`useGSAP`, cleanup) | §3; `references/vendor/gsap/gsap-react.md` |
+| GSAP timelines and sequencing | §9; `references/vendor/gsap/gsap-timeline.md` |
+| Scroll-linked animation, pinning, scrubbing | §9; `references/vendor/gsap/gsap-scrolltrigger.md` |
+| GSAP performance | §4; `references/vendor/gsap/gsap-performance.md` |
+| Motion design: personality, choreography, timing tables, patterns | §13; `references/vendor/lottie/motion-design.md`, then its `references/vendor/lottie/motion-design/` folders |
+| Faux product UI, animated demo, cursor walkthrough, hero illustration | §12; `references/vendor/stageshow/stageshow.md`, `references/vendor/stageshow/stageshow/examples/` (partial), then `references/vendor/stageshow/stageshow/references/motion.md`, `references/vendor/stageshow/stageshow/references/craft.md` and `references/vendor/stageshow/stageshow/references/framing.md` |
+| Bento grids of demos | §12; `references/vendor/stageshow/stageshow/references/bento.md` |
+| The stageshow kit's parts and `Act` API | §12; `references/vendor/stageshow/stageshow/references/kit.md` |
 | A UI that looks generic or vibe-coded | the `anti-slop` skill |
 | Layout, type, color around the motion | the `ui` skill |
 

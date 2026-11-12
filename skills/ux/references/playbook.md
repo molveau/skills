@@ -392,9 +392,3 @@ credits and what this file points to are at the end.
 - `[ibelick]` fixing-accessibility from ui-skills by Julien Thibeaut, https://github.com/ibelick/ui-skills,
   MIT, in `references/vendor/a11y/`.
 - `[Molveau]` the always-on rules in `SKILL.md`, the house calls and WCAG citations added here, MIT.
-
-Pointed to, not owned: contrast ratios, how to measure and fix a pair, focus ring color, overflow CSS and
-translation room in layout (`ui` §3, §5, §7); buzzword copy, exclamation marks, stock CTAs and the em dash
-rule (`anti-slop` §4 and tell 16); reduced-motion detail and vestibular triggers (`motion` §10); French
-spacing and punctuation (`french-typography`); consent, purpose and retention for any form that collects
-personal information in Québec (`loi-25-website`).
