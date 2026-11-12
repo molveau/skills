@@ -76,5 +76,5 @@ Home, Services (or one page per service), Projects with case studies, Pricing, C
 - Needs 1 to 9 hold on a 390 px and a desktop view; the first screen states offer, audience, place and one primary action.
 - A starting price and its scope appear on the pricing page and match the JSON-LD; `LocalBusiness` JSON-LD is valid and Google Business Profile matches name, address, phone.
 - Phone and contact form work in one step on mobile, and the confirmation tells what happens next; at least three real, specific proofs.
-- `fr-typo.mjs --check` exits 0 on FR and EN files (same content, same structure); the `loi-25-website` report has no open fix item (Québec sites).
+- `fr-typo.mjs --check` exits 0 on the French files (English copy goes through the `writing` skill's em-dash rule), and FR and EN have the same content and structure; the `loi-25-website` report has no open fix item (Québec sites).
 - LCP is under 2.5 s on throttled mobile; the checklists of `ui`, `ux`, `motion` and `anti-slop` pass; tsc, lint and tests are green.

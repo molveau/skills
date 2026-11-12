@@ -597,4 +597,6 @@ test('vitrine points to loi-25-website instead of listing its obligations', () =
   const body = readFileSync(join(SKILLS, 'vitrine', 'SKILL.md'), 'utf8');
   assert.ok(!body.includes('person in charge'), 'vitrine still lists Law 25 obligations');
   assert.ok(body.includes('loi-25-website'), 'vitrine does not name loi-25-website');
+  assert.ok(body.includes('A contact form is enough to trigger it. Run `loi-25-website`'), 'vitrine lost its Law 25 pointer');
+  assert.match(body, /^## Done when$/m, 'vitrine has no Done when section');
 });

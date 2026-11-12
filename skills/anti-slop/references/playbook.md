@@ -232,6 +232,7 @@ read what" in `SKILL.md`). Tags and credits are at the end.
 
 ## 12. App screens
 
+- The app's home is the user's work, not a pitch: no marketing hero. [Molveau]
 - Inventory objects and fields with units, realistic magnitudes (new accounts stay small), who opens
   the screen and how often, the most frequent job, the product's own things. Render from a data file;
   totals computed from the rows as displayed and asserted; a fact shown twice is one variable. [taste]

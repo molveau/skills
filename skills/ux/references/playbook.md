@@ -220,6 +220,7 @@ credits and what this file points to are at the end.
 - Everything reachable by pointer is reachable by keyboard (2.1.1), in a logical order equal to the DOM
   order; hover-only interactions get a keyboard path. Only `tabindex="0"` (custom controls) and `-1` (programmatic
   focus); never positive. [Molveau] [Jakub] [ibelick] [Impeccable]
+- Trap focus inside modals only; elsewhere Tab moves freely in reading order. [Molveau]
 - **Focus always visible** (2.4.7): style `:focus-visible` and keep the browser ring, adding only
   `outline-offset: 2px`, unless the project defines a focus token; a themed ring is at least 2px and 3:1
   against every adjacent color (1.4.11; 2.4.13 AAA is the target); never `outline: none` without a verified

@@ -42,13 +42,13 @@ real references.
 
 ## What an app needs that a site does not
 
-1. **App shell and navigation.** One persistent frame: sidebar or top bar, current location marked, account menu, a clear way back. Group destinations by the user's jobs, not by your database tables. Seven top-level items or fewer. On mobile the shell collapses to a bottom bar or a drawer, never a shrunken desktop sidebar.
+1. **App shell and navigation.** One persistent frame: sidebar or top bar, current location marked, account menu, a clear way back. Group destinations by the user's jobs, not by your database tables. Seven top-level items or fewer. On mobile the shell collapses to a bottom bar or a drawer. The home is the user's work, not a pitch (`anti-slop` playbook §12).
 2. **Dense data.** Tables are the main surface. Left-align text, right-align numbers with tabular figures, sticky header, sortable and filterable columns, row actions in a fixed place, bulk selection, pagination or virtualisation past a few hundred rows. Compact row height on desktop; touch targets follow `ux` playbook §14. Charts carry units, a date range and exact values on hover.
-3. **Four states per view.** Every view has loading, empty, error and populated (`ux`, `ui` playbook §9); add offline and permission-denied where they can happen. Write them before the happy path is called done.
+3. **Four states per view.** Every view has loading, empty, error and populated (state words and anatomy: `ux` playbook §6; look: `ui` playbook §9); add offline and permission-denied where they can happen. Write them before the happy path is called done.
 4. **Onboarding to first value.** Define the one action that proves the product works, and take the shortest path to it. Pre-fill with sample data or a template, defer profile and billing questions, show progress. Empty states double as onboarding.
 5. **Settings.** Split account, workspace and billing. Autosave or one clear Save, never both. Destructive actions are separated, named plainly and confirmed with the item's name. Explain every toggle in one line.
 6. **Billing and pricing.** Show the current plan, usage against limits, next invoice date and amount, and how to cancel, inside the app. The public pricing page leads with who each plan is for, names the limit that separates plans, and states the monthly and yearly price in the same unit. Failed payments get a calm, specific banner with the fix, not a lockout.
-7. **Dark mode.** Decide light and dark at the start; semantic tokens (`ui` playbook §6). Check charts and images in both.
+7. **Dark mode.** Decide light and dark at the start; semantic tokens (`ui` playbook §5, §6). Check charts and images in both.
 8. **Keyboard and focus.** Power users live here: a command palette or shortcuts for frequent actions. The focus rules are in `ux` (playbook §11, §12).
 9. **Motion only as feedback.** Press, toggles, menus and dialogs, row insert and remove, toast arrival; nothing on keyboard-driven actions (`motion`).
 
@@ -67,4 +67,4 @@ real references.
 - A new user reaches first value without leaving the guided path or filling optional forms.
 - The densest table works with 0, 1, 200 and very long rows, by mouse and by keyboard alone.
 - Billing shows plan, usage, next charge and cancellation in the app; destructive actions name what will be lost and can be undone or confirmed.
-- The checklists of `ui`, `ux`, `motion` and `anti-slop` pass at 390 px and on desktop, in light and dark; tsc, lint and tests are green.
+- The checklists of `ui`, `ux`, `motion` and `anti-slop` pass at 390 px and on desktop, in light and dark, charts included; tsc, lint and tests are green.

@@ -36,7 +36,7 @@ These ceilings are aimed at large enterprises. For a small business the realisti
 
 1. Read `references/checklist.md` for where to look and what counts as a pass for each item.
 2. Inventory pages, forms and third-party services (grep the code for forms, scripts, embeds and external requests).
-3. Judge each of the seven items and record the evidence.
+3. Judge each of the seven items and record the evidence. Judge only what the code shows. A register, an agreement or an impact assessment lives outside the code: mark it `fix` or list it as an open question, never `pass`.
 4. Report in this format, one line per item:
 
 ```
