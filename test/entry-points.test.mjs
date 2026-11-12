@@ -15,6 +15,7 @@ const SKILL_SCRIPTS = [
   ['anti-slop', 'detect-tells.mjs'],
   ['motion', 'check-motion.mjs'],
   ['french-typography', 'fr-typo.mjs'],
+  ['writing', 'check-writing.mjs'],
 ];
 
 for (const [skill, script] of SKILL_SCRIPTS) {

@@ -42,7 +42,7 @@ test('the tarball holds the server, the scripts it imports, every SKILL.md and p
     'package.json', 'README.md', 'LICENSE', 'THIRD_PARTY.md',
     'skills/.mcp/server.mjs', 'skills/.mcp/tools.mjs', 'skills/.claude-plugin/plugin.json',
     'skills/anti-slop/scripts/detect-tells.mjs', 'skills/anti-slop/scripts/story-contrast.mjs',
-    'skills/french-typography/scripts/fr-typo.mjs', 'skills/motion/scripts/check-motion.mjs',
+    'skills/french-typography/scripts/fr-typo.mjs', 'skills/motion/scripts/check-motion.mjs', 'skills/writing/scripts/check-writing.mjs',
     ...SKILLS.map((s) => `skills/${s}/SKILL.md`),
     ...SKILLS.filter((s) => existsSync(join(ROOT, 'skills', s, 'references', 'playbook.md'))).map((s) => `skills/${s}/references/playbook.md`),
   ];
@@ -117,6 +117,7 @@ test('the packed tarball installs and @molveau/skills/core answers every method 
     "  contrast: callTool(4, 'check_contrast', { foreground: '#000', background: '#fff' }).structuredContent.ratio,",
     "  fr: callTool(5, 'fr_typo', { text: 'Oui !' }).structuredContent.count,",
     "  motion: callTool(6, 'check_motion', { code: '.a { transition: all 1s; }', filename: 'a.css' }).structuredContent.count,",
+    "  writing: callTool(9, 'check_writing', { text: 'In conclusion, it works.' }).structuredContent.count,",
     "  playbook: callTool(7, 'get_playbook', { skill: 'loi-25-website' }).content[0].text.includes('Law 25 audit of'),",
     "  promo: JSON.stringify(callTool(8, 'get_playbook', { skill: 'loi-25-website' })).includes('molveau.ca'),",
     "  notification: handleRpc({ jsonrpc: '2.0', method: 'notifications/initialized' }, o),",
@@ -130,12 +131,13 @@ test('the packed tarball installs and @molveau/skills/core answers every method 
   const got = JSON.parse(r.stdout);
   assert.deepEqual(got, {
     server: { name: 'molveau-skills', version: pkg.version },
-    tools: ['check_contrast', 'check_motion', 'detect_tells', 'fr_typo', 'get_playbook'],
+    tools: ['check_contrast', 'check_motion', 'check_writing', 'detect_tells', 'fr_typo', 'get_playbook'],
     detectProps: ['code', 'filename'],
     detect: 1,
     contrast: '21:1',
     fr: 1,
     motion: 1,
+    writing: 1,
     playbook: true,
     promo: false,
     notification: null,

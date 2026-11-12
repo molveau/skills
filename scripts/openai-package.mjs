@@ -3,6 +3,7 @@
 // plugin"). openai/ holds the listing and the review cases; the version comes from package.json, the demo
 // recording URL from --demo. The tools themselves are the hosted endpoint, https://www.molveau.ca/api/mcp.
 //   node scripts/openai-package.mjs --demo <https url> [--out dir]     default dir: dist/
+//   node scripts/openai-package.mjs --draft [--out dir]                 no demo URL yet: upload to start the draft
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -87,8 +88,11 @@ function main() {
     const i = args.indexOf(flag);
     return i >= 0 ? args[i + 1] : undefined;
   };
+  const draft = args.includes('--draft');
   const manifest = buildManifest({ demoUrl: option('--demo') });
-  const problems = checkManifest(manifest);
+  // A draft leaves the demo out: the dashboard asks for it again before submission.
+  if (draft) delete manifest.extensions['com.openai'].review.demo_recording_url;
+  const problems = checkManifest(manifest).filter((p) => !(draft && p.startsWith('review.demo_recording_url')));
   if (problems.length) {
     console.error(problems.map((p) => `- ${p}`).join('\n'));
     process.exit(1);
@@ -102,7 +106,7 @@ function main() {
       else cpSync(from, join(stage, inside));
     }
     mkdirSync(out, { recursive: true });
-    const zip = join(out, `molveau-skills-openai-${manifest.version}.zip`);
+    const zip = join(out, `molveau-skills-openai-${manifest.version}${draft ? '-draft' : ''}.zip`);
     rmSync(zip, { force: true });
     // -D: no directory entries, -X: no extra file attributes, so the zip holds only the files.
     execFileSync('zip', ['-q', '-r', '-D', '-X', zip, '.'], { cwd: stage });

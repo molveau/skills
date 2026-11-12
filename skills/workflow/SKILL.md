@@ -79,6 +79,7 @@ This skill decides when and in what order; these skills decide how. Load the one
 | Before calling any UI done: the 20 tells and the detector | `anti-slop` |
 | A deep, multi-lens design audit of a file, component or route | `design-grill` |
 | Visual references before designing | `design-inspiration-index` |
+| Prose, articles, docs, README and email copy, in English or French | `writing` |
 | French copy (Québec or France) | `french-typography` |
 | A site that collects personal information in Québec | `loi-25-website` |
 | Starting a SaaS, dashboard or web app | `saas` |

@@ -5,13 +5,13 @@ import { existsSync } from 'node:fs';
 import { TOOLS, REMOTE_TOOLS, PLAYBOOK_FILES, checkArgs } from './tools.mjs';
 
 // Kept equal to package.json by test/mcp-core.test.mjs, so no file is read to name the server.
-export const VERSION = '1.3.2';
+export const VERSION = '1.4.0';
 export const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 // In remote mode, a string argument longer than this is refused with a tool error.
 export const MAX_INPUT = 200_000;
 
 const INSTRUCTIONS =
-  'Design checks from the Molveau skills: detect_tells (AI-look tells in UI code), check_contrast (WCAG ratio), fr_typo (French spacing and punctuation), check_motion (animation guardrails), and get_playbook to read a skill before building.';
+  'Design checks from the Molveau skills: detect_tells (AI-look tells in UI code), check_contrast (WCAG ratio), fr_typo (French spacing and punctuation), check_motion (animation guardrails), check_writing (AI-sounding prose in English and French), and get_playbook to read a skill before building.';
 
 const ok = (id, result) => ({ jsonrpc: '2.0', id, result });
 const fail = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });

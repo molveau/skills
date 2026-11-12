@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// molveau-skills MCP server: the skills' checks and playbooks as five tools for any MCP client.
+// molveau-skills MCP server: the skills' checks and playbooks as six tools for any MCP client.
 // Zero dependencies. Speaks newline-delimited JSON-RPC 2.0 on stdin and stdout; stdout carries protocol
 // messages only, diagnostics go to stderr. Read-only: no network, no writes. The answers come from core.mjs,
 // which a hosted endpoint calls too.
