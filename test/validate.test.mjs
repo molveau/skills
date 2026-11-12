@@ -567,3 +567,14 @@ test('every table row that cites a vendor file also names a playbook section', (
     }
   }
 });
+
+test('vendored skills keep credits in references/vendor/README.md', () => {
+  for (const name of ['ui', 'ux', 'motion', 'anti-slop']) {
+    const dir = join(SKILLS, name);
+    assert.ok(existsSync(join(dir, 'references', 'vendor', 'README.md')), `${name}: references/vendor/README.md missing`);
+    const body = readFileSync(join(dir, 'SKILL.md'), 'utf8');
+    assert.ok(body.includes('references/vendor/README.md'), `${name}: SKILL.md does not cite references/vendor/README.md`);
+    assert.doesNotMatch(body, /^## (Credits|Notes on the vendored files)/m, `${name}: credits block still in SKILL.md`);
+    assert.ok(!body.includes('Keep this credit'), `${name}: "Keep this credit" still in SKILL.md`);
+  }
+});

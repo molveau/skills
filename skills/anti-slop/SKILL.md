@@ -9,18 +9,7 @@ Vibe-coded UI fails in the same predictable ways. This skill merges three things
 the pass-by-pass method from unslop, the art-direction machinery from taste-skill, and a list of 20
 dated tells with a script that catches the mechanical ones.
 
-## Credits and licenses
-
-- The method is adapted from **unslop** by Damir Sokolovsky (https://github.com/heydamir/unslop),
-  licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Adapted: condensed and merged with
-  taste-skill by Leonxlnx and Molveau's tells in `references/playbook.md`. Keep this credit in any copy or adaptation. The original is
-  vendored unmodified in `references/vendor/unslop/`.
-- The art-direction run, house rules and inspector come from **taste-skill** by Leonxlnx
-  (https://github.com/Leonxlnx/taste-skill), MIT, vendored unmodified in `references/vendor/taste/`.
-- The 20-tells list and `scripts/detect-tells.mjs` are Molveau's own (MIT).
-- `scripts/story.mjs` is adapted from unslop's renderer (CC BY 4.0, changes listed in its header); it
-  stays CC BY 4.0, as does `scripts/story-server.mjs`, its local server. `scripts/story-contrast.mjs` is
-  Molveau's own (MIT).
+Vendor files are unmodified upstream copies: take the guidance, skip pointers to missing tools. Credits and licences: `references/vendor/README.md`. taste-skill's `scripts/` and `library/` are not vendored: use the direction gate below.
 
 ## Start here
 
@@ -203,9 +192,3 @@ clean file you ship. Do not polish the story beyond the shipped screen.
 | Judging a result with a rubric | §15; `references/vendor/taste/taste-skill/references/critique.md` |
 | The dated tells registry by wave | `references/vendor/taste/taste-skill/references/tells.md` |
 | The study behind taste's numbers | `references/vendor/taste/taste-skill/references/research.md` |
-
-The vendored files keep their upstream layout, so a few relative links inside them may not resolve
-here. taste-skill's `scripts/` and `library/` are not vendored (they read keys and the network, and the
-library is too large for the plugin directory's review): its dealt direction is replaced by the direction
-gate above; get the scripts from the upstream repo if you want them. Which visual checks to run is
-decided in the `ui` playbook, conflict 14 (this playbook's conflict 14 points there).
