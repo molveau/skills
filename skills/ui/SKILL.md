@@ -91,6 +91,7 @@ All paths are relative to this skill folder.
 | Public marketing site that should be cited by LLMs | §16; `references/discoverability.md` |
 | Prompts that force taste into AI-generated UI | §16; `references/prompts.md` |
 | The philosophy behind the rules | `references/quotes.md` |
+| Starting a SaaS or app, or a local business showcase site | the `saas` or `vitrine` skill |
 | UI looks vibe-coded or generic | the `anti-slop` skill |
 | Copy, errors, empty states, accessibility depth | the `ux` skill |
 

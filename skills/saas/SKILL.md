@@ -43,43 +43,28 @@ real references.
 ## What an app needs that a site does not
 
 1. **App shell and navigation.** One persistent frame: sidebar or top bar, current location marked, account menu, a clear way back. Group destinations by the user's jobs, not by your database tables. Seven top-level items or fewer. On mobile the shell collapses to a bottom bar or a drawer, never a shrunken desktop sidebar.
-2. **Dense data.** Tables are the main surface. Left-align text, right-align numbers with tabular figures, sticky header, sortable and filterable columns, row actions in a fixed place, bulk selection, pagination or virtualisation past a few hundred rows. Compact row height on desktop, but 44 px touch targets on touch devices.
-3. **Four states per view.** Every list, chart and detail view has designed loading (skeleton shaped like the content), empty (says why and offers the next step), error (what failed, retry, keeps user input) and populated. Add offline and permission-denied where they can happen. Write all of it before the happy path is called done.
+2. **Dense data.** Tables are the main surface. Left-align text, right-align numbers with tabular figures, sticky header, sortable and filterable columns, row actions in a fixed place, bulk selection, pagination or virtualisation past a few hundred rows. Compact row height on desktop; touch targets follow `ux` playbook §14. Charts carry units, a date range and exact values on hover.
+3. **Four states per view.** Every view has loading, empty, error and populated (`ux`, `ui` playbook §9); add offline and permission-denied where they can happen. Write them before the happy path is called done.
 4. **Onboarding to first value.** Define the one action that proves the product works, and take the shortest path to it. Pre-fill with sample data or a template, defer profile and billing questions, show progress. Empty states double as onboarding.
 5. **Settings.** Split account, workspace and billing. Autosave or one clear Save, never both. Destructive actions are separated, named plainly and confirmed with the item's name. Explain every toggle in one line.
 6. **Billing and pricing.** Show the current plan, usage against limits, next invoice date and amount, and how to cancel, inside the app. The public pricing page leads with who each plan is for, names the limit that separates plans, and states the monthly and yearly price in the same unit. Failed payments get a calm, specific banner with the fix, not a lockout.
-7. **Dark mode.** Decide at the start: semantic tokens (surface, text, border, accent) with a light and a dark value each, never raw hex in components. Check contrast, charts, shadows (replace with borders or lighter surfaces) and images in both.
-8. **Keyboard and focus.** Power users live here. Visible focus everywhere, logical tab order, a command palette or shortcuts for frequent actions, Escape closes layers and returns focus to its trigger, no focus trap outside modals.
-9. **Motion only as feedback.** Press states, toggles, menu and dialog enter and exit, row insert and remove, toast arrival. Nothing on frequent or keyboard-driven actions beyond a state change. No scroll reveals or looping ornaments inside the app.
+7. **Dark mode.** Decide light and dark at the start; semantic tokens (`ui` playbook §6). Check charts and images in both.
+8. **Keyboard and focus.** Power users live here: a command palette or shortcuts for frequent actions. The focus rules are in `ux` (playbook §11, §12).
+9. **Motion only as feedback.** Press, toggles, menus and dialogs, row insert and remove, toast arrival; nothing on keyboard-driven actions (`motion`).
 
 ## Order of work
 
 1. **Flow first.** List the user's three main jobs and the first-value path. Write the screens each needs and the states of each (item 3). Use the `ux` skill for the words as you go.
 2. **Direction, then tokens.** Run the direction gate above first. Then set colors (light and dark), type scale, spacing, radii and one ease-out token. If the project has none, use the `ui` skill and its taste defaults, then write them down.
-3. **Shell and one real screen.** Build the app shell and the densest table with real-looking data, not lorem ipsum or five perfect rows. Use the `ui` skill (new screen order; mockup first if the owner wants to judge it).
+3. **Shell and one real screen.** Build the app shell and the densest table with real-looking data, not lorem ipsum or five perfect rows. Use the `ui` skill (new screen order, and its mockup-first rule).
 4. **States.** Add loading, empty, error and permission states to every view. Use the `ux` skill (copy, then resilience with long names and other locales, then accessibility).
 5. **Onboarding, settings, billing.** In that order, each with its states.
-6. **Motion.** Add feedback only, using the `motion` skill and its guardrails. Reduced motion shows the final state.
-7. **Slop pass last.** Run the `anti-slop` skill, including its detector, before calling any screen done. Dashboards attract identical stat-card rows, gradient charts and icon-in-a-circle tiles; replace them with the numbers that matter, labeled plainly.
+6. **Motion.** Add feedback only, using the `motion` skill and its guardrails.
+7. **Slop pass last.** Run the `anti-slop` skill, including its detector, before calling any screen done.
 
-## Common mistakes
+## Done when
 
-- A marketing-style hero on the app's home screen. The home is the user's work, not your pitch.
-- Spinners over blank space, and empty states that say "No data".
-- Charts without units, a date range or a way to read exact values.
-- Color alone for status. Pair it with text or an icon.
-- A pricing page with four tiers and a feature matrix nobody can compare. Fewer plans, one limit that differs.
-- Settings that scatter one concern across three pages.
-
-## Done checklist
-
-- [ ] Every view has loading, empty, error and populated states, with specific copy and a next step.
-- [ ] A new user reaches first value without leaving the guided path or filling optional forms.
-- [ ] The densest table works with 0, 1, 200 and very long rows, sorting and keyboard.
-- [ ] Whole app usable by keyboard alone; focus visible; Escape and focus return verified.
-- [ ] Light and dark both pass AA contrast, including charts and badges.
-- [ ] Billing shows plan, usage, next charge and cancellation in the app.
-- [ ] Destructive actions name what will be lost and can be undone or confirmed.
-- [ ] Mobile layout checked at 390 px; touch targets 44 px.
-- [ ] Motion limited to feedback; reduced motion honored.
-- [ ] `anti-slop` detector run clean; tsc, lint and tests green.
+- A new user reaches first value without leaving the guided path or filling optional forms.
+- The densest table works with 0, 1, 200 and very long rows, by mouse and by keyboard alone.
+- Billing shows plan, usage, next charge and cancellation in the app; destructive actions name what will be lost and can be undone or confirmed.
+- The checklists of `ui`, `ux`, `motion` and `anti-slop` pass at 390 px and on desktop, in light and dark; tsc, lint and tests are green.

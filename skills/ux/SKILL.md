@@ -23,10 +23,10 @@ Open `references/playbook.md` and read two parts: the "Do this first" block at t
 5. **Native first.** Real `button`, `a`, `label`, `input`, `dialog`; ARIA only fills gaps.
 6. **Nothing by color alone**, text readable at 200% zoom and reflowing at 320px.
 7. **Text survives reality.** Long names, other locales, empty values and huge numbers do not break layout.
-8. **Motion respects `prefers-reduced-motion`**, and nothing the user needs disappears on a timer.
+8. **Motion** follows the `motion` skill's reduced-motion rule (playbook §10); nothing the user needs disappears on a timer.
 
 Neighbors: `ui` owns contrast values and fixes, color and layout CSS (`ui` playbook §3, §5); `anti-slop`
-owns buzzwords, stock CTAs and the em dash rule; `motion` owns reduced-motion detail; `french-typography`
+owns stock CTAs and the tells; `writing` owns buzzwords, filler and the em dash rule; `motion` owns reduced motion (playbook §10); `french-typography`
 owns French copy; `loi-25-website` owns what a Québec form must disclose.
 
 ## What to read for which task

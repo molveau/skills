@@ -131,8 +131,8 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - One color, one meaning (hues within 15 degrees count as one), never color alone; status hues 15 degrees
   or more from the accent; exactly one filled action per view. [Jakub] [Molveau/Emil] [Impeccable]
 - **Contrast**, on the background the element renders on: text 4.5:1, large text (24px, or 18.67px bold)
-  3:1; input borders, control boundaries, icons and focus indicators 3:1 (WCAG 1.4.11); decorative dividers
-  in apps and tables may sit near 1.1-1.3:1. [Jakub] [Impeccable] [Molveau] Placeholder text 4.5:1
+  3:1; input borders, control boundaries, icons, states, meaningful graphics and focus indicators 3:1 (WCAG
+  1.4.11); inactive controls and logos are exempt; decorative dividers in apps and tables may sit near 1.1-1.3:1. [Jakub] [Impeccable] [Molveau] Placeholder text 4.5:1
   (conflict 22). [Impeccable] APCA when asked: body Lc 75 (90 preferred), labels 60, large text (36px
   regular or 24px bold) 45, solid UI 30, dividers 15. [Jakub]
 - Fixing contrast: lightness first, hue held; near OKLCH L 0.75 move the background instead. Text on alpha,
@@ -239,8 +239,8 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
 - State swaps skip their first render (`AnimatePresence initial={false}`), never around a real entrance.
   From `display: none`, use `@starting-style` with `transition-behavior: allow-discrete`; a CSS entrance
   keeps the hidden state in the `from` keyframe (`fill-mode: both`), never a base `opacity: 0`. [Jakub] [feel]
-- Reduced motion is `motion` §10's: spinners, progress and brief press feedback stay; movement, scale-in,
-  parallax and loops go (Motion: `MotionConfig reducedMotion="user"`). [Jakub] [Molveau/Emil]
+- Reduced motion: the `motion` skill's rule (playbook §10). In Motion, `MotionConfig reducedMotion="user"`.
+  [Jakub] [Molveau/Emil]
 - Review motion at 10% speed; motion you could not watch is `Not verified`: flag it and ask the decision
   owner. `will-change`: `motion` §4. [feel] [Molveau]
 
@@ -340,7 +340,7 @@ read for which task" in `SKILL.md`). Tags and credits are at the end.
    to 300ms, longer only through `motion`. Why: long feedback reads as latency.
 5. **Measure.** Jakub 60-75 characters, Impeccable 45-75, Molveau/Emil about 65. Choice: cap 65ch, accept 60-75.
 6. **Font count.** Jakub rarely over three, Molveau two, Impeccable one on Operate. Choice: two at most.
-7. **Em dash.** Jakub offers it for asides; Molveau bans it in copy. Choice: none in copy (`anti-slop` tell 16).
+7. **Em dash.** Jakub offers it for asides; Molveau bans it in copy. Choice: none in copy (`writing` rule `em-dash`; `anti-slop` tell 16).
 8. **Filled icons in dark.** Molveau/Emil (after Rauno) fill icons in dark; Jakub's fill means active.
    Choice: fill means active in both themes.
 9. **Shadows at rest.** Jakub and feel ring cards with layered shadows; `anti-slop` keeps shadows for what

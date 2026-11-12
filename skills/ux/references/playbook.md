@@ -5,7 +5,7 @@
 1. **Read the path and the strings**: the flow around the change, who arrives in what state, the locale files (§1).
 2. **Hold the values**: targets 44 touch, 40 dense, 48dp, 24px the WCAG floor; errors beside the field; submit stays enabled.
 3. **Native first**: real `button`, `a`, `label`, `input`, `dialog`; ARIA only fills gaps; focus always visible (§11, §12).
-4. **Owners elsewhere**: contrast and color `ui` §5; hype and the em dash `anti-slop` §4; reduced-motion detail `motion` §10.
+4. **Owners elsewhere**: contrast and color `ui` §5; hype, filler and the em dash `writing`; reduced motion `motion` §10.
 5. **Check**: the §17 grep list, a keyboard-only and a screen-reader walk, an automated audit; unseen is `Not verified`.
 
 One doctrine for how an interface reads, holds up and works for everyone, from every source in this skill;
@@ -277,17 +277,15 @@ credits and what this file points to are at the end.
 
 ## 15. Contrast, color, zoom and motion
 
-- Contrast values, measuring and fixing are `ui` §5's; the criteria: text 4.5:1 and large text 3:1
-  (1.4.3), boundaries, states, icons and meaningful graphics 3:1 (1.4.11), inactive controls and logos
-  exempt. [Molveau] [Jakub] [ibelick]
+- Contrast values, measuring and fixing are `ui` §5's. The WCAG criteria to cite: 1.4.3 (text) and 1.4.11
+  (non-text). [Molveau] [Jakub] [ibelick]
 - Nothing by color alone (1.4.1): status pairs color with an icon, text or underline; errors with text. [Molveau] [Jakub] [ibelick] [Impeccable]
 - Zoom and reflow: text survives 200% resize (1.4.4); the page reflows at 320px (400% of 1280) with
   vertical scrolling only, real 2D content (tables, maps, code) scrolling in its own box (1.4.10); text
   boxes take `min-height`, not `height`; media queries in `rem` or `em` so a larger default font switches
   layout; never `maximum-scale=1` or `user-scalable=no`. Windows high contrast is tested. [Molveau] [Jakub] [Impeccable]
-- Motion respects `prefers-reduced-motion`: opt-in under `no-preference`, slides and scales become
-  opacity cross-fades, parallax and autoplay stop; spinners, progress and brief press feedback stay
-  (Jakub's keep list). The full doctrine: `motion` §10. [Molveau] [Jakub] [ibelick]
+- Motion follows the `motion` skill's reduced-motion rule (playbook §10); nothing the user needs disappears
+  on a timer. [Molveau] [Jakub] [ibelick]
 
 ## 16. Timed UI and media
 

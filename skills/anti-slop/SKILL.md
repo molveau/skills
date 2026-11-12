@@ -15,8 +15,7 @@ Vendor files are unmodified upstream copies: take the guidance, skip pointers to
 
 Open `references/playbook.md` and read two parts: the "Do this first" block at the top, then the one numbered section the task needs, from the table below. Stop there. Open vendor files only for depth or worked examples.
 
-Overlap: this is the AI-look pass. The `ui` skill's critique rows are the lighter general design review, and
-`design-grill` is the deep multi-lens audit; use them for design quality beyond the tells.
+Overlap: this is the AI-look pass. Review depth (light, deep, AI-look) is set out in the `ui` skill's Neighbors; `design-grill` is the deep audit.
 
 ## Direction gate
 
@@ -94,8 +93,8 @@ Full table with replacements: `references/tells.md`. Summary, with what the scri
 | 13 | Cursor-following glow | no |
 | 14 | Hover fade on buttons | yes |
 | 15 | Inconsistent spacing | no |
-| 16 | Em dashes in copy | yes |
-| 17 | Buzzword copy | yes |
+| 16 | Em dashes in copy (wording: the `writing` skill) | yes |
+| 17 | Buzzword copy (word list: the `writing` skill) | yes |
 | 18 | Serif italic accent words | no |
 | 19 | Space Grotesk with its usual display-serif partner (pair in `references/tells.md`) | yes |
 | 20 | Grain over a gradient | no |

@@ -580,3 +580,21 @@ test('vendored skills keep credits in references/vendor/README.md', () => {
     assert.ok(!body.includes('Keep this credit'), `${name}: "Keep this credit" still in SKILL.md`);
   }
 });
+
+test('ui routes the start of a SaaS or a showcase site to saas and vitrine', () => {
+  const body = readFileSync(join(SKILLS, 'ui', 'SKILL.md'), 'utf8');
+  assert.ok(body.includes('`saas`'), 'ui does not name `saas`');
+  assert.ok(body.includes('`vitrine`'), 'ui does not name `vitrine`');
+});
+
+test("saas follows ui's mockup-first rule", () => {
+  const body = readFileSync(join(SKILLS, 'saas', 'SKILL.md'), 'utf8');
+  assert.ok(!body.includes('if the owner wants to judge it'), 'saas still makes the mockup optional');
+  assert.ok(body.includes('mockup-first'), 'saas does not cite mockup-first');
+});
+
+test('vitrine points to loi-25-website instead of listing its obligations', () => {
+  const body = readFileSync(join(SKILLS, 'vitrine', 'SKILL.md'), 'utf8');
+  assert.ok(!body.includes('person in charge'), 'vitrine still lists Law 25 obligations');
+  assert.ok(body.includes('loi-25-website'), 'vitrine does not name loi-25-website');
+});
