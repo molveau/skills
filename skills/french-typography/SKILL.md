@@ -1,6 +1,6 @@
 ---
 name: french-typography
-description: Fixes and checks French (Québec and France) typography in UI copy, JSON message files and Markdown, including non-breaking spaces before colons, semicolons, exclamation and question marks, guillemets, thousands and currency spacing, curly apostrophes and the no-em-dash rule. Use when writing or reviewing French copy, translating a site, editing fr.json or i18n messages, or adding a CI guard test for French typography in next-intl or i18next. Includes a zero-dependency check and fix script.
+description: French typography (Québec and France) for UI copy, JSON message files and Markdown, covering non-breaking spaces before colons and ; ! ?, guillemets, number and price spacing, curly apostrophes. Use when writing, translating or reviewing French copy or fr.json messages, or adding a CI guard for French typography. Includes a check and fix script.
 ---
 
 # French typography

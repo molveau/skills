@@ -1,6 +1,6 @@
 ---
 name: ui
-description: Builds, restyles, polishes and reviews user interfaces with taste. Use when building, restyling or improving a UI, page, screen or component, including a hero, navbar, header, cards, a form or a section ("make it better", "make it pop", "add polish"); working on layout, spacing, typography, color, dark mode or design tokens; polishing hover and focus states or details when something "feels off"; responsive or mobile layout; critiquing, auditing or redesigning an interface; doing a design review or UI roast; simplifying or making a design bolder; or writing prompts that get production-grade UI out of an AI tool.
+description: Builds, restyles and reviews user interfaces with taste. Use when building, restyling or improving a UI, page, screen or component (a hero, navbar, cards; layout, spacing, type, color, dark mode, tokens, responsive), when asked to make it pop, when something feels off and needs polish, for a light design review or UI roast, or when writing prompts that get production-grade UI out of an AI tool.
 ---
 
 # UI

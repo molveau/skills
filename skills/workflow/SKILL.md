@@ -1,6 +1,6 @@
 ---
 name: workflow
-description: Delivery workflow for building software with a coding agent, from a rough idea to a verified, committed change. Use when starting a feature or a bugfix, when asked to plan this or break work into tasks, when deciding how we should work or setting up an agent or team workflow (clarify, plan, TDD, one implementer and one reviewer per task, git hygiene, status reports), before committing or merging, and when asking whether something is done. Covers debugging, code review, verification and progress reports. Hands UI, UX and motion detail to the ui, ux and motion skills.
+description: Delivery loop for building software with a coding agent, from rough idea to verified, committed change. Use when starting a feature or bugfix, when asked to plan or break work into tasks, when setting up how an agent or team works, before committing or merging, and when asking whether something is done.
 ---
 
 # Workflow

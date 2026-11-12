@@ -1,6 +1,6 @@
 ---
 name: vitrine
-description: Playbook for a vitrine, a business showcase / brochure site for a local business. Use at the start of a small business website, brochure site, landing page for a local business, service-business site, or when adding pricing, booking, city pages, local SEO, bilingual FR/EN or a Québec privacy setup to one. Says what such a site needs, in which order to apply the ui, ux, anti-slop, motion, french-typography and loi-25-website skills, and gives a done checklist.
+description: Vitrine playbook, a showcase (brochure) site for a local business. Use at the start of a small business, service-business or local landing-page site, or when adding pricing, booking, city pages, local SEO, a bilingual FR/EN setup or Québec privacy to one.
 ---
 
 # Vitrine playbook

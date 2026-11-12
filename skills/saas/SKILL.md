@@ -1,6 +1,6 @@
 ---
 name: saas
-description: Playbook for starting a SaaS product UI or web app. Use at the start of a SaaS, dashboard, admin panel, internal tool, web app or app-shell project, or when adding tables, onboarding, settings, a billing page or a pricing page to one. Says what an app needs that a marketing site does not, in which order to apply the ui, ux, anti-slop and motion skills, and gives a done checklist.
+description: SaaS playbook. Use at the start of a SaaS, dashboard, admin panel or web app project, or when adding tables, onboarding, settings, billing or a pricing page to one. Sets what an app needs and the order of the ui, ux, motion and anti-slop skills.
 ---
 
 # SaaS playbook

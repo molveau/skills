@@ -1,6 +1,6 @@
 ---
 name: design-inspiration-index
-description: Routing index for design inspiration. Use when you need visual references or ideas for a UI (a hero, landing page, SaaS page, navbar, CTA, motion or micro-interaction, brand or rebrand, component, icon) and want to know which curated gallery to pull from. Maps a need to the best source among galleries, component registries and optional MCP servers. Use it before hunting blindly for inspiration.
+description: Inspiration for a UI, saying which curated gallery, registry or MCP server to pull references from. Use when you need visual references before designing a hero, landing page, navbar, CTA, motion idea, brand or rebrand, component or icon.
 ---
 
 # Design inspiration index

@@ -1,6 +1,6 @@
 ---
 name: motion
-description: Designs, builds, reviews and audits web animation and motion. Use when animating anything (transitions, hover and press feedback, enter and exit, gestures, springs, scroll-linked or timeline motion), when an animation feels off or janky, when reviewing or auditing animation code, when looking for places that should or should not animate, when naming an effect, when using GSAP or Lottie, or when building a faux product UI or animated demo. Includes guardrails (reduced motion, pausing off screen) and a zero-dependency checker script.
+description: Designs, builds and reviews web animation. Use when animating anything (transitions, enter and exit, gestures, springs, scroll-linked motion, GSAP, Lottie), when an animation feels janky, when auditing animation code or finding places that should (or should not) animate, when naming an effect, or when building an animated product demo.
 ---
 
 # Motion

@@ -1,6 +1,6 @@
 ---
 name: anti-slop
-description: Removes the AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks vibe-coded or generic (purple gradients, gradient text, emoji labels, glow, eyebrow pills, Inter everywhere, buzzword copy, uneven spacing), when the user asks to unslop, de-AI or make a page stop looking generated, and before shipping any UI to check the 20 tells. Includes a zero-dependency detector script and a ratchet-test recipe.
+description: Removes the vibe-coded, AI-generated look from a UI and gives it a direction of its own. Use when a screen, landing page or dashboard looks generic or generated, when asked to unslop a UI, and before shipping any UI (the 20 tells). Includes a detector script.
 ---
 
 # Anti-slop

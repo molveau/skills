@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Improves how an interface talks to people and holds up in real use. Use when writing or reviewing interface copy (button labels, error messages, empty states, confirmations, onboarding, microcopy), when improving an onboarding or signup flow or making any flow clearer, when handling errors, edge cases, long text, i18n or overflow, or when checking accessibility (keyboard, focus, ARIA, screen readers, forms, contrast, touch targets, WCAG). Merges Jakub Krehel's, Paul Bakaus's and ibelick's skills with Molveau's always-on UX rules.
+description: Writes and reviews interface copy and accessibility. Use when writing button labels, error messages, empty states or onboarding copy, when improving an onboarding or signup flow, when handling errors, edge cases, long text or i18n, or when checking accessibility (keyboard, focus, ARIA, screen readers, forms, touch targets, WCAG).
 ---
 
 # UX
