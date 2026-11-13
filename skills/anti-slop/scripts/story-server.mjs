@@ -1,8 +1,9 @@
 // Local server for story.mjs. Adapted from the request handler in unslop's story.mjs by Damir Sokolovsky
 // (https://github.com/heydamir/unslop), CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); this file
 // stays under CC BY 4.0. Changes by Molveau: the path check uses path.relative instead of a prefix match, only
-// regular files are served, and a malformed URL gets a 400 instead of crashing the render.
-import { readFileSync, statSync } from "node:fs";
+// regular files are served, a malformed URL gets a 400 instead of crashing the render, and the frames folder is
+// deleted only when story.mjs created it (prepareFrames and dropFrames).
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { extname, isAbsolute, join, normalize, relative, sep } from "node:path";
 
 const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".avif": "image/avif", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".woff": "font/woff", ".mp4": "video/mp4" };
@@ -42,4 +43,22 @@ export function storyHandler(root, stage) {
       response.end();
     }
   };
+}
+
+// The frames folder holds one PNG per frame during a render. story.mjs marks the folder it creates, and only
+// ever deletes a folder that carries that mark, so a user's own ".story-frames" folder is left alone.
+export const FRAMES_MARK = ".created-by-story-mjs";
+const notOurs = (dir) => new Error(`${dir} exists and was not created by story.mjs: move or delete it, then run again`);
+
+export function prepareFrames(dir) {
+  if (existsSync(dir) && !existsSync(join(dir, FRAMES_MARK))) throw notOurs(dir);
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, FRAMES_MARK), "");
+}
+
+export function dropFrames(dir) {
+  if (!existsSync(dir)) return;
+  if (!existsSync(join(dir, FRAMES_MARK))) throw notOurs(dir);
+  rmSync(dir, { recursive: true, force: true });
 }

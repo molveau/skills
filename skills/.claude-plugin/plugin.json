@@ -1,7 +1,7 @@
 {
   "name": "molveau-skills",
   "description": "Sixteen agent skills by Molveau Studio: anti-slop, UI, UX, motion, a deep design audit, an inspiration index, French typography, Québec Law 25, Québec professional advertising rules, bilingual Next.js, SaaS, showcase-site, paid-booking and local AI visibility playbooks, a delivery workflow and a writing check, with four commands, two review agents and an edit check.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": {
     "name": "Molveau Studio",
     "url": "https://www.molveau.ca"

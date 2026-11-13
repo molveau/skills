@@ -98,3 +98,32 @@ test('storyHandler serves the stage and regular files only, 400 on a malformed U
     server.close();
   }
 });
+
+import { prepareFrames, dropFrames, FRAMES_MARK } from '../skills/anti-slop/scripts/story-server.mjs';
+
+test('prepareFrames creates the frames folder with its marker, and dropFrames removes only that folder', () => {
+  const d = mkdtempSync(join(tmpdir(), 'frames-'));
+  const frames = join(d, '.story-frames');
+  prepareFrames(frames);
+  assert.ok(existsSync(join(frames, FRAMES_MARK)));
+  writeFileSync(join(frames, 'f-0001.png'), 'x');
+  dropFrames(frames);
+  assert.equal(existsSync(frames), false);
+  dropFrames(frames); // missing folder: no error
+});
+
+test('a folder named .story-frames that the script did not create is never deleted', () => {
+  const d = mkdtempSync(join(tmpdir(), 'frames-'));
+  const frames = join(d, '.story-frames');
+  mkdirSync(frames);
+  writeFileSync(join(frames, 'keep.txt'), 'user data');
+  assert.throws(() => prepareFrames(frames), /not created by story\.mjs/);
+  assert.throws(() => dropFrames(frames), /not created by story\.mjs/);
+  assert.equal(readFileSync(join(frames, 'keep.txt'), 'utf8'), 'user data');
+});
+
+test('the data-slop label is written as text, never parsed as HTML', () => {
+  const src = readFileSync(STORY, 'utf8');
+  assert.doesNotMatch(src, /\+\s*el\.dataset\.slop\s*\+/);
+  assert.match(src, /textContent\s*=\s*el\.dataset\.slop/);
+});
