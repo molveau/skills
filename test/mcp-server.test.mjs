@@ -118,7 +118,7 @@ test('get_playbook offers exactly the skills in skills/', async () => {
   const schema = replies[0].result.tools.find((t) => t.name === 'get_playbook').inputSchema;
   const dirs = readdirSync(join(ROOT, 'skills')).filter((n) => !n.startsWith('.') && !['commands', 'agents', 'hooks'].includes(n) && statSync(join(ROOT, 'skills', n)).isDirectory());
   assert.deepEqual([...schema.properties.skill.enum].sort(), dirs.sort());
-  assert.equal(dirs.length, 12);
+  assert.equal(dirs.length, 16);
 });
 
 test('unknown tool is -32602; bad arguments are a tool error, not a crash', async () => {

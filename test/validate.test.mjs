@@ -187,8 +187,8 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 // Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
-  quebec: ['french-typography', 'loi-25-website'],
-  playbooks: ['saas', 'vitrine', 'workflow'],
+  quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising', 'bilingual-next'],
+  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking', 'local-ai-visibility'],
 };
 
 // The plugin is the skills/ folder only, so tests, fixtures, the example video and the repo scripts stay
@@ -363,7 +363,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
 
 test('skillDirs leaves out the plugin component folders', () => {
   for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
-  assert.equal(skillDirs().length, 12);
+  assert.equal(skillDirs().length, 16);
 });
 
 // Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment
@@ -644,4 +644,34 @@ test('every numbered playbook section is routed from its SKILL.md', () => {
     const missing = heads.filter((n) => !own.has(n) && !UNROUTED_SECTIONS.has(`${name}:${n}`));
     assert.deepEqual(missing, [], `${name}: playbook sections cited nowhere in SKILL.md: ${missing.map((n) => '§' + n).join(', ')}`);
   }
+});
+
+test('ordre-pro-advertising: one reference per regulator, each with an Uncertain section and a LégisQuébec link', () => {
+  const dir = join(SKILLS, 'ordre-pro-advertising', 'references');
+  const expected = ['amf-mortgage-broker.md', 'barreau.md', 'cmq.md', 'oaciq.md', 'opq.md', 'rbq-building-inspector.md'];
+  assert.ok(existsSync(dir), 'skills/ordre-pro-advertising/references/ missing');
+  assert.deepEqual(readdirSync(dir).sort(), expected);
+  for (const f of expected) {
+    const text = readFileSync(join(dir, f), 'utf8');
+    assert.match(text, /^## Uncertain$/m, `${f}: no "## Uncertain" heading`);
+    assert.match(text, /l[ée]gisqu[ée]bec/i, `${f}: no LégisQuébec link`);
+  }
+});
+
+test('paid-booking: the reference holds dated, linked vendor facts and the policy templates', () => {
+  const f = join(SKILLS, 'paid-booking', 'references', 'cal-stripe.md');
+  assert.ok(existsSync(f), 'skills/paid-booking/references/cal-stripe.md missing');
+  const text = readFileSync(f, 'utf8');
+  assert.match(text, /2\.9 ?% \+ CA\$ ?0\.30/, 'no Stripe Canada fee line');
+  assert.match(text, /https:\/\/stripe\.com\/en-ca\/pricing/, 'no Stripe Canada pricing link');
+  assert.match(text, /\b13 November 2026\b/, 'vendor facts are not dated');
+  assert.match(text, /https:\/\/cal\.com\/help\/bookings\/paid-bookings/, 'no Cal.com paid bookings link');
+  assert.match(text, /^## Policy text$/m);
+  assert.match(text, /^## QA checklist$/m);
+  const skill = readFileSync(join(SKILLS, 'paid-booking', 'SKILL.md'), 'utf8');
+  assert.match(skill, /`loi-25-website`/);
+  assert.match(skill, /`ordre-pro-advertising`/);
+  assert.equal((skill.match(/Done when/g) || []).length, 8, 'eight steps, each with a "Done when"');
+  assert.ok(skill.indexOf('regulator what the payment is') < skill.indexOf('Open the accounts'), 'regulator gate comes before the setup');
+  assert.doesNotMatch(text, /\b24 (hours|heures)/, 'the cancellation window is a [24] placeholder');
 });

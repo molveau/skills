@@ -2,6 +2,19 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] - 2026-11-13
+
+### Added
+
+- `ordre-pro-advertising` skill: advertising rules for the site of a Québec regulated professional, with a pass, fix or n.a. report per rule.
+- `paid-booking` skill: deposits, full payment, no-show fees, refunds and receipts for a booking site, with a Stripe test-mode check.
+- `local-ai-visibility` skill: how a small local business gets found and cited by AI search.
+- `bilingual-next` skill: `next-intl` setup for a French and English Next.js site.
+- `check-ai-visibility` script: checks a page for the signals AI crawlers and search read. A blocked training bot (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended) is ok; a blocked search or user bot is a fix. It treats an HTML page served at `/llms.txt` as missing, reports an unreachable `robots.txt` apart from a missing one, and caps a response at 5 MB.
+- `check-i18n-parity` script: lists the keys that differ between the French and English message files.
+- `get_playbook` serves the four new skills, and every `references/*.md` file of each skill (the package now ships them).
+- `vitrine` routes to `paid-booking`, `local-ai-visibility` and `bilingual-next`.
+
 ## [1.5.0] - 2026-11-12
 
 ### Changed

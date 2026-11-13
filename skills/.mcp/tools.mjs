@@ -16,6 +16,7 @@ const SKILLS_DIR = fileURLToPath(new URL('..', import.meta.url));
 export const SKILLS = [
   'anti-slop', 'design-grill', 'design-inspiration-index', 'french-typography', 'loi-25-website',
   'motion', 'saas', 'ui', 'ux', 'vitrine', 'workflow', 'writing',
+  'ordre-pro-advertising', 'paid-booking', 'local-ai-visibility', 'bilingual-next',
 ];
 
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
@@ -101,8 +102,26 @@ export function collectInside(root, paths, { maxFiles = 2000, maxBytes = 1_000_0
 
 // ---------- playbooks ----------
 
+// Each skill's other references/*.md files (no vendor folders). A runtime without a file system cannot list a
+// folder, so the names are written out; test/mcp-core.test.mjs keeps this equal to what is on disk.
+const REFERENCES = {
+  'anti-slop': ['tells.md'],
+  'bilingual-next': ['next-intl.md'],
+  'design-inspiration-index': ['galleries.md'],
+  'loi-25-website': ['checklist.md'],
+  motion: ['guardrails.md'],
+  'ordre-pro-advertising': ['amf-mortgage-broker.md', 'barreau.md', 'cmq.md', 'oaciq.md', 'opq.md', 'rbq-building-inspector.md'],
+  'paid-booking': ['cal-stripe.md'],
+  ui: ['animation.md', 'components.md', 'discoverability.md', 'mockup-first.md', 'prompts.md', 'quotes.md', 'taste.md'],
+  workflow: ['communication.md', 'delivery-loop.md', 'git.md', 'ui-work.md'],
+};
+export const REFERENCE_FILES = Object.entries(REFERENCES).flatMap(([s, names]) => names.map((n) => 'skills/' + s + '/references/' + n));
+
 // Every file get_playbook can read, relative to the package root.
-export const PLAYBOOK_FILES = SKILLS.flatMap((s) => ['skills/' + s + '/SKILL.md', 'skills/' + s + '/references/playbook.md']);
+export const PLAYBOOK_FILES = [
+  ...SKILLS.flatMap((s) => ['skills/' + s + '/SKILL.md', 'skills/' + s + '/references/playbook.md']),
+  ...REFERENCE_FILES,
+];
 
 // ctx.readFile, when given, serves those files by their package-relative path (for a runtime without a file
 // system); otherwise they are read beside this module.
@@ -185,9 +204,15 @@ function getPlaybook({ skill, query }, ctx) {
   const skillMd = readSkillFile(skill, 'SKILL.md', ctx);
   if (skillMd === null) throw new Error(`skills/${skill}/SKILL.md is missing from this install.`);
   const playbook = readSkillFile(skill, 'references/playbook.md', ctx);
-  const searched = playbook ?? skillMd;
-  const source = playbook ? `skills/${skill}/references/playbook.md` : `skills/${skill}/SKILL.md`;
-  const all = sections(searched);
+  const main = playbook ?? skillMd;
+  const mainSource = playbook ? `skills/${skill}/references/playbook.md` : `skills/${skill}/SKILL.md`;
+  // The main file first, then each other references/*.md of the skill, every section tagged with its file.
+  const docs = [{ source: mainSource, text: main }];
+  for (const name of REFERENCES[skill] ?? []) {
+    const text = readSkillFile(skill, 'references/' + name, ctx);
+    if (text !== null) docs.push({ source: `skills/${skill}/references/${name}`, text });
+  }
+  const all = docs.flatMap((d) => sections(d.text).map((s) => ({ ...s, source: d.source })));
   const headings = all.map((s) => s.heading).filter(Boolean);
   const footerFor = (from) => `From ${from}. Ask again with a query to read other sections:\n${headings.join('\n')}`;
 
@@ -196,7 +221,7 @@ function getPlaybook({ skill, query }, ctx) {
     const gate = sections(skillMd).find((s) => /^## Direction gate\b/.test(s.heading));
     const first = playbook && sections(playbook).find((s) => /^## Do this first\b/.test(s.heading));
     const text = gate ? gate.text : first ? first.text : skillMd.split('\n').slice(0, 80).join('\n');
-    const from = gate ? `skills/${skill}/SKILL.md` : first ? source : `skills/${skill}/SKILL.md (first 80 lines)`;
+    const from = gate ? `skills/${skill}/SKILL.md` : first ? mainSource : `skills/${skill}/SKILL.md (first 80 lines)`;
     return { text, footer: footerFor(from), data: { skill, source: from, sections: headings } };
   }
 
@@ -207,8 +232,9 @@ function getPlaybook({ skill, query }, ctx) {
     .sort((a, b) => b.score - a.score || a.i - b.i)
     .slice(0, 3);
   if (!ranked.length) {
-    return { text: `No section of ${source} matches "${query}". Sections:\n${headings.join('\n')}`, data: { skill, source, matched: [], sections: headings } };
+    return { text: `No section of ${mainSource} matches "${query}". Sections:\n${headings.join('\n')}`, data: { skill, source: mainSource, matched: [], sections: headings } };
   }
+  const source = [...new Set(ranked.map((s) => s.source))].join(', ');
   // No footer here: the reply holds at most 12,000 characters in all.
   return { text: fitSections(ranked), data: { skill, source, matched: ranked.map((s) => s.heading) } };
 }

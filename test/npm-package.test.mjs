@@ -45,6 +45,7 @@ test('the tarball holds the server, the scripts it imports, every SKILL.md and p
     'skills/french-typography/scripts/fr-typo.mjs', 'skills/motion/scripts/check-motion.mjs', 'skills/writing/scripts/check-writing.mjs',
     ...SKILLS.map((s) => `skills/${s}/SKILL.md`),
     ...SKILLS.filter((s) => existsSync(join(ROOT, 'skills', s, 'references', 'playbook.md'))).map((s) => `skills/${s}/references/playbook.md`),
+    ...SKILLS.flatMap((s) => (existsSync(join(ROOT, 'skills', s, 'references')) ? readdirSync(join(ROOT, 'skills', s, 'references')).filter((n) => n.endsWith('.md')).map((n) => `skills/${s}/references/${n}`) : [])),
   ];
   for (const p of must) assert.ok(got.has(p), `${p} missing from the tarball`);
 });
