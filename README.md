@@ -1,6 +1,6 @@
 # Molveau skills
 
-Twelve agent skills from [Molveau Studio](https://www.molveau.ca/?utm_source=github&utm_medium=readme&utm_campaign=skills), a web studio in Montréal. Nine of them cover a domain (anti-slop, UI, motion, UX, French typography, Law 25, SaaS, showcase sites, writing) and route to the best material on it; two more are a deep design audit and an inspiration index; the last one is the delivery workflow that ties them together. The domain material comes from other authors' open skills, kept in this repo as pinned, unedited copies and checked against upstream every week. You install one skill instead of a dozen, and the work is split by task, so the agent opens the right file instead of loading everything.
+Sixteen agent skills from [Molveau Studio](https://www.molveau.ca/?utm_source=github&utm_medium=readme&utm_campaign=skills), a web studio in Montréal. Thirteen of them cover a domain (anti-slop, UI, motion, UX, French typography, Law 25, professional advertising rules, bilingual Next.js, SaaS, showcase sites, paid booking, local AI visibility, writing) and route to the best material on it; two more are a deep design audit and an inspiration index; the last one is the delivery workflow that ties them together. The domain material comes from other authors' open skills, kept in this repo as pinned, unedited copies and checked against upstream every week. You install one skill instead of a dozen, and the work is split by task, so the agent opens the right file instead of loading everything.
 
 ## See it work
 
@@ -24,16 +24,20 @@ A dashboard vibecoded by Claude Sonnet, unslopped by Claude Opus with the `anti-
 | `design-grill` | Deep read-only design audit: seven lenses (tokens, craft, motion, layout, accessibility, copy, heuristics) and one ranked report. Uses Claude Code's Workflow tool and several agents, so it costs more; a manual fallback is documented. Runs only when you type `/design-grill` | Molveau only | `merge-findings` and three helpers |
 | `design-inspiration-index` | Routes a need (hero, navbar, CTA, motion, icons, brand) to the best public gallery or registry | Molveau only | none |
 | `workflow` | How to deliver with a coding agent: clarify, plan, test first, one implementer and one reviewer per task, verify, git hygiene, status and result reports; routes each step to the skills above | Molveau only | none |
+| `ordre-pro-advertising` | Advertising rules for the site of a Québec regulated professional (lawyer, mortgage or real estate broker, inspector, psychologist, physician), with a pass, fix or n.a. report per rule; not legal advice | Molveau only | none |
+| `paid-booking` | Paid booking for a professional's or studio's site: deposit or full payment, no-show fees, refund and receipt policy, a safe form and a Stripe test-mode check | Molveau only | none |
+| `local-ai-visibility` | Gets a small local business found and cited by ChatGPT, Perplexity, Claude, Copilot and Google AI Overviews, with a checker for the site | Molveau only | `check-ai-visibility` |
+| `bilingual-next` | next-intl setup for a French and English Next.js site: localized URLs, hreflang and x-default, a language switcher that keeps the page, and a check that FR and EN messages match | Molveau only | `check-i18n-parity` |
 
 How each skill compares with the other open skills on its subject, and when to install the original instead: [`anti-slop`](https://www.molveau.ca/guides/anti-slop-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`ui`](https://www.molveau.ca/guides/ui-design-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`ux`](https://www.molveau.ca/guides/ux-accessibility-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`motion`](https://www.molveau.ca/guides/motion-animation-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`design-grill`](https://www.molveau.ca/guides/design-audit-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`design-inspiration-index`](https://www.molveau.ca/guides/design-inspiration-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`workflow`](https://www.molveau.ca/guides/agent-workflow-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`french-typography`](https://www.molveau.ca/guides/french-typography-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`loi-25-website`](https://www.molveau.ca/guides/law-25-website-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`saas`](https://www.molveau.ca/guides/saas-ui-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills), [`vitrine`](https://www.molveau.ca/guides/local-business-website-skills-compared?utm_source=github&utm_medium=readme&utm_campaign=skills).
 
 ## Install
 
-All twelve, with the [skills CLI](https://github.com/vercel-labs/skills) (Claude Code, Codex, Cursor and other agents that read `SKILL.md`):
+All sixteen, with the [skills CLI](https://github.com/vercel-labs/skills) (Claude Code, Codex, Cursor and other agents that read `SKILL.md`):
 
 ```sh
-npx skills add molveau/skills                  # all twelve, in this project
-npx skills add molveau/skills -g               # all twelve, for every project
+npx skills add molveau/skills                  # all sixteen, in this project
+npx skills add molveau/skills -g               # all sixteen, for every project
 npx skills add molveau/skills -s anti-slop     # just one
 ```
 
@@ -45,7 +49,7 @@ Or one bundle:
 | Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website -s ordre-pro-advertising -s bilingual-next` |
 | Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow -s paid-booking -s local-ai-visibility` |
 
-In Claude Code, all twelve as one plugin, with the commands, agents, MCP server and hook described below:
+In Claude Code, all sixteen as one plugin, with the commands, agents, MCP server and hook described below:
 
 ```
 /plugin marketplace add molveau/skills

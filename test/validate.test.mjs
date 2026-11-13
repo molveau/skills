@@ -363,7 +363,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
 
 test('skillDirs leaves out the plugin component folders', () => {
   for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
-  assert.equal(skillDirs().length, 12);
+  assert.equal(skillDirs().length, 16);
 });
 
 // Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment

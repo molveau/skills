@@ -16,6 +16,7 @@ const SKILLS_DIR = fileURLToPath(new URL('..', import.meta.url));
 export const SKILLS = [
   'anti-slop', 'design-grill', 'design-inspiration-index', 'french-typography', 'loi-25-website',
   'motion', 'saas', 'ui', 'ux', 'vitrine', 'workflow', 'writing',
+  'ordre-pro-advertising', 'paid-booking', 'local-ai-visibility', 'bilingual-next',
 ];
 
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };

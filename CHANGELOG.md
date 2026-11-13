@@ -2,6 +2,18 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] - 2026-11-13
+
+### Added
+
+- `ordre-pro-advertising` skill: advertising rules for the site of a Québec regulated professional, with a pass, fix or n.a. report per rule.
+- `paid-booking` skill: deposits, full payment, no-show fees, refunds and receipts for a booking site, with a Stripe test-mode check.
+- `local-ai-visibility` skill: how a small local business gets found and cited by AI search.
+- `bilingual-next` skill: `next-intl` setup for a French and English Next.js site.
+- `check-ai-visibility` script: checks a page for the signals AI crawlers and search read.
+- `check-i18n-parity` script: lists the keys that differ between the French and English message files.
+- `get_playbook` serves the four new skills.
+
 ## [1.5.0] - 2026-11-12
 
 ### Changed
