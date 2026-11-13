@@ -136,38 +136,40 @@ Each language gets its own entry, and both carry the full alternates, itself inc
 
 ```tsx
 'use client';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from '@/i18n/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
   const pathname = usePathname(); // the internal route key, e.g. '/blog/[slug]'
   const params = useParams();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const next = locale === 'fr' ? 'en' : 'fr';
+  // next-intl types `params` against the pathname literal; here both come from the current
+  // route, so they always match and the cast only silences the generic type.
+  const href = { pathname, params } as React.ComponentProps<typeof Link>['href'];
 
   return (
-    <button
-      type="button"
+    <Link
+      href={href}
+      locale={next}
+      hrefLang={next}
       lang={next}
-      onClick={() =>
-        // next-intl types `params` against the pathname literal; here both come from the current
-        // route, so they always match and the cast below only silences the generic type.
-        router.replace(
-          { pathname, params, query: Object.fromEntries(searchParams) } as Parameters<typeof router.replace>[0],
-          { locale: next },
-        )
-      }
+      onClick={(event) => {
+        // Keep the query string. It is read on click, so no Suspense boundary is needed.
+        event.preventDefault();
+        const query = Object.fromEntries(new URLSearchParams(window.location.search));
+        router.replace({ pathname, params, query } as Parameters<typeof router.replace>[0], { locale: next });
+      }}
     >
       {next === 'en' ? 'English' : 'Français'}
-    </button>
+    </Link>
   );
 }
 ```
 
-`usePathname` returns the route key, so `router.replace` lands on the localized path of the same page. A plain `<a hreflang>` link is the crawlable alternative; the button is fine when the head already declares alternates. The query string is carried over with `useSearchParams` (repeated keys keep only the last value).
+`usePathname` returns the route key, so the link lands on the localized path of the same page. The `Link` from `createNavigation` is a real `<a href>` in the other language, so a crawler can follow it and a visitor can open it in a new tab; `locale` picks the target path, and `hrefLang` and `lang` label it. The click handler adds the current query string from `window.location.search` (repeated keys keep only the last value). Reading it on click avoids `useSearchParams`, which on a prerendered route pushes the component up to the nearest `Suspense` boundary into client rendering; if you prefer that hook, wrap the switcher in `<Suspense>`.
 
 ## Content twins
 

@@ -11,6 +11,7 @@ A visitor picks a slot, pays or leaves a card, and the event lands in the owner'
 
 - One person or a small practice sells a consultation, a session or a call by the slot.
 - The owner wants to cut no-shows, or to be paid before the meeting.
+- The owner uses Calendly: the policy, form and test steps apply to it too; the vendor facts and setup details are Cal.com's.
 
 It does not fit a shop with a cart, many products or shipping: use a shop tool. It does not fit a free booking with no money: use Cal.com alone and skip the Stripe parts of steps 2, 3 and 8.
 

@@ -10,25 +10,25 @@ Facts below come from the Molveau research of November 2026 and were last review
 - **Structured, verified data wins citations.** Yext, 2026: structured, verified data is the most cited source type across ChatGPT, Gemini, Perplexity and Claude (source: Yext, 2026, not linked).
 - **Bing Webmaster Tools, AI Performance report.** Public preview since February 2026: Copilot citations and grounding queries ([Bing Webmaster Tools](https://www.bing.com/webmasters), 13 November 2026).
 - **Search Console, generative AI report.** June 2026: impressions in AI Overviews and AI Mode, no click data ([Google Search Console](https://search.google.com/search-console), 13 November 2026).
-- **ChatGPT referral tag.** ChatGPT adds `utm_source=chatgpt.com` to the links it shows, so the visits appear in analytics as a source.
-- **One index.** Google's line is that good SEO is good GEO: AI features use the same index and the same quality signals ([Google Search essentials](https://developers.google.com/search/docs/essentials), 13 November 2026).
+- **ChatGPT referral tag.** Visits from ChatGPT often arrive tagged `utm_source=chatgpt.com`, so they show as a source in analytics (seen in analytics tools in 2026, not linked; check your own data).
+- **One index.** For Google's AI features, Google says SEO best practices apply unchanged ([Google Search essentials](https://developers.google.com/search/docs/essentials), 13 November 2026).
 - **Local business structured data.** Google documents the properties for `LocalBusiness` ([Google, local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business), 13 November 2026). Types: [schema.org/LocalBusiness](https://schema.org/LocalBusiness).
 
 ## AI crawlers the checker tests
 
-| Bot | Operator | Used for |
-| --- | --- | --- |
-| GPTBot | OpenAI | model training |
-| OAI-SearchBot | OpenAI | ChatGPT search results |
-| ChatGPT-User | OpenAI | a page opened for a user's question |
-| PerplexityBot | Perplexity | search index |
-| Google-Extended | Google | a control token for Gemini training and grounding |
-| ClaudeBot | Anthropic | model training |
-| Claude-SearchBot | Anthropic | search results in Claude |
-| Applebot-Extended | Apple | a control token for Apple's AI training |
-| Bingbot | Microsoft | Bing index, which feeds Copilot |
+| Bot | Operator | Kind | Used for |
+| --- | --- | --- | --- |
+| GPTBot | OpenAI | training | model training |
+| OAI-SearchBot | OpenAI | search | ChatGPT search results |
+| ChatGPT-User | OpenAI | user | a page opened for a user's question |
+| PerplexityBot | Perplexity | search | search index |
+| Google-Extended | Google | training | a control token for Gemini training; Google says it does not affect inclusion in Google Search or AI Overviews |
+| ClaudeBot | Anthropic | training | model training |
+| Claude-SearchBot | Anthropic | search | search results in Claude |
+| Applebot-Extended | Apple | training | a control token for Apple's AI training |
+| Bingbot | Microsoft | search | Bing index, which feeds Copilot |
 
-Blocking a training bot (GPTBot, ClaudeBot) is a legitimate choice; blocking the search and user bots removes the business from answers. State the choice in writing with the owner.
+Blocking a training bot (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended) is a legitimate choice, and the checker reports it as ok; blocking the search and user bots removes the business from answers and stays a FIX. State the choice in writing with the owner.
 
 ## Directories for Québec
 
