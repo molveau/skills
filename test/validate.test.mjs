@@ -188,7 +188,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
   quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising'],
-  playbooks: ['saas', 'vitrine', 'workflow'],
+  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking'],
 };
 
 // The plugin is the skills/ folder only, so tests, fixtures, the example video and the repo scripts stay
@@ -656,4 +656,16 @@ test('ordre-pro-advertising: one reference per regulator, each with an Uncertain
     assert.match(text, /^## Uncertain$/m, `${f}: no "## Uncertain" heading`);
     assert.match(text, /l[ée]gisqu[ée]bec/i, `${f}: no LégisQuébec link`);
   }
+});
+
+test('paid-booking: the reference holds dated, linked vendor facts and the policy templates', () => {
+  const f = join(SKILLS, 'paid-booking', 'references', 'cal-stripe.md');
+  assert.ok(existsSync(f), 'skills/paid-booking/references/cal-stripe.md missing');
+  const text = readFileSync(f, 'utf8');
+  assert.match(text, /2\.9 ?% \+ CA\$ ?0\.30/, 'no Stripe Canada fee line');
+  assert.match(text, /https:\/\/stripe\.com\/en-ca\/pricing/, 'no Stripe Canada pricing link');
+  assert.match(text, /\b13 November 2026\b/, 'vendor facts are not dated');
+  assert.match(text, /https:\/\/cal\.com\/help\/bookings\/paid-bookings/, 'no Cal.com paid bookings link');
+  assert.match(text, /^## Policy text$/m);
+  assert.match(text, /^## QA checklist$/m);
 });
