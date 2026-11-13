@@ -52,7 +52,7 @@ Abbreviations: M-9 r 17 = Code de déontologie des médecins; LAM = Loi sur l'as
 | Online appointments | Acceptable only if secured (HTTPS). | CMQ web page | CMQ page |
 | Forms | Information protected by default and used only for the intended purposes. Third-party profiling or geolocation cookies off by default. | CMQ page; P-39.1 a. 9.1 | CMQ page |
 
-Advertising of medically required (insured) services: a participating physician may bill the patient only the fees set by regulation and posted. "Aucune autre somme d'argent que celle affichée [...] ne peut être réclamée ou reçue d'une personne assurée, directement ou indirectement, pour l'obtention d'un service médical dans un cabinet privé" (LAM a. 22.0.0.1 para. 2). A clinic site must therefore not offer a paid "priority" or "subscription" for insured services provided by a participating physician. Have a lawyer validate before proposing a membership programme.
+Advertising of medically required (insured) services: a participating physician may bill the patient only the fees set by regulation and posted. "Aucune autre somme d'argent que celle affichée [...] ne peut être réclamée ou reçue d'une personne assurée, directement ou indirectement, pour l'obtention d'un service médical dans un cabinet privé" (LAM a. 22.0.0.1 para. 2). A clinic site must therefore not offer a paid "priority" or "subscription" for insured services provided by a participating physician. To verify: with a lawyer before proposing a membership programme.
 
 ## RAMQ participation: what is in force in November 2026
 
@@ -85,7 +85,7 @@ What a non-participating (or disengaged) physician must say or do for patients:
 - The 2020 guide suggests a detailed quote signed before the procedure: procedure, products, cost, recovery, duration of effect (appendices I and II).
 - To avoid, per the 2020 guide (p. 29-30): posters with the commercial name of an injected product, links to manufacturers or lending institutions, commercial logos, contests and draws, sale of products by a third party associated with the physician.
 - The guide cites, for discounts, the example "10 % sur les injections de toxine botulinique par unité" computed from the posted regular rate.
-- Public reminders: CMQ and OIIQ release of 30 May 2024 (https://cms.cmq.org/files/documents/Avis-et-prises-de-position/comm-soins-medico-esthetiques-20240530.pdf); joint CMQ and Ordre des dentistes release of 28 November 2025 (https://www.odq.qc.ca/wp-content/uploads/2025/11/20251128-communique-soins-medico-esthetiques-vf.pdf). Content of both documents not read: verify before using them.
+- Public reminders: CMQ and OIIQ release of 30 May 2024 (https://cms.cmq.org/files/documents/Avis-et-prises-de-position/comm-soins-medico-esthetiques-20240530.pdf); joint CMQ and Ordre des dentistes release of 28 November 2025 (https://www.odq.qc.ca/wp-content/uploads/2025/11/20251128-communique-soins-medico-esthetiques-vf.pdf). Content of both documents not read. To verify: their content before using them.
 
 ## Remote consultation, booking and payment
 
@@ -109,14 +109,14 @@ For privacy mechanics use the `loi-25-website` skill. Points specific to a clini
 ## Uncertain
 
 - RAMQ pages were not read (access refused). RAMQ obligations come from the LAM on LégisQuébec.
-- The LAM text read says a. 22.0.0.1 targets a physician "soumis à une entente ou [...] désengagé". It does not name the non-participant, while a. 105 of the Code and the CMQ guide target them. Interaction to verify with a lawyer.
-- Exact LAM article number on the maximum rate billable by a non-participant: to verify (the text read predates a. 22.0.0.0.3).
+- The LAM text read says a. 22.0.0.1 targets a physician "soumis à une entente ou [...] désengagé". It does not name the non-participant, while a. 105 of the Code and the CMQ guide target them. To verify with a lawyer: the interaction.
+- Exact LAM article number on the maximum rate billable by a non-participant: To verify (the text read predates a. 22.0.0.0.3).
 - Loi 2 of 2025 and its amending bill: final text not read; possible effect on non-participants and private practice unknown.
 - Court challenges against Loi 83: no judgment found, status at 2026-11-12 unknown.
 - Santé Québec authorization figures: press only (La Presse, 2026-08-26), not verified at the source.
 - The CMQ guide of 2023-11 is online under a file name dated "2019-03-26"; the 2023-11 version was read. Its appendix does not reproduce all the evolution of the rules since.
 - Content of the CMQ 2024 and 2025 releases on medical-aesthetic care: not read.
-- Exact entry into force of Loi 5 for private practices: to verify. Which Loi 5 rules weigh on a clinic's website: verify with the Ministry or a lawyer.
+- To verify: the exact entry into force of Loi 5 for private practices. To verify with the Ministry or a lawyer: which Loi 5 rules weigh on a clinic's website.
 - No CMQ guide found on publishing Google reviews on the site (only on replying to comments).
 
 Who to ask: the CMQ (https://www.cmq.org), Bureau du syndic or the practice-advice service; for the RAMQ status question, the RAMQ itself.
