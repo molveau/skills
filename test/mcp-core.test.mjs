@@ -217,7 +217,7 @@ test('PRIVACY.md describes the hosted endpoint: what it receives, that it stores
   const at = privacy.indexOf('## Hosted MCP endpoint');
   assert.ok(at >= 0, 'no "## Hosted MCP endpoint" section');
   const section = privacy.slice(at).split(/\n## /)[0];
-  for (const must of ['https://www.molveau.ca/api/mcp', 'in memory', 'stores none', 'no account', 'cookie', 'https://vercel.com/legal/privacy-policy', 'IP address', 'general audiences']) {
+  for (const must of ['https://www.molveau.ca/api/mcp', 'in memory', 'stores none', 'no account', 'cookie', 'Cloudflare', 'https://www.cloudflare.com/privacypolicy/', 'IP address', 'general audiences']) {
     assert.ok(section.includes(must), `the section lacks "${must}"`);
   }
 });
