@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // check-i18n-parity: compare two message JSON trees (for example messages/fr.json and messages/en.json).
 // Zero dependencies. Usage: node check-i18n-parity.mjs <a.json> <b.json> [--json]
+// Paths: object keys dotted, array indexes bracketed ("faq.items[2].q"). A key that itself contains a dot
+// is ambiguous with nesting. null counts as a leaf (a value), like strings, numbers and booleans.
+// Leaves are never compared by type: only object, array and leaf are told apart.
 // Exit: 0 same shape, 1 differences, 2 usage error, missing file or invalid JSON.
 import { readFileSync, realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -10,13 +13,17 @@ const childPath = (prefix, key, isIndex) => (isIndex ? `${prefix}[${key}]` : pre
 
 // Paths are dotted for object keys and bracketed for array indexes: "faq.items[2].q".
 export function parity(a, b) {
-  const out = { missingInB: [], missingInA: [], typeMismatch: [], emptyInB: [] };
+  const out = { missingInB: [], missingInA: [], typeMismatch: [], emptyInB: [], emptyInA: [] };
   const walk = (x, y, prefix) => {
     const kx = kind(x);
     const ky = kind(y);
     if (kx !== ky) { out.typeMismatch.push(prefix); return; }
     if (kx === 'leaf') {
-      if (typeof x === 'string' && x.trim() && typeof y === 'string' && !y.trim()) out.emptyInB.push(prefix);
+      const blank = (v) => typeof v === 'string' && !v.trim();
+      if (typeof x === 'string' && typeof y === 'string') {
+        if (blank(y) && !blank(x)) out.emptyInB.push(prefix);
+        if (blank(x) && !blank(y)) out.emptyInA.push(prefix);
+      }
       return;
     }
     const isIndex = kx === 'array';
@@ -39,6 +46,7 @@ const LABELS = {
   missingInA: (a, b) => `in ${b} but missing from ${a}`,
   typeMismatch: () => 'object, array and text mixed up',
   emptyInB: (a, b) => `filled in ${a} but empty in ${b}`,
+  emptyInA: (a, b) => `filled in ${b} but empty in ${a}`,
 };
 
 function load(file) {

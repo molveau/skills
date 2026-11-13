@@ -136,7 +136,7 @@ Each language gets its own entry, and both carry the full alternates, itself inc
 
 ```tsx
 'use client';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 
@@ -144,6 +144,7 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const pathname = usePathname(); // the internal route key, e.g. '/blog/[slug]'
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const next = locale === 'fr' ? 'en' : 'fr';
 
@@ -152,8 +153,12 @@ export function LanguageSwitcher() {
       type="button"
       lang={next}
       onClick={() =>
-        // @ts-expect-error -- params always match the current pathname
-        router.replace({ pathname, params }, { locale: next })
+        // next-intl types `params` against the pathname literal; here both come from the current
+        // route, so they always match and the cast below only silences the generic type.
+        router.replace(
+          { pathname, params, query: Object.fromEntries(searchParams) } as Parameters<typeof router.replace>[0],
+          { locale: next },
+        )
       }
     >
       {next === 'en' ? 'English' : 'Français'}
@@ -162,7 +167,7 @@ export function LanguageSwitcher() {
 }
 ```
 
-`usePathname` returns the route key, so `router.replace` lands on the localized path of the same page. A plain `<a hreflang>` link is the crawlable alternative; the button is fine when the head already declares alternates. Query strings need to be carried over by hand.
+`usePathname` returns the route key, so `router.replace` lands on the localized path of the same page. A plain `<a hreflang>` link is the crawlable alternative; the button is fine when the head already declares alternates. The query string is carried over with `useSearchParams` (repeated keys keep only the last value).
 
 ## Content twins
 
