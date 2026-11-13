@@ -57,6 +57,7 @@
     "skills/bilingual-next/scripts/check-i18n-parity.mjs",
     "skills/*/SKILL.md",
     "skills/*/references/playbook.md",
+    "skills/*/references/*.md",
     "README.md",
     "LICENSE",
     "THIRD_PARTY.md",
