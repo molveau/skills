@@ -2,7 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { parity } from '../skills/bilingual-next/scripts/check-i18n-parity.mjs';
 
@@ -76,4 +77,15 @@ test('CLI exits 2 with a message, no stack, on usage error, missing file or inva
 test('CLI rejects a top-level non-object', () => {
   const r = run(fx('fr.json'), fx('scalar.json'));
   assert.equal(r.status, 2);
+});
+
+test('CLI: deeply nested JSON exits 2 with "nested too deeply", not a stack', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'parity-'));
+  const deep = '['.repeat(200000) + ']'.repeat(200000);
+  writeFileSync(join(dir, 'a.json'), deep);
+  writeFileSync(join(dir, 'b.json'), deep);
+  const r = run(join(dir, 'a.json'), join(dir, 'b.json'));
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /nested too deeply/);
+  assert.doesNotMatch(r.stderr, /\n\s+at /);
 });

@@ -2,6 +2,8 @@
 // check-ai-visibility: check that a local business site can be found and cited by AI assistants.
 // Zero dependencies. Usage: node check-ai-visibility.mjs <url> [--json]
 // Exit: 0 all ok, 1 findings, 2 usage error or the page itself cannot be fetched.
+// It follows redirects to any host, which is fine for a local CLI. The hosted MCP exposes no URL tool.
+// A response body is capped at 5 MB.
 import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
@@ -9,6 +11,16 @@ export const AI_CRAWLERS = [
   'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'PerplexityBot', 'Google-Extended',
   'ClaudeBot', 'Claude-SearchBot', 'Applebot-Extended', 'Bingbot',
 ];
+
+// Training crawlers: blocking one keeps your pages out of model training, not out of answers.
+export const TRAINING_BOTS = ['GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended'];
+const MAX_BODY = 5 * 1024 * 1024;
+const LOCAL_SUFFIX = /(store|business|service|shop|clinic|agency|center|centre)$/;
+
+// An app that answers every path with its home page serves HTML where a text file belongs.
+export function looksLikeHtml(body, contentType = '') {
+  return /text\/html/i.test(contentType) || /^\s*<(!doctype|html)\b/i.test(String(body || ''));
+}
 
 const LOCAL_TYPES = new Set([
   'localbusiness', 'professionalservice', 'legalservice', 'attorney', 'notary', 'accountingservice',
@@ -75,16 +87,20 @@ function flatten(node, out = []) {
 const typesOf = (n) => [].concat(n['@type'] || []).map((t) => String(t).replace(/^(?:https?:\/\/schema\.org\/|schema:)/i, '').toLowerCase());
 const has = (v) => v !== undefined && v !== null && !(typeof v === 'string' && !v.trim()) && !(Array.isArray(v) && !v.length);
 
-export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
+export function checkSite({ robotsTxt, robotsError, llmsTxt: rawLlms, html, url } = {}) {
+  const llmsTxt = looksLikeHtml(rawLlms) ? null : rawLlms;
   const out = [];
   const add = (rule, ok, detail) => out.push({ rule, ok, detail });
 
   if (robotsTxt === null || robotsTxt === undefined) {
-    add('robots.txt', false, 'robots.txt not found');
+    if (robotsError) add('robots.txt', false, `robots.txt unreachable (${robotsError}: crawlers treat the site as blocked)`);
+    else add('robots.txt', false, 'robots.txt not found');
   } else {
     for (const bot of AI_CRAWLERS) {
-      const ok = botAllowed(robotsTxt, bot);
-      add(`robots:${bot}`, ok, ok ? 'allowed' : 'blocked by robots.txt');
+      const allowed = botAllowed(robotsTxt, bot);
+      if (allowed) add(`robots:${bot}`, true, 'allowed');
+      else if (TRAINING_BOTS.includes(bot)) add(`robots:${bot}`, true, 'blocked (training only; does not affect answers)');
+      else add(`robots:${bot}`, false, 'blocked by robots.txt');
     }
   }
 
@@ -100,7 +116,7 @@ export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
     for (const b of blocks) {
       try { flatten(JSON.parse(b), nodes); } catch (e) { bad += 1; add('jsonld:parse', false, `JSON-LD block does not parse: ${e.message}`); }
     }
-    let biz = nodes.find((n) => typesOf(n).some((t) => LOCAL_TYPES.has(t)));
+    let biz = nodes.find((n) => typesOf(n).some((t) => LOCAL_TYPES.has(t) || LOCAL_SUFFIX.test(t)));
     let unknown = null;
     if (!biz) {
       unknown = nodes.find((n) => n['@type'] && (has(n.address) || has(n.telephone)));
@@ -109,7 +125,7 @@ export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
     if (!biz) {
       if (!bad) add('jsonld', false, 'no LocalBusiness or ProfessionalService type in the JSON-LD');
     } else {
-      if (unknown) add('jsonld:type', false, `type ${[].concat(biz['@type']).join(', ')} not recognised as a LocalBusiness subtype, check it`);
+      if (unknown) add('jsonld:type', true, `type ${[].concat(biz['@type']).join(', ')} not recognised as a LocalBusiness subtype, check it`);
       else add('jsonld', true, `type ${[].concat(biz['@type']).join(', ')}`);
       const need = [
         ['name', ['name']], ['url', ['url']], ['address', ['address']], ['telephone', ['telephone']],
@@ -141,19 +157,37 @@ export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
     const m = /^\/(en|fr)(?:[/?#]|$)/i.exec(h);
     return m ? m[1].toLowerCase() : null;
   };
-  const linksOther = tags(page, 'a').some((t) => attr(t, 'hreflang') || (lang && pathLang(attr(t, 'href')) && pathLang(attr(t, 'href')) !== lang));
+  const otherLang = (t) => { const l = (attr(t, 'lang') || '').toLowerCase().slice(0, 2); return !!(lang && l && l !== lang); };
+  const linksOther = tags(page, 'a').some((t) => attr(t, 'hreflang') || otherLang(t) || (lang && pathLang(attr(t, 'href')) && pathLang(attr(t, 'href')) !== lang))
+    || tags(page, 'button').some(otherLang);
   if (alternates.length) add('hreflang', true, `${alternates.length} alternates`);
   else if (linksOther) add('hreflang', false, 'links to another language but declares no hreflang alternates');
   else add('hreflang', true, 'single language');
   return out;
 }
 
-export async function get(url, fetchImpl = fetch, ms = 10_000) {
+async function readCapped(res, maxBytes) {
+  if (!res.body?.getReader) return res.text();
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let total = 0;
+  let text = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.length;
+    if (total > maxBytes) { await reader.cancel().catch(() => {}); throw new Error(`response larger than ${Math.round(maxBytes / 1024 / 1024)} MB`); }
+    text += decoder.decode(value, { stream: true });
+  }
+  return text + decoder.decode();
+}
+
+export async function get(url, fetchImpl = fetch, ms = 10_000, maxBytes = MAX_BODY) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), ms);
   try {
     const res = await fetchImpl(url, { signal: ctl.signal, redirect: 'follow', headers: { 'user-agent': 'molveau-check-ai-visibility/1' } });
-    return { ok: res.ok, status: res.status, text: res.ok ? await res.text() : '' };
+    return { ok: res.ok, status: res.status, url: res.url || url, contentType: res.headers?.get?.('content-type') || '', text: res.ok ? await readCapped(res, maxBytes) : '' };
   } finally {
     clearTimeout(timer);
   }
@@ -184,16 +218,20 @@ async function main(argv) {
     process.stderr.write(`Cannot fetch ${base.href}: HTTP ${page.status}\n`);
     return 2;
   }
+  let origin = base.origin;
+  let finalUrl = base.href;
+  try { const u = new URL(page.url); origin = u.origin; finalUrl = u.href; } catch { /* keep the typed URL */ }
   const side = async (path) => {
     try {
-      const r = await get(new URL(path, base.origin).href);
-      return r.ok ? r.text : null;
-    } catch {
-      return null;
+      const r = await get(new URL(path, origin).href);
+      if (r.ok) return { text: looksLikeHtml(r.text, r.contentType) && path === '/llms.txt' ? null : r.text };
+      return r.status >= 500 ? { text: null, error: `HTTP ${r.status}` } : { text: null };
+    } catch (e) {
+      return { text: null, error: `network error: ${e.name === 'AbortError' ? 'timeout' : (e.cause?.code || e.message)}` };
     }
   };
-  const [robotsTxt, llmsTxt] = await Promise.all([side('/robots.txt'), side('/llms.txt')]);
-  const findings = checkSite({ robotsTxt, llmsTxt, html: page.text, url: base.href });
+  const [robots, llms] = await Promise.all([side('/robots.txt'), side('/llms.txt')]);
+  const findings = checkSite({ robotsTxt: robots.text, robotsError: robots.error, llmsTxt: llms.text, html: page.text, url: finalUrl });
   const bad = findings.filter((f) => !f.ok);
   if (json) process.stdout.write(`${JSON.stringify(findings, null, 2)}\n`);
   else {
@@ -212,5 +250,8 @@ function isMainModule() {
 }
 
 if (isMainModule()) {
-  main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
+  main(process.argv.slice(2)).then((code) => { process.exitCode = code; }, (e) => {
+    process.stderr.write(`${e.message}\n`);
+    process.exitCode = 2;
+  });
 }

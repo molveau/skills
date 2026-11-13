@@ -69,7 +69,11 @@ function main(argv) {
   let a;
   let b;
   try { a = load(rest[0]); b = load(rest[1]); } catch (e) { console.error(e.message); return 2; }
-  const result = parity(a, b);
+  let result;
+  try { result = parity(a, b); } catch (e) {
+    if (e instanceof RangeError) { console.error('JSON nested too deeply to compare.'); return 2; }
+    throw e;
+  }
   const total = Object.values(result).reduce((n, l) => n + l.length, 0);
   if (json) {
     console.log(JSON.stringify(result, null, 2));
@@ -93,4 +97,6 @@ function isMainModule() {
   return import.meta.url === pathToFileURL(resolved).href;
 }
 
-if (isMainModule()) process.exitCode = main(process.argv.slice(2));
+if (isMainModule()) {
+  try { process.exitCode = main(process.argv.slice(2)); } catch (e) { console.error(e instanceof RangeError ? 'JSON nested too deeply to compare.' : e.message); process.exitCode = 2; }
+}

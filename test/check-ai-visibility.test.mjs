@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { checkSite, AI_CRAWLERS, botAllowed, get } from '../skills/local-ai-visibility/scripts/check-ai-visibility.mjs';
+import { checkSite, AI_CRAWLERS, TRAINING_BOTS, botAllowed, get, looksLikeHtml } from '../skills/local-ai-visibility/scripts/check-ai-visibility.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRIPT = join(HERE, '..', 'skills', 'local-ai-visibility', 'scripts', 'check-ai-visibility.mjs');
@@ -22,14 +22,23 @@ test('the crawler list names the nine bots', () => {
   assert.deepEqual(AI_CRAWLERS, ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'PerplexityBot', 'Google-Extended', 'ClaudeBot', 'Claude-SearchBot', 'Applebot-Extended', 'Bingbot']);
 });
 
-test('a GPTBot group with Disallow: / blocks GPTBot only', () => {
+test('a blocked training bot is ok and says it does not affect answers', () => {
   const f = checkSite({ robotsTxt: fx('blocks-gptbot-robots.txt'), llmsTxt: 'x', html: fx('good.html') });
-  assert.deepEqual(failed(f), ['robots:GPTBot']);
+  assert.deepEqual(failed(f), []);
+  assert.deepEqual(by(f, 'robots:GPTBot')[0], { rule: 'robots:GPTBot', ok: true, detail: 'blocked (training only; does not affect answers)' });
+  assert.deepEqual(TRAINING_BOTS, ['GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended']);
+});
+
+test('a blocked search or user bot stays a FIX', () => {
+  for (const bot of ['OAI-SearchBot', 'ChatGPT-User', 'PerplexityBot', 'Claude-SearchBot', 'Bingbot']) {
+    const f = checkSite({ robotsTxt: `User-agent: ${bot}\nDisallow: /\n`, llmsTxt: 'x', html: fx('good.html') });
+    assert.deepEqual(failed(f), [`robots:${bot}`], bot);
+  }
 });
 
 test('User-agent: * with Disallow: / blocks every crawler', () => {
   const f = checkSite({ robotsTxt: fx('blocks-all-robots.txt'), llmsTxt: 'x', html: fx('good.html') });
-  assert.equal(failed(f).filter((r) => r.startsWith('robots:')).length, AI_CRAWLERS.length);
+  assert.equal(failed(f).filter((r) => r.startsWith('robots:')).length, AI_CRAWLERS.length - TRAINING_BOTS.length);
 });
 
 test('a specific group overrides the star group, and an empty Disallow allows', () => {
@@ -128,8 +137,16 @@ test('JSON-LD: family types, prefixed types and unknown types', () => {
     assert.deepEqual(failed(checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd({ '@type': type, ...FULL }) })), [], type);
   }
   const f = checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd({ '@type': 'Foo', ...FULL }) });
-  assert.deepEqual(failed(f), ['jsonld:type']);
+  assert.deepEqual(failed(f), []);
+  assert.equal(by(f, 'jsonld:type')[0].ok, true);
   assert.match(by(f, 'jsonld:type')[0].detail, /type Foo not recognised as a LocalBusiness subtype, check it/);
+});
+
+test('JSON-LD: Store, Business, Service, Shop, Clinic, Agency, Center types and other real subtypes pass', () => {
+  for (const type of ['ClothingStore', 'Hotel', 'ExerciseGym', 'DaySpa', 'EmploymentAgency', 'DaycareCenter', 'ShoeStore', 'AutomotiveBusiness']) {
+    const f = checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd({ '@type': type, ...FULL }) });
+    assert.deepEqual(failed(f), [], type);
+  }
 });
 
 test('JSON-LD: an invalid block is reported even when another block is valid', () => {
@@ -144,6 +161,47 @@ test('hreflang: a link to /en or /fr by path without alternates is a finding', (
   for (const href of ['/en', '/en/', '/en/about', 'https://example.com/en/']) assert.equal(h(page(href)).ok, false, href);
   for (const href of ['/enterprise', '/fr/', 'https://other.com/en/', '/contact']) assert.equal(h(page(href)).ok, true, href);
   assert.equal(h(page('/en/', '<link rel="alternate" hreflang="en" href="/en/">')).ok, true);
+});
+
+test('llms.txt: an HTML page served as the fallback counts as missing', () => {
+  assert.equal(looksLikeHtml('<!DOCTYPE html><html></html>', ''), true);
+  assert.equal(looksLikeHtml('  \n<html lang="en">', 'text/plain'), true);
+  assert.equal(looksLikeHtml('# Site\n> About', 'text/html; charset=utf-8'), true);
+  assert.equal(looksLikeHtml('# Site\n> About', 'text/plain'), false);
+  const f = checkSite({ robotsTxt: '', llmsTxt: '<!doctype html><html><body>app</body></html>', html: fx('good.html') });
+  assert.deepEqual(failed(f), ['llms.txt']);
+});
+
+test('hreflang: a lang attribute on a link or button to another language is a finding', () => {
+  const page = (body) => `<html lang="fr"><head></head><body>${body}</body></html>`;
+  const h = (html) => by(checkSite({ robotsTxt: '', llmsTxt: 'x', html, url: 'https://example.com/' }), 'hreflang')[0];
+  assert.equal(h(page('<a lang="en" href="#">EN</a>')).ok, false);
+  assert.equal(h(page('<button lang="en">EN</button>')).ok, false);
+  assert.equal(h(page('<button lang="en-CA">EN</button>')).ok, false);
+  assert.equal(h(page('<a lang="fr" href="#">FR</a>')).ok, true);
+});
+
+test('robots.txt unreachable (5xx or network) is reported apart from a 404', () => {
+  const f = checkSite({ robotsTxt: null, robotsError: 'HTTP 503', llmsTxt: 'x', html: fx('good.html') });
+  assert.deepEqual(failed(f), ['robots.txt']);
+  assert.equal(by(f, 'robots.txt')[0].detail, 'robots.txt unreachable (HTTP 503: crawlers treat the site as blocked)');
+  assert.equal(by(checkSite({ robotsTxt: null, llmsTxt: 'x', html: fx('good.html') }), 'robots.txt')[0].detail, 'robots.txt not found');
+});
+
+test('get returns the final URL and content type, and refuses a body over the cap', async () => {
+  const res = Object.assign(new Response('hello', { headers: { 'content-type': 'text/plain' } }), {});
+  Object.defineProperty(res, 'url', { value: 'https://final.example/x' });
+  const r = await get('http://x', async () => res);
+  assert.equal(r.url, 'https://final.example/x');
+  assert.equal(r.contentType, 'text/plain');
+  assert.equal(r.text, 'hello');
+  await assert.rejects(get('http://x', async () => new Response('a'.repeat(100)), 1000, 50), /larger than/);
+});
+
+test('CLI: a failing run exits 2 with a message, never a stack', () => {
+  const r = spawnSync(process.execPath, [SCRIPT, 'http://[::1'], { encoding: 'utf8' });
+  assert.equal(r.status, 2);
+  assert.doesNotMatch(r.stderr, /\n\s+at /);
 });
 
 test('get aborts after the timeout and rejects', async () => {
