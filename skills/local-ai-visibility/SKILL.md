@@ -1,6 +1,6 @@
 ---
 name: local-ai-visibility
-description: Local AI visibility playbook for a small business site. Use when the owner asks "why does ChatGPT not recommend my business", how to be found by ChatGPT, Perplexity, Claude or Copilot, how to appear in Google AI Overviews and AI Mode, or about GEO and AI search for a local business. Covers crawler access, llms.txt, LocalBusiness structured data, the buying facts as page text, directory listings, reviews and measurement, with a site checker.
+description: Local AI visibility playbook for a small business site. Use when the owner asks "why does ChatGPT not recommend my business", how to be found by ChatGPT, Perplexity, Claude or Copilot, how to appear in Google AI Overviews and AI Mode, or about GEO and AI search for a local business.
 ---
 
 # Local AI visibility

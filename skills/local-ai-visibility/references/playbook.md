@@ -4,10 +4,10 @@ Facts below come from the Molveau research of November 2026 and were last review
 
 ## Facts (dated)
 
-- **Consumers use AI for local picks.** BrightLocal, 2026: 45% of consumers used AI tools for local recommendations ([BrightLocal](https://www.brightlocal.com), 13 November 2026).
-- **Yelp feeds ChatGPT.** BrightLocal, 2026: Yelp is cited in about 80% of ChatGPT local answers in the US. The figure is US data; no Canadian figure is known.
-- **Google Business Profile.** BrightLocal, 2026: it matters for Google AI Overviews and AI Mode, and little for ChatGPT.
-- **Structured, verified data wins citations.** Yext, 2026: structured, verified data is the most cited source type across ChatGPT, Gemini, Perplexity and Claude ([Yext](https://www.yext.com), 13 November 2026).
+- **Consumers use AI for local picks.** BrightLocal, 2026: 45% of consumers used AI tools for local recommendations (source: BrightLocal, 2026, not linked).
+- **Yelp feeds ChatGPT.** BrightLocal, 2026: Yelp is cited in about 80% of ChatGPT local answers in the US. The figure is US data; no Canadian figure is known (source: BrightLocal, 2026, not linked).
+- **Google Business Profile.** BrightLocal, 2026: it matters for Google AI Overviews and AI Mode, and little for ChatGPT (source: BrightLocal, 2026, not linked).
+- **Structured, verified data wins citations.** Yext, 2026: structured, verified data is the most cited source type across ChatGPT, Gemini, Perplexity and Claude (source: Yext, 2026, not linked).
 - **Bing Webmaster Tools, AI Performance report.** Public preview since February 2026: Copilot citations and grounding queries ([Bing Webmaster Tools](https://www.bing.com/webmasters), 13 November 2026).
 - **Search Console, generative AI report.** June 2026: impressions in AI Overviews and AI Mode, no click data ([Google Search Console](https://search.google.com/search-console), 13 November 2026).
 - **ChatGPT referral tag.** ChatGPT adds `utm_source=chatgpt.com` to the links it shows, so the visits appear in analytics as a source.

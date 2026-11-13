@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { checkSite, AI_CRAWLERS, botAllowed } from '../skills/local-ai-visibility/scripts/check-ai-visibility.mjs';
+import { checkSite, AI_CRAWLERS, botAllowed, get } from '../skills/local-ai-visibility/scripts/check-ai-visibility.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRIPT = join(HERE, '..', 'skills', 'local-ai-visibility', 'scripts', 'check-ai-visibility.mjs');
@@ -57,8 +57,8 @@ test('each missing JSON-LD field is reported', () => {
 
 test('invalid JSON-LD is one finding, not a crash', () => {
   const f = checkSite({ robotsTxt: fx('good-robots.txt'), llmsTxt: 'x', html: fx('invalid-jsonld.html') });
-  assert.deepEqual(failed(f), ['jsonld']);
-  assert.match(by(f, 'jsonld')[0].detail, /parse|JSON/i);
+  assert.deepEqual(failed(f), ['jsonld:parse']);
+  assert.match(by(f, 'jsonld:parse')[0].detail, /parse|JSON/i);
 });
 
 test('no JSON-LD at all is one finding', () => {
@@ -97,4 +97,56 @@ test('CLI exits 2 on usage error and on an unreachable page, with a message', ()
   assert.match(bad.stderr, /Cannot fetch/);
   const notUrl = spawnSync(process.execPath, [SCRIPT, 'not a url'], { encoding: 'utf8' });
   assert.equal(notUrl.status, 2);
+});
+
+const wrapLd = (...blocks) => `<html lang="en"><head><title>t</title><meta name="description" content="d">${blocks.map((b) => `<script type="application/ld+json">${typeof b === 'string' ? b : JSON.stringify(b)}</script>`).join('')}</head></html>`;
+const FULL = { name: 'a', url: 'u', telephone: '1', address: 'x', openingHours: 'Mo 9-5', priceRange: '$', sameAs: ['y'] };
+
+test('robots: duplicate groups for one bot are merged', () => {
+  const r = 'User-agent: GPTBot\nAllow: /\n\nUser-agent: GPTBot\nDisallow: /\n';
+  assert.equal(botAllowed(r, 'GPTBot'), true); // equal length, Allow wins
+  assert.equal(botAllowed('User-agent: GPTBot\nDisallow: /a\n\nUser-agent: GPTBot\nDisallow: /\n', 'GPTBot'), false);
+});
+
+test('robots: split star groups are merged and used only when no group names the bot', () => {
+  const r = 'User-agent: *\nAllow: /private\n\nUser-agent: *\nDisallow: /\n\nUser-agent: Bingbot\nDisallow: /x\n';
+  assert.equal(botAllowed(r, 'GPTBot'), false);
+  assert.equal(botAllowed(r, 'Bingbot'), true);
+});
+
+test('robots: wildcards, anchors, empty Disallow, comments, CRLF', () => {
+  assert.equal(botAllowed('User-agent: *\nDisallow: /*\n', 'GPTBot'), false);
+  assert.equal(botAllowed('User-agent: *\nDisallow: /\nAllow: /$\n', 'GPTBot'), true);
+  assert.equal(botAllowed('User-agent: *\nDisallow: /\nAllow: /$ # home only\n', 'GPTBot'), true);
+  assert.equal(botAllowed('User-agent: *\nDisallow:\n', 'GPTBot'), true);
+  assert.equal(botAllowed('User-agent: GPTBot # ai\r\nDisallow: / # all\r\n', 'GPTBot'), false);
+  assert.equal(botAllowed('User-agent: *\r\nDisallow: /*.pdf$\r\n', 'GPTBot'), true);
+});
+
+test('JSON-LD: family types, prefixed types and unknown types', () => {
+  for (const type of ['LegalService', 'MedicalClinic', 'schema:Plumber', 'https://schema.org/Dentist', 'http://schema.org/Notary']) {
+    assert.deepEqual(failed(checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd({ '@type': type, ...FULL }) })), [], type);
+  }
+  const f = checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd({ '@type': 'Foo', ...FULL }) });
+  assert.deepEqual(failed(f), ['jsonld:type']);
+  assert.match(by(f, 'jsonld:type')[0].detail, /type Foo not recognised as a LocalBusiness subtype, check it/);
+});
+
+test('JSON-LD: an invalid block is reported even when another block is valid', () => {
+  const f = checkSite({ robotsTxt: '', llmsTxt: 'x', html: wrapLd('{bad', { '@type': 'LocalBusiness', ...FULL }) });
+  assert.deepEqual(failed(f), ['jsonld:parse']);
+  assert.ok(by(f, 'jsonld')[0].ok);
+});
+
+test('hreflang: a link to /en or /fr by path without alternates is a finding', () => {
+  const page = (href, extra = '') => `<html lang="fr"><head>${extra}</head><body><a href="${href}">x</a></body></html>`;
+  const h = (html) => by(checkSite({ robotsTxt: '', llmsTxt: 'x', html, url: 'https://example.com/' }), 'hreflang')[0];
+  for (const href of ['/en', '/en/', '/en/about', 'https://example.com/en/']) assert.equal(h(page(href)).ok, false, href);
+  for (const href of ['/enterprise', '/fr/', 'https://other.com/en/', '/contact']) assert.equal(h(page(href)).ok, true, href);
+  assert.equal(h(page('/en/', '<link rel="alternate" hreflang="en" href="/en/">')).ok, true);
+});
+
+test('get aborts after the timeout and rejects', async () => {
+  const never = (_u, { signal }) => new Promise((_, rej) => signal.addEventListener('abort', () => rej(Object.assign(new Error('aborted'), { name: 'AbortError' }))));
+  await assert.rejects(get('http://x', never, 20), { name: 'AbortError' });
 });

@@ -16,15 +16,23 @@ const LOCAL_TYPES = new Set([
   'homeandconstructionbusiness', 'plumber', 'electrician', 'hvacbusiness', 'roofingcontractor', 'generalcontractor',
   'locksmith', 'movingcompany', 'housepainter', 'autorepair', 'autodealer', 'realestateagent', 'financialservice',
   'insuranceagency', 'restaurant', 'foodestablishment', 'cafeorcoffeeshop', 'bakery', 'store', 'hairsalon',
-  'beautysalon', 'daycare', 'veterinarycare', 'travelagency', 'selfstorage',
+  'beautysalon', 'childcare', 'veterinarycare', 'travelagency', 'selfstorage',
 ]);
 
-// Parse robots.txt into groups of { agents, rules } and decide whether a bot may fetch "/".
+// RFC 9309: merge every group that names the bot; use the "*" groups (merged) only when none does.
+// For the path "/", the longest matching rule wins ("*" and "$" supported) and Allow wins a tie.
+function ruleMatches(pattern, path) {
+  const anchored = pattern.endsWith('$');
+  const body = anchored ? pattern.slice(0, -1) : pattern;
+  const re = new RegExp(`^${body.split('*').map((p) => p.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*')}${anchored ? '$' : ''}`);
+  return re.test(path);
+}
+
 export function botAllowed(robotsTxt, bot) {
   const groups = [];
   let cur = null;
   let lastWasAgent = false;
-  for (const raw of String(robotsTxt || '').split(/\r?\n/)) {
+  for (const raw of String(robotsTxt || '').split(/\r\n|\r|\n/)) {
     const line = raw.replace(/#.*/, '').trim();
     const m = /^([A-Za-z-]+)\s*:\s*(.*)$/.exec(line);
     if (!m) continue;
@@ -36,15 +44,18 @@ export function botAllowed(robotsTxt, bot) {
       lastWasAgent = true;
     } else {
       lastWasAgent = false;
-      if (cur && (key === 'disallow' || key === 'allow')) cur.rules.push({ key, value });
+      if (cur && (key === 'disallow' || key === 'allow') && value) cur.rules.push({ allow: key === 'allow', value });
     }
   }
   const name = bot.toLowerCase();
-  const group = groups.find((g) => g.agents.includes(name)) || groups.find((g) => g.agents.includes('*'));
-  if (!group) return true;
-  const blocks = group.rules.some((r) => r.key === 'disallow' && r.value === '/');
-  const allowsAll = group.rules.some((r) => r.key === 'allow' && r.value === '/');
-  return !blocks || allowsAll;
+  let chosen = groups.filter((g) => g.agents.includes(name));
+  if (!chosen.length) chosen = groups.filter((g) => g.agents.includes('*'));
+  let best = null;
+  for (const r of chosen.flatMap((g) => g.rules)) {
+    if (!ruleMatches(r.value, '/')) continue;
+    if (!best || r.value.length > best.value.length || (r.value.length === best.value.length && r.allow && !best.allow)) best = r;
+  }
+  return !best || best.allow;
 }
 
 const tags = (html, name) => String(html || '').match(new RegExp(`<${name}\\b[^>]*>`, 'gi')) || [];
@@ -61,7 +72,7 @@ function flatten(node, out = []) {
   }
   return out;
 }
-const typesOf = (n) => [].concat(n['@type'] || []).map((t) => String(t).toLowerCase());
+const typesOf = (n) => [].concat(n['@type'] || []).map((t) => String(t).replace(/^(?:https?:\/\/schema\.org\/|schema:)/i, '').toLowerCase());
 const has = (v) => v !== undefined && v !== null && !(typeof v === 'string' && !v.trim()) && !(Array.isArray(v) && !v.length);
 
 export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
@@ -84,16 +95,22 @@ export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
   if (!blocks.length) {
     add('jsonld', false, 'no JSON-LD block found');
   } else {
-    let nodes = [];
-    let parseError = null;
+    const nodes = [];
+    let bad = 0;
     for (const b of blocks) {
-      try { flatten(JSON.parse(b), nodes); } catch (e) { parseError = e.message; }
+      try { flatten(JSON.parse(b), nodes); } catch (e) { bad += 1; add('jsonld:parse', false, `JSON-LD block does not parse: ${e.message}`); }
     }
-    const biz = nodes.find((n) => typesOf(n).some((t) => LOCAL_TYPES.has(t)));
-    if (parseError && !biz) add('jsonld', false, `JSON-LD does not parse: ${parseError}`);
-    else if (!biz) add('jsonld', false, 'no LocalBusiness or ProfessionalService type in the JSON-LD');
-    else {
-      add('jsonld', true, `type ${[].concat(biz['@type']).join(', ')}`);
+    let biz = nodes.find((n) => typesOf(n).some((t) => LOCAL_TYPES.has(t)));
+    let unknown = null;
+    if (!biz) {
+      unknown = nodes.find((n) => n['@type'] && (has(n.address) || has(n.telephone)));
+      biz = unknown;
+    }
+    if (!biz) {
+      if (!bad) add('jsonld', false, 'no LocalBusiness or ProfessionalService type in the JSON-LD');
+    } else {
+      if (unknown) add('jsonld:type', false, `type ${[].concat(biz['@type']).join(', ')} not recognised as a LocalBusiness subtype, check it`);
+      else add('jsonld', true, `type ${[].concat(biz['@type']).join(', ')}`);
       const need = [
         ['name', ['name']], ['url', ['url']], ['address', ['address']], ['telephone', ['telephone']],
         ['hours', ['openingHoursSpecification', 'openingHours']], ['price', ['priceRange', 'offers']], ['sameAs', ['sameAs']],
@@ -112,20 +129,30 @@ export function checkSite({ robotsTxt, llmsTxt, html, url } = {}) {
   add('meta-description', descOk, descOk ? 'present' : 'meta description missing or empty');
 
   const alternates = tags(page, 'link').filter((t) => /alternate/i.test(attr(t, 'rel') || '') && attr(t, 'hreflang'));
-  // A site that links to another language version (an <a hreflang>) must declare alternates in the head.
-  const linksOther = tags(page, 'a').some((t) => attr(t, 'hreflang'));
+  // A page with a lang that links to another language version must declare hreflang alternates in the head.
+  const htmlTag = tags(page, 'html')[0];
+  const lang = ((htmlTag && attr(htmlTag, 'lang')) || '').toLowerCase().slice(0, 2);
+  let host = '';
+  try { host = new URL(url).host; } catch { /* no url given */ }
+  const pathLang = (href) => {
+    let h = href || '';
+    const full = /^https?:\/\/([^/]+)(\/.*)?$/i.exec(h);
+    if (full) { if (!host || full[1].toLowerCase() !== host.toLowerCase()) return null; h = full[2] || '/'; }
+    const m = /^\/(en|fr)(?:[/?#]|$)/i.exec(h);
+    return m ? m[1].toLowerCase() : null;
+  };
+  const linksOther = tags(page, 'a').some((t) => attr(t, 'hreflang') || (lang && pathLang(attr(t, 'href')) && pathLang(attr(t, 'href')) !== lang));
   if (alternates.length) add('hreflang', true, `${alternates.length} alternates`);
   else if (linksOther) add('hreflang', false, 'links to another language but declares no hreflang alternates');
   else add('hreflang', true, 'single language');
-  void url;
   return out;
 }
 
-async function get(url) {
+export async function get(url, fetchImpl = fetch, ms = 10_000) {
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 10_000);
+  const timer = setTimeout(() => ctl.abort(), ms);
   try {
-    const res = await fetch(url, { signal: ctl.signal, redirect: 'follow', headers: { 'user-agent': 'molveau-check-ai-visibility/1' } });
+    const res = await fetchImpl(url, { signal: ctl.signal, redirect: 'follow', headers: { 'user-agent': 'molveau-check-ai-visibility/1' } });
     return { ok: res.ok, status: res.status, text: res.ok ? await res.text() : '' };
   } finally {
     clearTimeout(timer);
