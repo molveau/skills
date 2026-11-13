@@ -325,10 +325,6 @@
       "into": "skills/ui/references/vendor/impeccable",
       "take": [
         {
-          "from": "plugin/skills/impeccable/SKILL.md",
-          "to": "impeccable.md"
-        },
-        {
           "from": "plugin/skills/impeccable/reference",
           "to": "."
         }
@@ -337,9 +333,13 @@
         "plugin/skills/impeccable/scripts/**",
         "plugin/skills/impeccable/reference/clarify.md",
         "plugin/skills/impeccable/reference/harden.md",
-        "plugin/skills/impeccable/reference/onboard.md"
+        "plugin/skills/impeccable/reference/onboard.md",
+        "plugin/skills/impeccable/reference/doctor.md",
+        "plugin/skills/impeccable/reference/hooks.md",
+        "plugin/skills/impeccable/reference/live.md",
+        "plugin/skills/impeccable/reference/live-setup.md"
       ],
-      "notes": "Taken from the built `plugin/skills/impeccable/` output (not the `SKILL.src.md` template). `reference/*.md` is flattened next to `impeccable.md`. The `scripts/` folder (font index, live browser bundle) is not vendored. `reference/clarify.md`, `harden.md` and `onboard.md` are not vendored here: they live once in the `ux` skill (source `impeccable-ux`), which owns copy, resilience and onboarding; the ui router and playbook cite none of them. Apache-2.0: LICENSE and NOTICE.md kept; changes are limited to relocation and renaming.",
+      "notes": "Taken from the built `plugin/skills/impeccable/` output (not the `SKILL.src.md` template). `reference/*.md` is flattened into the folder. The `scripts/` folder (font index, live browser bundle) is not vendored, and neither are the files that only drive the Impeccable CLI (the `SKILL.md` command entry point, `doctor.md`, `hooks.md`, `live.md`, `live-setup.md`): they tell the agent to install and run third-party code, which this package does not do. `reference/clarify.md`, `harden.md` and `onboard.md` are not vendored here: they live once in the `ux` skill (source `impeccable-ux`), which owns copy, resilience and onboarding; the ui router and playbook cite none of them. Apache-2.0: LICENSE and NOTICE.md kept; changes are limited to relocation and renaming.",
       "bundled": [
         {
           "name": "platform-design-skills",

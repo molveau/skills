@@ -2,12 +2,13 @@
 // (https://creativecommons.org/licenses/by/4.0/). This file stays under CC BY 4.0. Changes by Molveau:
 // a bottom band so the credit never sits on the screen, an Accessibility step that measures text contrast ([data-contrast]) and target size ([data-target])
 // live while the screen changes, an optional caption (<meta name="story-caption">), the credit line, a safer local
-// server (story-server.mjs), exit 2 on a usage error, and no .story-frames folder left behind when the render fails.
+// server (story-server.mjs), exit 2 on a usage error, no .story-frames folder left behind when the render fails, a frames
+// folder deleted only when this script created it, and data-slop labels written as text, never parsed as HTML.
 import { createRequire } from "node:module";
 import * as contrast from "./story-contrast.mjs";
-import { storyHandler } from "./story-server.mjs";
+import { storyHandler, prepareFrames, dropFrames as dropFramesAt } from "./story-server.mjs";
 import { createServer } from "node:http";
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 
@@ -205,7 +206,8 @@ const runtime = `
       const wrap = put("s-fade", { ...rect(b.left - pad, b.top - pad, b.width + pad * 2, b.height + pad * 2), transitionDelay: index * 70 + "ms" });
       wrap.innerHTML = '<div class="s-box" style="position:absolute;inset:0"></div>' +
         [["left", "top"], ["right", "top"], ["left", "bottom"], ["right", "bottom"]].map(([x, y]) => '<span class="s-corner" style="position:absolute;' + x + ':-4px;' + y + ':-4px"></span>').join("") +
-        '<span class="s-tag" style="position:absolute;left:0;top:-40px">' + el.dataset.slop + "</span>";
+        '<span class="s-tag" style="position:absolute;left:0;top:-40px"></span>';
+      wrap.querySelector(".s-tag").textContent = el.dataset.slop;
     });
   }
 
@@ -417,14 +419,19 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const FPS = 60;
 const LENGTH = 10;
 const frames = join(root, ".story-frames");
-const dropFrames = () => rmSync(frames, { recursive: true, force: true });
+const dropFrames = () => dropFramesAt(frames);
 
 const chrome = [process.env.CHROME_PATH, "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome", "/usr/bin/chromium"].find((path) => path && existsSync(path));
 const { chromium } = await browserKit();
 const browser = await chromium.launch({ ...(chrome ? { executablePath: chrome } : {}), headless: !play });
 if (!play) {
-  dropFrames();
-  mkdirSync(frames, { recursive: true });
+  try {
+    prepareFrames(frames);
+  } catch (error) {
+    await browser.close();
+    console.error(error.message);
+    process.exit(2);
+  }
 }
 const sleep = (ms) => new Promise((done) => setTimeout(done, Math.max(0, ms)));
 let total = 0;
