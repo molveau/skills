@@ -2,7 +2,7 @@
 // server and a hosted Streamable HTTP route both call handleRpc; remote mode is what the hosted route serves.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -11,7 +11,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORE = join(ROOT, 'skills', '.mcp', 'core.mjs');
 const PKG_VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
 const { handleRpc, bundledFiles, VERSION, MAX_INPUT } = await import('../skills/.mcp/core.mjs');
-const { SKILLS } = await import('../skills/.mcp/tools.mjs');
+const { SKILLS, REFERENCE_FILES } = await import('../skills/.mcp/tools.mjs');
 
 const EM = String.fromCharCode(0x2014);
 const rpc = (id, method, params) => ({ jsonrpc: '2.0', id, method, ...(params ? { params } : {}) });
@@ -171,6 +171,29 @@ test('bundledFiles lists every file the core reads at run time, relative to the 
     assert.ok(existsSync(join(ROOT, f)), `${f} listed but missing`);
   }
   assert.ok(files.includes('skills/ui/references/playbook.md'));
+});
+
+test('REFERENCE_FILES lists every references/*.md of every skill (not vendor folders), and bundledFiles serves them', () => {
+  const onDisk = SKILLS.flatMap((s) => {
+    const dir = join(ROOT, 'skills', s, 'references');
+    return existsSync(dir) ? readdirSync(dir, { withFileTypes: true }).filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== 'playbook.md').map((e) => `skills/${s}/references/${e.name}`) : [];
+  });
+  assert.deepEqual([...REFERENCE_FILES].sort(), onDisk.sort());
+  const files = bundledFiles();
+  for (const f of onDisk) assert.ok(files.includes(f), f);
+  assert.ok(onDisk.includes('skills/ordre-pro-advertising/references/barreau.md'));
+});
+
+test('get_playbook finds a section in a reference file, in both modes, and names the file', () => {
+  for (const options of [{}, remote]) {
+    const r = call('get_playbook', { skill: 'ordre-pro-advertising', query: 'barreau' }, options).result;
+    assert.ok(!r.isError, textOf(r));
+    assert.match(r.structuredContent.source, /skills\/ordre-pro-advertising\/references\/barreau\.md/);
+    const p = call('get_playbook', { skill: 'paid-booking', query: 'Cal.com Stripe' }, options).result;
+    assert.match(p.structuredContent.source, /references\/cal-stripe\.md/);
+    const w = call('get_playbook', { skill: 'workflow', query: 'git branches commits' }, options).result;
+    assert.match(w.structuredContent.source, /skills\/workflow\/references\//);
+  }
 });
 
 test('importing the core reads no stdin and starts nothing', async () => {

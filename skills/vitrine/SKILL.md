@@ -44,15 +44,15 @@ real references.
 
 1. **One clear offer per page.** The first screen says what is sold, to whom and where, in plain words, with one primary action. A reader who skips everything else still knows. Separate pages for separate services beat one page that sells everything.
 2. **Prices, or a "from" price.** Buyers compare. A starting price and what it includes filters out bad leads and builds trust; "contact us for a quote" alone loses people to competitors who post a number. State what changes the price. Keep amounts in one data file so every page and the structured data agree.
-3. **Booking or contact in one step.** A visible phone link and one short form or booking link on every page. Ask only for what you need to reply (name, contact, what they want). Say when they will hear back. Confirm clearly after sending. Tap-to-call on mobile.
+3. **Booking or contact in one step.** A visible phone link and one short form or booking link on every page. Ask only for what you need to reply (name, contact, what they want). Say when they will hear back. Confirm clearly after sending. Tap-to-call on mobile. Paid slots, deposits and no-show fees: `paid-booking`.
 4. **Proof.** Real projects with a result, real reviews with names and dates (or links to them), logos only if permitted. A few specific proofs beat many vague ones. Only real people, real reviews.
 5. **Local SEO basics.**
    - A page per service area worth ranking in, each with genuinely local content (not the same text with the city swapped).
-   - `LocalBusiness` (or a more specific subtype) JSON-LD with name, address or service area, phone, hours, and price range that matches the posted prices. Add `FAQPage` only on one canonical page.
+   - `LocalBusiness` (or a more specific subtype) JSON-LD whose price range matches the posted prices. Being named by ChatGPT and AI search, and the JSON-LD field list: `local-ai-visibility`, which owns that list. Add `FAQPage` only on one canonical page.
    - A complete Google Business Profile: same name, address and phone as the site, categories, hours, photos, a link to the right page, and a habit of answering reviews.
    - One `h1` per page, descriptive titles and meta descriptions, `hreflang` for both languages, a sitemap, readable URLs.
 6. **A speed budget.** Local visitors are on phones with average connections. Preload the LCP image and size it correctly (modern format, explicit width and height); fonts self-hosted, one or two families, `font-display` set, subset; no heavy 3D, video backgrounds or large JS libraries for decoration; third-party scripts only when they earn their place. Content is present on load. Target LCP under 2.5 s on mobile and test with real throttling.
-7. **Bilingual FR/EN when the market is.** Same content in both languages, a language switch that keeps the current page, localized URLs and `hreflang`. Apply `french-typography` to every French string, guard included. Layouts take French at +20 percent length.
+7. **Bilingual FR/EN when the market is.** Same content in both languages, a language switch that keeps the current page, localized URLs and `hreflang`. Apply `french-typography` to every French string, guard included. Next.js wiring and the parity check: `bilingual-next`. Layouts take French at +20 percent length.
 8. **Québec: Law 25.** A contact form is enough to trigger it. Run `loi-25-website` as part of the build; pick analytics and form tools with it in mind.
 9. **Motion: one signature moment at most.** One memorable, purposeful interaction (a project switcher with a crossfade, a before/after) plus plain press and hover feedback. Use the `motion` skill.
 
@@ -66,8 +66,8 @@ Home, Services (or one page per service), Projects with case studies, Pricing, C
 2. **Direction and tokens.** Run the direction gate above, then palette, one or two self-hosted fonts, spacing, radii, with the `ui` skill (taste defaults if the project has none).
 3. **Mockup, desktop and 390 px.** Home first, then one inner page. The owner judges it; iterate before building (`ui` skill, mockup-first).
 4. **Build pages with real content.** Real photos and text, not lorem ipsum. Check long French strings.
-5. **SEO and schema.** Titles, meta, JSON-LD, sitemap, `hreflang`, area pages, Google Business Profile aligned to the site.
-6. **Language and law.** Run `french-typography` on all French copy, then `loi-25-website` for the audit report.
+5. **SEO and schema.** Titles, meta, sitemap, `hreflang`, area pages, Google Business Profile aligned to the site. JSON-LD and AI-search visibility: `local-ai-visibility`. Paid slots and deposits: `paid-booking`.
+6. **Language and law.** For a Next.js site, wire both languages and run the parity check with `bilingual-next`. Run `french-typography` on all French copy, then `loi-25-website` for the audit report.
 7. **Speed pass.** Measure LCP, CLS and total transfer on a throttled mobile profile; repeat on the biggest item until LCP is under 2.5 s.
 8. **Motion, then slop pass.** Add the one signature moment, then run `anti-slop` and its detector.
 

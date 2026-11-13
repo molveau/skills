@@ -1,6 +1,6 @@
 {
   "name": "@molveau/skills",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "MCP server for Molveau Studio's design skills: AI-look tells, WCAG contrast, French typography, motion guardrails, an AI-prose check and the skills' playbooks. Zero dependencies.",
   "license": "MIT",
   "author": {
@@ -32,7 +32,9 @@
     "contrast",
     "anti-slop",
     "motion",
-    "french-typography"
+    "french-typography",
+    "next-intl",
+    "quebec"
   ],
   "type": "module",
   "bin": {
@@ -51,8 +53,11 @@
     "skills/french-typography/scripts/fr-typo.mjs",
     "skills/motion/scripts/check-motion.mjs",
     "skills/writing/scripts/check-writing.mjs",
+    "skills/local-ai-visibility/scripts/check-ai-visibility.mjs",
+    "skills/bilingual-next/scripts/check-i18n-parity.mjs",
     "skills/*/SKILL.md",
     "skills/*/references/playbook.md",
+    "skills/*/references/*.md",
     "README.md",
     "LICENSE",
     "THIRD_PARTY.md",
