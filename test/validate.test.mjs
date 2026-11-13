@@ -187,7 +187,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 // Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
-  quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising'],
+  quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising', 'bilingual-next'],
   playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking', 'local-ai-visibility'],
 };
 
