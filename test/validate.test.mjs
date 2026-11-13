@@ -187,7 +187,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 // Bundles exist only as skills CLI commands (-s), listed in the README.
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
-  quebec: ['french-typography', 'loi-25-website'],
+  quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising'],
   playbooks: ['saas', 'vitrine', 'workflow'],
 };
 
@@ -643,5 +643,17 @@ test('every numbered playbook section is routed from its SKILL.md', () => {
     }
     const missing = heads.filter((n) => !own.has(n) && !UNROUTED_SECTIONS.has(`${name}:${n}`));
     assert.deepEqual(missing, [], `${name}: playbook sections cited nowhere in SKILL.md: ${missing.map((n) => '§' + n).join(', ')}`);
+  }
+});
+
+test('ordre-pro-advertising: one reference per regulator, each with an Uncertain section and a LégisQuébec link', () => {
+  const dir = join(SKILLS, 'ordre-pro-advertising', 'references');
+  const expected = ['amf-mortgage-broker.md', 'barreau.md', 'cmq.md', 'oaciq.md', 'opq.md', 'rbq-building-inspector.md'];
+  assert.ok(existsSync(dir), 'skills/ordre-pro-advertising/references/ missing');
+  assert.deepEqual(readdirSync(dir).sort(), expected);
+  for (const f of expected) {
+    const text = readFileSync(join(dir, f), 'utf8');
+    assert.match(text, /^## Uncertain$/m, `${f}: no "## Uncertain" heading`);
+    assert.match(text, /l[ée]gisqu[ée]bec/i, `${f}: no LégisQuébec link`);
   }
 });

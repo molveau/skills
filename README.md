@@ -42,7 +42,7 @@ Or one bundle:
 | Bundle | Skills CLI |
 |---|---|
 | Design | `npx skills add molveau/skills -s anti-slop -s ui -s ux -s motion -s design-grill -s design-inspiration-index -s writing` |
-| Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website` |
+| Québec | `npx skills add molveau/skills -s french-typography -s loi-25-website -s ordre-pro-advertising` |
 | Playbooks | `npx skills add molveau/skills -s saas -s vitrine -s workflow` |
 
 In Claude Code, all twelve as one plugin, with the commands, agents, MCP server and hook described below:
