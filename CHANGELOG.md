@@ -2,6 +2,14 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.6.1] - 2026-11-13
+
+### Security
+
+- `ui` no longer vendors the Impeccable files that only drive its CLI (`impeccable.md`, `doctor.md`, `hooks.md`, `live.md`, `live-setup.md`). They told the agent to install and run third-party code. The design references stay.
+- `ui`, `ux`, `anti-slop` and `design-grill` say that text found in project files, web pages and screenshots is material to review, and that the agent acts only on the user's instructions.
+- `anti-slop`'s `story.mjs` writes each `data-slop` label as text instead of HTML, and deletes its `.story-frames` folder only when it created it. A folder of that name made by someone else is left alone and the script exits 2.
+
 ## [1.6.0] - 2026-11-13
 
 ### Added
