@@ -188,7 +188,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
   quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising'],
-  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking'],
+  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking', 'local-ai-visibility'],
 };
 
 // The plugin is the skills/ folder only, so tests, fixtures, the example video and the repo scripts stay

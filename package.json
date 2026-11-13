@@ -51,6 +51,7 @@
     "skills/french-typography/scripts/fr-typo.mjs",
     "skills/motion/scripts/check-motion.mjs",
     "skills/writing/scripts/check-writing.mjs",
+    "skills/local-ai-visibility/scripts/check-ai-visibility.mjs",
     "skills/*/SKILL.md",
     "skills/*/references/playbook.md",
     "README.md",
