@@ -668,4 +668,10 @@ test('paid-booking: the reference holds dated, linked vendor facts and the polic
   assert.match(text, /https:\/\/cal\.com\/help\/bookings\/paid-bookings/, 'no Cal.com paid bookings link');
   assert.match(text, /^## Policy text$/m);
   assert.match(text, /^## QA checklist$/m);
+  const skill = readFileSync(join(SKILLS, 'paid-booking', 'SKILL.md'), 'utf8');
+  assert.match(skill, /`loi-25-website`/);
+  assert.match(skill, /`ordre-pro-advertising`/);
+  assert.equal((skill.match(/Done when/g) || []).length, 8, 'eight steps, each with a "Done when"');
+  assert.ok(skill.indexOf('regulator what the payment is') < skill.indexOf('Open the accounts'), 'regulator gate comes before the setup');
+  assert.doesNotMatch(text, /\b24 (hours|heures)/, 'the cancellation window is a [24] placeholder');
 });
