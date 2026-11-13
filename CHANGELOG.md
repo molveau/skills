@@ -2,6 +2,12 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.6.2] - 2026-11-13
+
+### Fixed
+
+- `PRIVACY.md` names the right host for the hosted MCP endpoint: Cloudflare, not Vercel, with a link to its privacy policy.
+
 ## [1.6.1] - 2026-11-13
 
 ### Security
