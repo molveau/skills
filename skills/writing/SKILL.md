@@ -1,13 +1,13 @@
 ---
 name: writing
-description: Removes the AI-written sound from prose, in English and French (README, docs, copy, email, UI strings). Use when a text sounds generated, generic or AI-written, when asked to de-AI or humanize it, or on "relis ce texte" or "ça sonne IA". Includes a checker for 11 tells and a rewrite method.
+description: Removes the AI-written sound from prose, in English and French (README, docs, copy, email, UI strings). Use when a text sounds generated, generic or AI-written, when asked to de-AI or humanize it, or on "relis ce texte" or "ça sonne IA". Includes a checker for 12 tells and a rewrite method.
 ---
 
 # Writing
 
 AI-written prose fails in the same predictable ways: it clears its throat before the point, praises
 everything, hedges, lists with stock connectors and closes with a summary nobody asked for. This skill
-lists eleven of those tells, in English and in French, with a script that finds them and a method to
+lists twelve of those tells, in English and in French, with a script that finds them and a method to
 rewrite them.
 
 ## What it covers
@@ -15,8 +15,9 @@ rewrite them.
 - Prose in Markdown, MDX, plain text and JSON string values: READMEs, docs, landing copy, articles,
   emails, UI strings, release notes.
 - English and French. The script detects the language, or you pass `--lang`.
-- It does not cover the look of a UI (use `anti-slop`) or French spacing, guillemets and apostrophes
-  (use `french-typography`). Run those on the same text after the rewrite.
+- It does not cover the look of a UI (use `anti-slop`), what help text should say (use `ux`, playbook §2)
+  or French spacing, guillemets and apostrophes (use `french-typography`). Run those on the same text after
+  the rewrite.
 
 ## The tells
 
@@ -33,11 +34,13 @@ rewrite them.
 | `not-x-but-y` | House | "It's not X, it's Y" | « Ce n’est pas X, c’est Y » | State Y. |
 | `whether-you` | House | "Whether you're a X or a Y" | « Que vous soyez X ou Y » | Name who it is for. |
 | `chat-filler` | House | "I hope this helps", "feel free to" | « N’hésitez pas à », « j’espère que cela vous aide » | Cut it. |
+| `slogan` | House | "Week after week", "from A to Z", "to share or to print", "who did what" | « Entrée par entrée », « de l’arrivée à la sortie », « à analyser ou à soumettre » | Say what is there: the contents, one row per what, how many. |
 
 Matching ignores case, needs whole words, and accepts both apostrophes and the French spaces. In
 `listing-words`, "first and foremost" and "en premier lieu" always count; the other connectors count only
-at the start of a sentence, and only when the text has three or more of them. Code spans and fenced code
-are skipped.
+at the start of a sentence, and only when the text has three or more of them. `slogan` is checked only
+in label-sized text, a JSON value or a paragraph of 16 words or fewer: in running prose, "frame by frame"
+is literal. Code spans and fenced code are skipped.
 
 ## Order of work
 
@@ -48,10 +51,13 @@ are skipped.
 3. **Rewrite by family**, starting with openers and conclusions: delete the throat-clearing first, because
    the point usually sits in the next sentence. Then swap adjectives for facts, hedges for a commitment or a
    source, buzzword verbs for plain ones.
-4. **Read it aloud.** If you would not say it to a colleague, change it. Check that no sentence now
-   starts with the same word three times, and that the cuts left no hole.
-5. **Run the check again.** Zero findings is not proof the text is good; it only means the mechanical
-   tells are gone. Then run `french-typography` on French text.
+4. **Read every string aloud, one at a time**, the ones the script passed included: the script knows
+   phrases, and a slogan is often a shape it has never seen. Change what you would not say to a colleague.
+   A title, subtitle or help line names what is there (contents, grain, count) and stays silent on why or
+   for whom (playbook, `slogan`). Done when every string is kept, cut or rewritten, no sentence starts
+   with the same word three times, and the cuts left no hole.
+5. **Run the check again**, then `french-typography` on French text. A clean run clears the listed
+   phrases; step 4 clears the rest.
 
 Read `references/playbook.md` first, starting with its "Do this first" block, then the section for the
 family you are fixing: each has a before and after in English and in French.
@@ -73,5 +79,5 @@ the text directly.
 
 - The eight families come from the infographic "Can You Identify AI Authors?" by YourNerdyBestFriend.com
   (March 2025). Only the family names are taken; no text or image is copied.
-- The English and French phrase lists, the three house tells, the rewrite method and
+- The English and French phrase lists, the four house tells, the rewrite method and
   `scripts/check-writing.mjs` are Molveau's own (MIT).

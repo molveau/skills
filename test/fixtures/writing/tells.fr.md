@@ -8,3 +8,5 @@ Il faut booster les ventes.
 Ce n’est pas un outil, c’est une habitude.
 Que vous soyez designer ou développeur, lisez la suite.
 N’hésitez pas à m’écrire.
+
+Les ventes de la boutique, semaine après semaine.
