@@ -18,7 +18,7 @@ How to run it:
 - Each prompt twice. The prompts stay the same from month to month; a prompt added later starts its own trend.
 - The brand is typed only in the brand prompts. Competitor names in the comparison prompts come from the owner; with none, run the category prompts once, take the names the answers give, then freeze the panel.
 - A different product with the same name counts as not named; note it.
-- Short first panel, when the owner has an hour: ten prompts, one run, two assistants. Write "short panel" in the log and run the full one the next month; the two are not compared.
+- Short first panel, when the owner has an hour: the first ten prompts, one run, two assistants. Order the twenty so the first ten hold three category, three problem, two comparison and two brand prompts. Write "short panel" in the log; the next month runs all twenty, and the trend is read on those ten until the full panel has its own history.
 
 ## Log
 
