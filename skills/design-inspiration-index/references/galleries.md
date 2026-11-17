@@ -195,3 +195,7 @@ Icons · Mobile/App.
 - **Retrieval tip:** Browse/search on reicon.dev with live preview. Use the `weight`
   prop to swap Outline ↔ Filled on the same component. For brand logos, go straight to
   brands.reicon.dev instead of hunting SVGs.
+
+## How to extend this index
+
+Add a new gallery to this file with the same fields (name, URL, category, best for, access, format, retrieval tip), then add a routing row to the table in `SKILL.md`.

@@ -5,9 +5,7 @@ description: Inspiration for a UI, saying which curated gallery, registry or MCP
 
 # Design inspiration index
 
-A retrieval map: "I need inspiration for X, so go to source Y." It is an index of public galleries and registries, not a design authority; once you have references, build with the `ui` skill and check the result with `anti-slop`. Per-site detail (access, format, filters, retrieval tips) is in `references/galleries.md`.
-
-Nothing here is required. Every source is a public website; the two that have MCP servers (Mobbin, Refero) are optional and only worth wiring up if you use them often.
+A retrieval map: "I need inspiration for X, so go to source Y." It is an index of public galleries and registries, not a design authority; once you have references, build with the `ui` skill and check the result with `anti-slop`. Per-site detail (access, format, filters, retrieval tips) is in `references/galleries.md`. Design engineers whose sites and open-source work are worth studying: `references/people.md`.
 
 ## When you need X, go to Y
 
@@ -42,21 +40,6 @@ Nothing here is required. Every source is a public website; the two that have MC
 
 Free component libraries that ship their own registry are worth checking before you write a block by hand. Adapt anything you import to the project's tokens and accessibility rules.
 
-## Design engineers to study
-
-High-signal people whose sites and open-source work are worth studying and following.
-
-| Person | Site | Known for |
-|---|---|---|
-| Emil Kowalski | emilkowal.ski | Sonner, Vaul; web animation craft |
-| shadcn | shadcn.com | shadcn/ui; copy-in components and registries |
-| Paco Coursey | paco.me | cmdk, next-themes; keyboard-first minimal UI |
-| Rauno Freiberg | rauno.me | interface invariants and the why behind polish |
-| Raphael Salaja | raphaelsalaja.com | motion-rich portfolio, playful interaction craft |
-| Gavin Nelson | nelson.co | product and icon design |
-| floguo | floguo.com | expressive micro-interactions, personality |
-| Syed Subhan | syedsubhan.in | micro-transitions; built Amicro (amicro.vercel.app), a collection of reusable micro-transition patterns |
-
 ## Mobbin and Refero: optional MCP servers
 
 Both need a login and are best queried through an MCP server if you have one connected. Mobbin exposes screen, flow and section search; Refero's server is at `https://api.refero.design/mcp` (docs: https://doc.refero.design/mcp/getting-started) and returns real product screens. If you have neither, browse the sites by hand. Do not scrape.
@@ -70,7 +53,3 @@ Verify before relying; sites change.
 - Login or MCP: Mobbin, refero.design.
 
 Several of these (saaspo.com, component.gallery, landing.love, designspells.com) block automated fetches with a 403 or 429 but open fine in a normal browser. godly.website now redirects to recent.design. To pull from a blocked site programmatically, drive a real browser (for example with a Playwright MCP, if installed) rather than a plain HTTP fetch.
-
-## How to extend this index
-
-Add a new gallery to `references/galleries.md` with the same fields (name, URL, category, best for, access, format, retrieval tip), then add a routing row to the table above.

@@ -105,9 +105,9 @@ export function collectInside(root, paths, { maxFiles = 2000, maxBytes = 1_000_0
 // Each skill's other references/*.md files (no vendor folders). A runtime without a file system cannot list a
 // folder, so the names are written out; test/mcp-core.test.mjs keeps this equal to what is on disk.
 const REFERENCES = {
-  'anti-slop': ['tells.md'],
+  'anti-slop': ['ratchet.md', 'story-video.md', 'tells.md'],
   'bilingual-next': ['next-intl.md'],
-  'design-inspiration-index': ['galleries.md'],
+  'design-inspiration-index': ['galleries.md', 'people.md'],
   'loi-25-website': ['checklist.md'],
   motion: ['guardrails.md'],
   'ordre-pro-advertising': ['amf-mortgage-broker.md', 'barreau.md', 'cmq.md', 'oaciq.md', 'opq.md', 'rbq-building-inspector.md'],
