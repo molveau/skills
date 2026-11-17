@@ -119,62 +119,14 @@ detector on each edited UI file and hands the findings back to the agent. The pl
 default; "Check edited files" in `/config` turns it off. With the skills CLI, register it in the project's
 settings (snippet in the repository README).
 
-## Ratchet test in a project
-
-A ratchet pins today's count and fails when it goes up, so the tells can only shrink. Sketch for
-`node:test` (adapt the paths and the baseline):
-
-```js
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { readFileSync, globSync } from 'node:fs'; // globSync needs Node 22; on 20 walk the folders yourself
-import { detectTells } from './.agents/skills/anti-slop/scripts/detect-tells.mjs';
-
-const BASELINE = { 10: 8, 5: 1 }; // tell number -> allowed findings today
-test('no new vibe-coded tells', () => {
-  const files = globSync('{app,components}/**/*.{ts,tsx,css}').map((path) => ({ path, text: readFileSync(path, 'utf8') }));
-  const now = {};
-  for (const f of detectTells(files)) now[f.tell] = (now[f.tell] ?? 0) + 1;
-  for (const [tell, n] of Object.entries(now)) assert.ok(n <= (BASELINE[tell] ?? 0), 'tell ' + tell + ': ' + n + ' findings, baseline ' + (BASELINE[tell] ?? 0));
-});
-```
-
-Lower the baseline whenever you fix one; never raise it.
-
-## Story video
-
-A square clip, about 10 seconds, where the screen unslops itself step by step with redlines. Make it only
-when asked. Build the story file exactly as unslop's "Story video" section says
-(`references/vendor/unslop/unslop.md`; its reference frames are upstream, not vendored:
-https://github.com/heydamir/unslop/blob/main/skills/unslop/references/refs/story-dashboard-frames.webp; one `story.html`, `.s1` to `.s5` CSS on top, `data-gap`,
-`data-radius`, `data-slop`, swaps), then render it with this skill's adapted renderer:
-
-```bash
-node <skill folder>/scripts/story.mjs unslop-story/story.html unslop-story.mp4   # --wide for 16:9, --play to watch
-```
-
-What it adds to unslop's renderer:
-
-- **An Accessibility step.** A step whose name contains Accessibility shows live measurements. Put
-  `data-contrast` on two to four text elements whose contrast changes; each shows its WCAG ratio, red
-  under 4.5:1 (3:1 for large text), white with `AA` once it passes, grey `?` when a colour cannot be
-  read (such as `lab()` or `color(display-p3 ...)`): use sRGB, hex or `oklch()` colours on those elements. Put `data-target` on one or two
-  controls; each shows its size, red under 24 by 24 px. Choose elements that fail in the before; never
-  mark an element that still fails in the after.
-- **A caption**, `<meta name="story-caption" content="...">`, bottom left. State only what is true of
-  the run, such as the model and that the screen was not edited by hand.
-- **The credit** `molveau.ca/skills · unslop method by @heydamir` is drawn on every frame, as the CC BY 4.0
-  licence of unslop asks. Do not remove it.
-
-The story is a presentation of real files: step 0 is the before as it was, and the last step equals the
-clean file you ship. Do not polish the story beyond the shipped screen.
-
 ## When to read what
 
 | Need | Read (§ = this skill's playbook) |
 |---|---|
 | Rules and values for any task | "Do this first" in `references/playbook.md`, then the § from the rows below |
 | The 20 tells with replacements and the detector's limits | `references/tells.md` |
+| Pin the tell count in a project's CI so it can only shrink | `references/ratchet.md` |
+| A story video of the before and after, only when asked | `references/story-video.md` |
 | unslop's full method, direction, nine passes, checklist, story video | §3; `references/vendor/unslop/unslop.md` |
 | Exact values (spacing, type scale, ramps, motion curves) | §5, §7, §8; `references/vendor/unslop/unslop/references/tokens.md` (its motion values are superseded: `ui` playbook §10 and `motion` §5 win, playbook conflict 19) |
 | The audit list of signs | §15; `references/vendor/unslop/unslop/references/signs.md` |

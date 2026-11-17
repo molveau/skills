@@ -330,7 +330,7 @@ read what" in `SKILL.md`). Tags and credits are at the end.
 - Report the direction, a few lines per pass, claims removed or unverifiable, sample details to
   confirm, image prompts, found pictures with licence and credit place, and checks that did not run.
   Never claim a check you did not run. [unslop] [taste]
-- A story video only on request: `scripts/story.mjs` (unslop's, adapted; `SKILL.md` "Story video"). It
+- A story video only on request: `scripts/story.mjs` (unslop's, adapted; `references/story-video.md`). It
   morphs the real before into the shipped after, nothing the clean file lacks. [unslop] [Molveau]
 
 ## 16. Do not
