@@ -2,7 +2,7 @@
 
 An interface that shows these reads as "generated, not designed". Each one is a ban, with the
 replacement to reach for. The last column says whether `scripts/detect-tells.mjs` catches it; the
-rest are on you, so grep for them before shipping and keep a ratchet test green (see SKILL.md).
+rest are on you, so grep for them before shipping and keep a ratchet test green (`references/ratchet.md`).
 
 | # | Tell | Do instead | Script |
 |---|---|---|---|

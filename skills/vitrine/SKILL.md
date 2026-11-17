@@ -58,7 +58,7 @@ real references.
 
 ## Suggested pages
 
-Home, Services (or one page per service), Projects with case studies, Pricing, Contact. Add area pages and a few guides only if you will keep them honest and updated. Skip an "About" page unless it carries proof; fold a short human introduction into home or contact.
+Home, Services (or one page per service), Projects with case studies, Pricing, Contact. Add area pages and a few guides only if you will keep them honest and updated; plan and write the guides with `seo`. Skip an "About" page unless it carries proof; fold a short human introduction into home or contact.
 
 ## Order of work
 

@@ -20,5 +20,6 @@ AI assistants answer "who is a good plumber near me" from the open web, from dir
 
 - For Google's AI features, Google says SEO best practices apply unchanged; do not assume the same for other assistants. Do not buy a "GEO package" before steps 1 to 4 are done.
 - Tracking and consent: analytics and the contact form fall under Québec's Law 25; run `loi-25-website`.
+- A product, SaaS or shop with no address to visit: `geo`. Guides and articles that answer a search query: `seo`.
 - Words on the page come from `writing`; French strings follow `french-typography`.
 - Report outcomes as "cited in 3 of 10 prompts this month", never as a promise.

@@ -79,6 +79,8 @@ This skill decides when and in what order; these skills decide how. Load the one
 | Prose, articles, docs, README and email copy, in English or French | `writing` |
 | French copy (Québec or France) | `french-typography` |
 | A site that collects personal information in Québec | `loi-25-website` |
+| Content that should rank in Google: a plan, a guide, a page that does not rank | `seo` |
+| A brand that AI assistants do not name | `geo` (a local business: `local-ai-visibility`) |
 | Starting a SaaS, dashboard or web app | `saas` |
 | Starting a showcase site for a local business | `vitrine` |
 
