@@ -14,10 +14,10 @@ const DASH = '—';
 const run = (...args) => spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8' });
 const rulesOf = (text, opts) => checkWriting(text, opts).map((f) => f.rule);
 
-test('RULES lists the eleven rule ids in order', () => {
+test('RULES lists the twelve rule ids in order', () => {
   assert.deepEqual(RULES, [
     'transition-opener', 'scene-setting', 'hedging', 'inflated', 'listing-words', 'cliche-conclusion',
-    'buzzword-verb', 'em-dash', 'not-x-but-y', 'whether-you', 'chat-filler',
+    'buzzword-verb', 'em-dash', 'not-x-but-y', 'whether-you', 'chat-filler', 'slogan',
   ]);
   assert.ok(EXTS.has('.md') && EXTS.has('.json') && EXTS.has('.txt') && EXTS.has('.mdx'));
 });
@@ -39,6 +39,7 @@ const EN = {
   'not-x-but-y': "It's not a tool, it's a habit.",
   'whether-you': "Whether you're a designer or a developer, read on.",
   'chat-filler': 'I hope this helps.',
+  slogan: 'Sales figures, week after week.',
 };
 const FR = {
   'transition-opener': 'Il est important de noter que l’API est lente.',
@@ -52,6 +53,7 @@ const FR = {
   'not-x-but-y': 'Ce n’est pas un outil, c’est une habitude.',
   'whether-you': 'Que vous soyez designer ou développeur, lisez la suite.',
   'chat-filler': 'N’hésitez pas à m’écrire.',
+  slogan: 'Les ventes de la boutique, semaine après semaine.',
 };
 
 for (const [lang, table] of [['en', EN], ['fr', FR]]) {
@@ -234,4 +236,73 @@ test('CLI exits 2 when a file cannot be read', { skip: process.getuid?.() === 0 
     chmodSync(file, 0o600);
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('slogan: rhythm, sweep, doubled purpose and stock taglines are flagged', () => {
+  const fr = [
+    'Santé des patients, entrée par entrée',
+    'Les ventes, jour après jour',
+    'Les fichiers du projet, à analyser ou à soumettre',
+    'Tout ce qui est arrivé à chaque client, de l’arrivée à la sortie',
+    'Leur parcours de A à Z',
+    'Qui a fait quoi, et quand',
+    'Tout ce dont vous avez besoin',
+    'Toutes vos données en un seul endroit',
+    'Exportez en un clic',
+    'Du début à la fin',
+  ];
+  for (const t of fr) assert.deepEqual(rulesOf(t, { lang: 'fr' }), ['slogan'], t);
+  const en = [
+    'Patient health, entry by entry',
+    'Sales, week after week',
+    'Project files, to analyze or to submit',
+    'Their journey from A to Z',
+    'Who did what, and when',
+    'Everything you need',
+    'All your data in one place',
+    'Export in one click',
+    'From start to finish',
+  ];
+  for (const t of en) assert.deepEqual(rulesOf(t, { lang: 'en' }), ['slogan'], t);
+});
+
+test('slogan: literal pairs, plain ranges and dates are left alone', () => {
+  const fr = [
+    'Deux graphiques côte à côte',
+    'Une réunion face à face',
+    'Ajouter des clients un par un',
+    'Du lundi au vendredi',
+    'Du 1er janv. au 16 nov.',
+    'Une ligne par entrée : date, valeur, auteur',
+    'Des tests de bout en bout',
+  ];
+  for (const t of fr) assert.deepEqual(rulesOf(t, { lang: 'fr' }), [], t);
+  const en = [
+    'Two charts side by side',
+    'Back to back meetings',
+    'Add clients one by one',
+    'End-to-end tests',
+    'One row per entry: date, value, author',
+    'From Monday to Friday',
+  ];
+  for (const t of en) assert.deepEqual(rulesOf(t, { lang: 'en' }), [], t);
+});
+
+test('slogan: only label-sized text is checked, so literal prose stays clean', () => {
+  const prose = 'The motion playbook steps through the animation frame by frame so the reader sees where the easing curve bends and why the overshoot feels late.';
+  assert.deepEqual(rulesOf(prose, { lang: 'en' }), []);
+  assert.deepEqual(rulesOf('Frame by frame', { lang: 'en' }), ['slogan']);
+  const md = prose + '\n\nSales, week after week.';
+  const found = scanText(md, 'a.md', { lang: 'en' });
+  assert.deepEqual(found.map((f) => [f.rule, f.line]), [['slogan', 3]]);
+});
+
+test('every rule id has its row in SKILL.md and its section in the playbook', () => {
+  const skill = readFileSync(join(HERE, '..', 'skills', 'writing', 'SKILL.md'), 'utf8');
+  const playbook = readFileSync(join(HERE, '..', 'skills', 'writing', 'references', 'playbook.md'), 'utf8');
+  for (const rule of RULES) {
+    assert.match(skill, new RegExp('^\\| `' + rule + '` \\|', 'm'), 'SKILL.md lacks a row for ' + rule);
+    assert.match(playbook, new RegExp('^## .*\\(`' + rule + '`\\)$', 'm'), 'playbook lacks a section for ' + rule);
+  }
+  assert.match(skill, /checker for 12 tells/);
 });

@@ -8,3 +8,5 @@ We leverage the cache.
 It's not a tool, it's a habit.
 Whether you're a designer or a developer, read on.
 I hope this helps.
+
+Sales figures, week after week.

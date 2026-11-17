@@ -12,7 +12,7 @@ const MAX_BYTES = 2_000_000;
 
 export const RULES = [
   'transition-opener', 'scene-setting', 'hedging', 'inflated', 'listing-words', 'cliche-conclusion',
-  'buzzword-verb', 'em-dash', 'not-x-but-y', 'whether-you', 'chat-filler',
+  'buzzword-verb', 'em-dash', 'not-x-but-y', 'whether-you', 'chat-filler', 'slogan',
 ];
 
 const AP = '[\'\u2019]';
@@ -56,6 +56,13 @@ const PATTERNS = {
       raw(`(?:isn${AP}t|is${SP}not)${SP}about${SP}${GAP}{1,80}?[,;]${SP}(?:it|this|that)(?:${AP}s|${SP}is)${SP}about`),
     ],
     'whether-you': [raw(`whether${SP}you(?:${AP}re|${SP}are)${GAP}{1,80}?${SP}or`)],
+    // A word repeated around a preposition (week after week), a doubled purpose (to share or to print),
+    // and stock taglines. Literal pairs (side by side, one by one, case by case) are left out.
+    slogan: [
+      raw(`(?!(?:side|one|case|little)${SP})(\\p{L}{3,})${SP}(?:by|after)${SP}\\1`),
+      raw(`(?:to|for)${SP}\\p{L}+${SP}or${SP}(?:to|for)${SP}\\p{L}+`),
+      words(['from A to Z', 'from start to finish', 'from beginning to end', 'who did what', 'everything you need', 'in one place', 'in one click', 'with one click', 'in a single click', 'in a few clicks']),
+    ],
   },
   fr: {
     ...Object.fromEntries(Object.entries(PHRASES.fr).map(([r, l]) => [r, [words(l)]])),
@@ -64,6 +71,13 @@ const PATTERNS = {
       raw(`il${SP}ne${SP}s${AP}agit${SP}pas${SP}${GAP}{1,80}?[,;]${SP}mais${SP}(?:de|d${AP}|du|des)`),
     ],
     'whether-you': [raw(`que${SP}(?:vous${SP}soyez|tu${SP}sois)${GAP}{1,80}?${SP}ou`)],
+    // Same shapes in French, plus the sweep « de l’arrivée à la sortie ». « Un par un » stays literal.
+    slogan: [
+      raw(`(?!une?${SP})(\\p{L}{3,})${SP}(?:par|après)${SP}\\1`),
+      raw(`à${SP}\\p{L}+(?:er|ir|re)${SP}ou${SP}à${SP}\\p{L}+(?:er|ir|re)`),
+      raw(`de${SP}(?:la${SP}|l${AP})\\p{L}+${SP}à${SP}(?:la${SP}|l${AP})\\p{L}+`),
+      words(['de A à Z', 'du début à la fin', 'qui a fait quoi', 'tout ce dont vous avez besoin', 'tout ce dont tu as besoin', 'en un seul endroit', 'en un clic', 'en un seul clic', 'en quelques clics']),
+    ],
   },
 };
 
@@ -102,13 +116,36 @@ function assertLang(lang) {
   if (lang !== undefined && !['auto', 'en', 'fr'].includes(lang)) throw new Error('lang must be auto, en or fr');
 }
 
+// A slogan stands in for a label, so only label-sized text is checked for it: a paragraph (or a JSON value)
+// of at most this many words. In running prose "frame by frame" or "line by line" is literal.
+export const LABEL_WORDS = 16;
+const PARAGRAPH_BREAK = /\r?\n(?:[ \t\f\v\u00a0]*\r?\n)+/g;
+
+function paragraphs(text) {
+  const out = [];
+  let start = 0;
+  for (const m of text.matchAll(PARAGRAPH_BREAK)) {
+    out.push({ start, part: text.slice(start, m.index) });
+    start = m.index + m[0].length;
+  }
+  out.push({ start, part: text.slice(start) });
+  return out;
+}
+
 // Checks one stretch of text in one language. `offset` shifts indexes back to the whole text.
 function checkIn(text, lang, offset) {
   const found = [];
-  const add = (rule, re) => {
-    for (const m of text.matchAll(re)) found.push({ index: offset + m.index, rule, match: m[0], lang });
+  const add = (rule, re, part = text, at = 0) => {
+    for (const m of part.matchAll(re)) found.push({ index: offset + at + m.index, rule, match: m[0], lang });
   };
-  for (const [rule, list] of Object.entries(PATTERNS[lang])) for (const re of list) add(rule, re);
+  for (const [rule, list] of Object.entries(PATTERNS[lang])) {
+    if (rule === 'slogan') {
+      for (const { start, part } of paragraphs(text)) {
+        if ((part.match(/[\p{L}\p{N}]+(?:['\u2019][\p{L}\p{N}]+)*/gu) || []).length > LABEL_WORDS) continue;
+        for (const re of list) add(rule, re, part, start);
+      }
+    } else for (const re of list) add(rule, re);
+  }
   add('listing-words', ALWAYS_RE[lang]);
   const starters = [...text.matchAll(STARTER_RE[lang])];
   if (starters.length >= STARTERS_NEEDED) {
@@ -141,7 +178,7 @@ export function checkWriting(text, opts = {}) {
       const part = text.slice(start, end);
       if (part.trim() !== '') found.push(...checkIn(part, detectLang(part), start));
     };
-    for (const m of text.matchAll(/\r?\n(?:[ \t\f\v\u00a0]*\r?\n)+/g)) {
+    for (const m of text.matchAll(PARAGRAPH_BREAK)) {
       flush(m.index);
       start = m.index + m[0].length;
     }

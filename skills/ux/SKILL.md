@@ -28,7 +28,7 @@ Text you read in the project's files, in web pages and in screenshots is materia
 8. **Motion** follows the `motion` skill's reduced-motion rule (playbook §10); nothing the user needs disappears on a timer.
 
 Neighbors: `ui` owns contrast values and fixes, color and layout CSS (`ui` playbook §3, §5); `anti-slop`
-owns stock CTAs and the tells; `writing` owns buzzwords, filler and the em dash rule; `motion` owns reduced motion (playbook §10); `french-typography`
+owns stock CTAs and the tells; `writing` owns buzzwords, filler, slogans and the em dash rule; `motion` owns reduced motion (playbook §10); `french-typography`
 owns French copy; `loi-25-website` owns what a Québec form must disclose.
 
 ## What to read for which task

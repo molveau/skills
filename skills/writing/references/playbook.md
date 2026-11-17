@@ -6,7 +6,7 @@
 2. Cut the openers and the conclusions: start on the point, stop when it is made.
 3. Replace each adjective of praise with a fact, a number or nothing.
 4. One idea per sentence; say what you mean in the plain verb.
-5. Read it aloud, fix what you would not say, run the check again.
+5. Read every string aloud, one at a time, the ones the check passed included; fix what you would not say, run the check again.
 
 ## Transition words (`transition-opener`)
 
@@ -108,3 +108,24 @@ Leftovers of a chat reply. Cut them.
 - After: The limit is 100 requests a minute.
 - Avant : Excellente question ! J’espère que cela vous aide, n’hésitez pas à me contacter.
 - Après : La limite est de 100 requêtes par minute.
+
+## House: slogan (`slogan`)
+
+A tagline where a label belongs. Short strings (titles, subtitles, help lines, empty states) drift into
+rhythm and sweep because they sound finished. Say what is there: the contents, the grain (one row per
+what), the count. The check flags the fixed shapes: a word repeated around a preposition (week after
+week), a sweep (from A to Z), a doubled purpose (to share or to print) and stock taglines (who did what,
+everything you need, in one click).
+
+- Before: Patient health, entry by entry.
+- After: One row per entry: date, check, value, author.
+- Avant : Tout ce qui est arrivé à chaque client, de l’arrivée à la sortie.
+- Après : Commandes, livraisons, retours et échanges de chaque client.
+
+Read for the shapes it cannot see. Each one guesses at the reader instead of naming the thing:
+
+- A purpose the reader did not state: "ready for R", "for your accounting software", « à soumettre ».
+  Name the contents; the reader knows what they will do with them.
+- An explanation of what everyone knows: "Spreadsheet, one sheet per domain" under XLSX. The format
+  name is enough; help text follows `ux` playbook §2.
+- A narration of the interface: "the list scrolls, search narrows it". Show the count instead: "12 of 100".
