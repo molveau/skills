@@ -2,6 +2,17 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.7.0] - 2026-11-16
+
+### Added
+
+- `writing` gains a twelfth tell, `slogan`: a word repeated around a preposition ("week after week", « entrée par entrée »), a sweep ("from A to Z", « de l’arrivée à la sortie »), a doubled purpose ("to share or to print", « à analyser ou à soumettre ») and stock taglines ("who did what", "in one click"). It checks only label-sized text (a JSON value or a paragraph of 16 words or fewer), so "frame by frame" in running prose is left alone, and literal pairs (side by side, one by one, « côte à côte », « un par un ») are left alone everywhere.
+
+### Changed
+
+- `writing` step 4 reads every string aloud, one at a time, including the ones the check passed, and says when the step is done. A label, subtitle or help line names what is there.
+- `ux` playbook §2: a known name needs no gloss; a file-format menu shows XLSX, CSV and PDF with no line under each, unless the format changes what the file holds.
+
 ## [1.6.2] - 2026-11-13
 
 ### Fixed

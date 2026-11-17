@@ -5,7 +5,7 @@
 1. **Read the path and the strings**: the flow around the change, who arrives in what state, the locale files (§1).
 2. **Hold the values**: targets 44 touch, 40 dense, 48dp, 24px the WCAG floor; errors beside the field; submit stays enabled.
 3. **Native first**: real `button`, `a`, `label`, `input`, `dialog`; ARIA only fills gaps; focus always visible (§11, §12).
-4. **Owners elsewhere**: contrast and color `ui` §5; hype, filler and the em dash `writing`; reduced motion `motion` §10.
+4. **Owners elsewhere**: contrast and color `ui` §5; hype, filler, slogans and the em dash `writing`; reduced motion `motion` §10.
 5. **Check**: the §17 grep list, a keyboard-only and a screen-reader walk, an automated audit; unseen is `Not verified`.
 
 One doctrine for how an interface reads, holds up and works for everyone, from every source in this skill;
@@ -62,7 +62,8 @@ and credits are at the end.
 - A toggle describes its ON state ("Send read receipts"), never a negative; link straight to a referenced
   setting ("Notification settings") instead of spelling its path. [Jakub]
 - Help text answers the question the control raises instead of restating it; rare detail goes behind
-  progressive disclosure. [Impeccable]
+  progressive disclosure. A known name needs no gloss: a file-format menu shows XLSX, CSV and PDF with no
+  line under each, unless the format changes what the file holds (the PDF is one page per record). [Impeccable] [Molveau]
 
 ## 4. Errors
 
