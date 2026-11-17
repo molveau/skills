@@ -188,7 +188,7 @@ test('every vendor folder has LICENSE and SOURCE.md', () => {
 const BUNDLES = {
   design: ['anti-slop', 'ui', 'ux', 'motion', 'design-grill', 'design-inspiration-index', 'writing'],
   quebec: ['french-typography', 'loi-25-website', 'ordre-pro-advertising', 'bilingual-next'],
-  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking', 'local-ai-visibility'],
+  playbooks: ['saas', 'vitrine', 'workflow', 'paid-booking', 'local-ai-visibility', 'seo', 'geo'],
 };
 
 // The plugin is the skills/ folder only, so tests, fixtures, the example video and the repo scripts stay
@@ -363,7 +363,7 @@ test('README documents the MCP server and the hook; anti-slop points to both', (
 
 test('skillDirs leaves out the plugin component folders', () => {
   for (const d of COMPONENT_DIRS) assert.ok(!skillDirs().includes(d), `${d} counted as a skill`);
-  assert.equal(skillDirs().length, 16);
+  assert.equal(skillDirs().length, 18);
 });
 
 // Commands and agents: the Anthropic directory's screens read a dollar placeholder as an environment

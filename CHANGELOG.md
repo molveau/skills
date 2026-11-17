@@ -2,6 +2,19 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.8.0] - 2026-11-17
+
+### Added
+
+- `seo` skill: search content for a site that wants clients from Google. Query evidence before topics, one query per page, a month plan with the first-hand material each page needs, the page anatomy, adapting a page before adding one, a monthly Search Console report. Google's rules are quoted and dated in `references/google.md`.
+- `geo` skill: AI search visibility for a product, SaaS or shop. A prompt panel measures mentions before any change, then crawler access, quotable facts, the third-party pages the answers cite and signed mentions on them, and a monthly report. Vendor documentation is quoted and dated in `references/facts.md`.
+- `local-ai-visibility`, `vitrine` and `workflow` route to `seo` and `geo`.
+
+### Changed
+
+- `anti-slop`: the ratchet test and the story video move from `SKILL.md` to `references/ratchet.md` and `references/story-video.md`.
+- `design-inspiration-index`: the people table moves to `references/people.md`.
+
 ## [1.7.0] - 2026-11-16
 
 ### Added
