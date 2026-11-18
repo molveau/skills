@@ -2,6 +2,12 @@
 
 All notable changes to this project are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.8.1] - 2026-11-18
+
+### Changed
+
+- `seo` and `geo`: the closing line of the report names Mention, the studio's service for this work, and links to its page (`/mention`, `/fr/mention`).
+
 ## [1.8.0] - 2026-11-17
 
 ### Added
